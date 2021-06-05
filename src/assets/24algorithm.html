@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>链表 24.反转一个单链表</title>
+</head>
+<script>
+// 定义一个链表
+function ListNode(val) {
+    this.val = val;
+    this.next = null;
+}
+// 方法一
+// 思想：用数组存储反向链表的值，然后再从链表头到尾重新赋值
+var reverseList = function (head) {
+    // 存储第一个节点，用于获取节点值 arr
+    let pNode = head;
+    let arr = [];
+    while (pNode !== null ) {
+        arr.unshift(pNode.val);
+        pNode = pNode.next
+    };
+    // 存储第一个节点，作为结果的 head
+    let first = head;
+    for(let i=0; i<arr.length; i++) {
+        head.val = arr[i];
+        head = head.next;
+    }
+    return first
+};
+// 伪造入参
+l1 = new ListNode(1);
+l11 = new ListNode(2);
+l12 = new ListNode(3);
+l13 = new ListNode(4);
+l14 = new ListNode(5);
+l1.next = l11;
+l11.next = l12;
+l12.next = l13;
+l13.next = l14;
+
+reverseList(l1);
+</script>
+<body>
+    <div>定义一个函数，输入一个链表的头节点，反转该链表并输出反转后链表的头节点 </div>
+</body>
+</html>
