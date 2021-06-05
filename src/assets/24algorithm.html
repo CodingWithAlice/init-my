@@ -90,7 +90,7 @@
         var p = reverseList(head.next);
         // 为了便于自己理解，假设输入的是 1->2->3->4->5:
         // 第一次返回的递归执行到这儿时：p = 5 -> null；head = 4->5（head 由于闭包，每次都会比 p 早一个节点）
-        head.next.next = head; // 5->4->5->4... 循环
+        head.next.next = head; // 5->4->5->4... 循环.
         head.next = null; // 4 -> null
         // 返回 p 之前，可以看到：p = 5 -> 4 -> null
         return p;
