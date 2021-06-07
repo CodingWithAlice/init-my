@@ -35,11 +35,23 @@
 
     // 方法二
     // 除非不报错，报错就是有环
+    // var hasCycle = (head) => {
+    //     try {
+    //         JSON.stringify(head);
+    //     } catch (error) {
+    //         return true
+    //     }
+    //     return false
+    // }
+
+    // 方法三
     var hasCycle = (head) => {
-        try {
-            JSON.stringify(head);
-        } catch (error) {
-            return true
+        while (head !== null) {
+            if(head.tag) {
+                return true
+            }
+            head.tag = true;
+            head = head.next;
         }
         return false
     }
