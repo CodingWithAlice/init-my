@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>链表 24.反转一个单链表</title>
+    <title>141. 环形链表</title>
 </head>
 <script>
     // 定义一个链表
@@ -13,24 +13,35 @@
         this.val = val;
         this.next = null;
     }
-    var hasCycle = function(head) {
-        if (head === null || head.next === null) {
-            return false;
+    // var hasCycle = function(head) {
+    //     if (head === null || head.next === null) {
+    //         return false;
+    //     }
+    //     let circle = false;
+    //     // 用两个数组存储当前节点和下一个节点的值
+    //     let arr = [head.val];
+    //     let arrNext = [head.next.val];
+    //     for(let i = head.next; i.next !== null && !circle; i = i.next) {
+    //         // 存在且相等
+    //         if (arr.includes(i.val) && (arr.indexOf(i.val) === arrNext.indexOf(i.next.val))) {
+    //             circle = true;
+    //             return circle;
+    //         }
+    //         arr.push(i.val);
+    //         arrNext.push(i.next.val);
+    //     }
+    //     return circle
+    // }
+
+    // 方法二
+    // 除非不报错，报错就是有环
+    var hasCycle = (head) => {
+        try {
+            JSON.stringify(head);
+        } catch (error) {
+            return true
         }
-        let circle = false;
-        // 用两个数组存储当前节点和下一个节点的值
-        let arr = [head.val];
-        let arrNext = [head.next.val];
-        for(let i = head.next; i.next !== null && !circle; i = i.next) {
-            // 存在且相等
-            if (arr.includes(i.val) && (arr.indexOf(i.val) === arrNext.indexOf(i.next.val))) {
-                circle = true;
-                return circle;
-            }
-            arr.push(i.val);
-            arrNext.push(i.next.val);
-        }
-        return circle
+        return false
     }
     // 伪造入参
     // [-1,-7,7,-4,19,6,-9,-5,-2,-5]
