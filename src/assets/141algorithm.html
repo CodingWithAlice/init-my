@@ -45,12 +45,25 @@
     // }
 
     // 方法三
+    // var hasCycle = (head) => {
+    //     while (head !== null) {
+    //         if(head.tag) {
+    //             return true
+    //         }
+    //         head.tag = true;
+    //         head = head.next;
+    //     }
+    //     return false
+    // }
+
+    // 方法四
     var hasCycle = (head) => {
-        while (head !== null) {
-            if(head.tag) {
-                return true
+        let set = new Set();
+        while(head !== null){
+            if(set.has(head)) {
+                return true;
             }
-            head.tag = true;
+            set.add(head);
             head = head.next;
         }
         return false
