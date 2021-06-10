@@ -71,42 +71,84 @@
 // };
 
 // 方法二：
-var checkValidString = (s) => {
-    //s: "((*"  (三种情况)
+// var checkValidString = (s) => {
+//     //s: "((*"  (三种情况)
     
-    //s:"((("  count++
-    //s:"(()"  count--
-    //s:"(( "  count
-    let len = s.length;
-    let minCount = 0;//最少有多少个'('
-    let maxCount = 0;//最多有多少个'('
-    for(let i=0;i<len;i++)
-    {
-        if( s[i] === '(' ) {
-            maxCount++;
-            minCount++;
-        } else if ( s[i] === ')' ) {
-            maxCount--;
-            minCount--;
-        } else if ( s[i] === '*' ) {
-            maxCount++; //'*' 为 '('
-            minCount--; //'*' 为 ')'
-            //'*' 为 空格都不变
-        }
+//     //s:"((("  count++
+//     //s:"(()"  count--
+//     //s:"(( "  count
+//     let len = s.length;
+//     let minCount = 0;//最少有多少个'('
+//     let maxCount = 0;//最多有多少个'('
+//     for(let i=0;i<len;i++)
+//     {
+//         if( s[i] === '(' ) {
+//             maxCount++;
+//             minCount++;
+//         } else if ( s[i] === ')' ) {
+//             maxCount--;
+//             minCount--;
+//         } else if ( s[i] === '*' ) {
+//             maxCount++; //'*' 为 '('
+//             minCount--; //'*' 为 ')'
+//             //'*' 为 空格都不变
+//         }
 
-        if( maxCount < 0) {
-            return false;
+//         if( maxCount < 0) {
+//             return false;
+//         }
+//         //当第一个为'*'时只能用作'('  或  空（空可以忽略）
+//         if( minCount < 0) {
+//             minCount = 0;
+//         }
+//     }
+//     return minCount === 0;
+// }
+
+// 方法三
+// 核心思想：利用栈的后进先出实现 --> `(`和`*`分别`push`到两个栈中，遇到`)`就弹出一个 -> 直到最后剩余的右括号一定是已经遍历完了 -> 剩余的`(`再找`*`中有没有可以对应的
+var checkValidString = (s) => {
+    let pos = true;
+    let leftStack = [];
+    let rightStack = [];
+    let xingStack = [];
+    for(let i = 0; pos && i < s.length; i++) {
+        if(s[i] === '(') {
+            leftStack.push(i);
         }
-        //当第一个为'*'时只能用作'('  或  空（空可以忽略）
-        if( minCount < 0) {
-            minCount = 0;
+        if(s[i] === '*') {
+            xingStack.push(i);
+        }
+        if(s[i] === ')') {
+            // 左栈中存在，则弹出
+            if (leftStack.length) {
+                leftStack.pop();
+            } else {
+                // 左栈中不存在，星栈中存在
+                if(xingStack.length) {
+                    xingStack.pop();
+                } else {
+                    // 左栈/星栈中都不存在
+                    pos = false;
+                }
+            }
         }
     }
-    return minCount === 0;
+    // 如果左括号存在剩余
+    leftStack.forEach((left, index) => {
+        let xingIdx =  xingStack && xingStack.findIndex(xing => xing >= left);
+        if(xingIdx > -1) {
+            xingStack.splice(xingIdx, 1);
+        } else {
+            pos = false;
+        }
+    })
+    return pos
 }
 
-let test3 = "((((()(()()()*()(((((*)()*(**(())))))(())()())(((())())())))))))(((((())*)))()))(()((*()*(*)))(*)()";
-checkValidString(test3);
+let test1 = "(";
+let test3 = "(((((*(()((((*((**(((()()*)()()()*((((**)())*)*)))))))(())(()))())((*()()(((()((()*(())*(()**)()(())";
+checkValidString(test1);
 </script>
 
 <body>
