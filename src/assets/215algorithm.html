@@ -25,12 +25,17 @@
     // 方法二：冒泡
     // var findKthLargest = function (nums, k) {
     //     for(let i = 0; i < nums.length - 1; i++) {
+    //         let tag = true;
     //         for(let j = i+1; j < nums.length; j = j+1) {
     //             if(nums[i] < nums[j]) {
     //                 let temp = nums[i];
     //                 nums[i] = nums[j];
     //                 nums[j] = temp;
+    //                 tag = false;
     //             }
+    //         }
+    //         if(tag) {
+    //             break
     //         }
     //     }
     //     return nums[k - 1];
@@ -40,6 +45,7 @@
     var findKthLargest = (nums, k) => {
         // 循环 k 次，只排序到第 k 个大的值
         for(let i = 0; i < k ; i++) {
+            let tag = true;
             // 得从后往前，把大值的往前送
             for (let j = nums.length - 1; j >= 0; j--) {
                 // 前面小于后面，则交换 -> 将值从大往小排
@@ -47,7 +53,11 @@
                     let temp = nums[j];
                     nums[j] = nums[j + 1];
                     nums[j + 1] = temp;
+                    tag = false;
                 }
+            }
+            if(tag) {
+                break
             }
         }
         return nums[k - 1];
