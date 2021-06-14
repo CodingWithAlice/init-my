@@ -21,19 +21,38 @@
     //     });
     //     return res[k - 1];
     // };
+
     // 方法二：冒泡
-    var findKthLargest = function (nums, k) {
-        for(let i = 0; i < nums.length - 1; i++) {
-            for(let j = i+1; j < nums.length; j = j+1) {
-                if(nums[i] < nums[j]) {
-                    let temp = nums[i];
-                    nums[i] = nums[j];
-                    nums[j] = temp;
+    // var findKthLargest = function (nums, k) {
+    //     for(let i = 0; i < nums.length - 1; i++) {
+    //         for(let j = i+1; j < nums.length; j = j+1) {
+    //             if(nums[i] < nums[j]) {
+    //                 let temp = nums[i];
+    //                 nums[i] = nums[j];
+    //                 nums[j] = temp;
+    //             }
+    //         }
+    //     }
+    //     return nums[k - 1];
+    // };
+
+    // 方法三：冒泡 -> 找到对应的数字后退出
+    var findKthLargest = (nums, k) => {
+        // 循环 k 次，只排序到第 k 个大的值
+        for(let i = 0; i < k ; i++) {
+            // 得从后往前，把大值的往前送
+            for (let j = nums.length - 1; j >= 0; j--) {
+                // 前面小于后面，则交换 -> 将值从大往小排
+                if(nums[j] < nums[j + 1]) {
+                    let temp = nums[j];
+                    nums[j] = nums[j + 1];
+                    nums[j + 1] = temp;
                 }
             }
         }
         return nums[k - 1];
-    };
+    }
+
 
     let arr1 = [3, 2, 1, 5, 6, 4];
     let k1 = 2;
