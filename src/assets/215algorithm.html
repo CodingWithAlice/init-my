@@ -78,19 +78,44 @@
     // }
 
     // 方法五：插入排序 - 优化：在 i 第一次比较不需要交换时，不需要再执行当前内层循环
+    // var findKthLargest = (nums, k) => {
+    //     for (var i = 1; i < nums.length; i++) {
+    //         // 优化：里层循环的是 前一项小于后一项，则交换
+    //         if (nums[i-1] > nums[i]) {
+    //             continue;
+    //         }
+    //         for (var j = i; j > 0; --j) {
+    //             if (nums[j - 1] < nums[j]) {
+    //                 [nums[j - 1], nums[j]] = [nums[j], nums[j - 1]];
+    //             }
+    //         }
+    //     }
+    //     return nums[k - 1];
+    // }
+
+    // 方法六：快排
     var findKthLargest = (nums, k) => {
-        for (var i = 1; i < nums.length; i++) {
-            // 优化：里层循环的是 前一项小于后一项，则交换
-            if (nums[i-1] > nums[i]) {
-                continue;
-            }
-            for (var j = i; j > 0; --j) {
-                if (nums[j - 1] < nums[j]) {
-                    [nums[j - 1], nums[j]] = [nums[j], nums[j - 1]];
+        var quickSort = function (arr) {
+            // 递归退出循环的条件
+            if (arr.length <= 1) { return arr; }
+            var midIndex = Math.floor(arr.length / 2);
+            // 从原数组中拿出 mid 值
+            var mid = arr.splice(midIndex, 1)[0];
+            var left = [];
+            var right = [];
+            // 以 mid 为基准，将数组拆分成两部分
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i] > mid) {
+                    left.push(arr[i]);
+                } else {
+                    right.push(arr[i]);
                 }
             }
-        }
-        return nums[k - 1];
+            // 递归 - 左半部分 + mid + 右半部分
+            return quickSort(left).concat([mid], quickSort(right));
+        };
+        let res = quickSort(nums);
+        return res[k - 1];
     }
 
 
