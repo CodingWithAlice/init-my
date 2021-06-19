@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>属性选择器</title>
+    <style>
+        [id] {
+            background-color: brown;
+        }
+        [class~=test] {
+            background-color: yellow;
+        } 
+        [class=test] {
+            color: #fff;
+        } 
+        [class^=p] {
+            border: 1px solid blue;
+        }
+        [class$=s] {
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <section class="wrap">
+        <div class="p2 test">222222</div>
+        <div class="test">444444</div>
+        <div class="p1" id="1">111111</div>
+        <div class="p2 asdads" id="2">2222</div>
+        <div class="p3">3333</div>
+        <div class="p4 asdasds">444444</div>
+    </section>
+</body>
+</html>
