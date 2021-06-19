@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>普通文档流和 BFC 下的外边距合并现象</title>
+    <style>
+        .wrap {
+            /* 解决方案 */
+            display: flex;
+            flex-direction: column;
+            /* 普通文档流和 BFC 下都存在外边距合并现象 */
+            /* overflow: hidden; */
+        }
+        .content1 {
+            width: 100px;
+            height: 100px;
+            background-color: pink;
+            margin-bottom: 50px;
+        }
+        .content2 {
+            margin-top: 100px;
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+    <section class="wrap">
+        <div class="content1">conten1</div>
+        <div class="content2">conten2</div>
+    </section>
+</body>
+</html>
