@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>position:sticky</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        /* .sticky-wrap {
+            position: relative;
+        } */
+        .div1 {
+            height: 200px;
+        }
+        .p2 {
+            height: 30px;
+            position: sticky;
+            top: 30px;
+            background-color: red;
+        }
+        .test{
+            width: 100px;
+            background-color: pink;
+        }
+        .asdasds {
+            height: 1000px;
+        }
+    </style>
+</head>
+<body>
+    <section class="wrap">
+        <div class="test div1">2222</div>
+        <!-- <div class="sticky-wrap">    -->
+            <span class="p2">跨越特定阈值前为相对定位，之后为固定定位</span>
+        <!-- </div> -->
+        <div class="test" id="1">3333</div>
+        <span class="test" id="2">4444</span>
+        <span class="test">5555</span>
+        <div class="test asdasds">6666</div>
+    </section>
+</body>
+</html>
