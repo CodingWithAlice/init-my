@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flex布局</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        /* 关于flex 盒子默认拥有在 交叉轴上面缩放适应高度 的情况 */
+        .flex1 {
+            display: flex;
+        }
+        .height {
+            /* height: 100px; */
+            background-color: pink;
+        }
+        .other {
+            /* height: 20px; */
+            background-color: yellow;
+        }
+        /* 关于 flex 元素默认不换行 */
+        .flex2 {
+            display: flex;
+            /* flex-wrap: wrap; */
+        }
+        .wrap {
+            width: 600px;
+            height: 100px;
+            border: 2px solid pink;
+        }
+        /* 关于 flex 的简写 - 对于 可用空间和对齐行为 的影响 */
+        .flex3 {
+            display: flex;
+            width: 500px;
+            border: 2px dashed black;
+        }
+        .son {
+            width: 100px;
+            border: 3px solid red;
+            background-color: purple;
+        }
+        .son1 {
+            flex: 1;
+        }
+        .son2 {
+            flex: 2;
+        }
+        /* 玩骰子 1-9个点布局 */
+        /* 公共样式 */
+        .item {
+            display: block;
+            width: 20px;
+            height: 20px;
+            background-color: red;
+            border-radius: 50%;
+        }
+        .touzi {
+            width: 100px;
+            height: 100px;
+            background-color: #f7f7f7;
+            border: 1px solid black;
+            margin-top: 10px;
+            padding: 10px;
+        }
+        .touzi-wrap {
+            display: flex;
+            justify-content: space-around;
+        }
+        /* 一个骰子 */
+        /* 一个骰子 位置1*/
+        .touzi1-1 {
+            display: flex;
+        }
+        /* 一个骰子 位置2 */
+        .touzi1-2 {
+            display: flex;
+            justify-content: center;
+        }
+        /* 一个骰子 位置3 */
+        .touzi1-3 {
+            display: flex;
+            justify-content: flex-end;
+        }
+        /* 一个骰子 位置4 */
+        .touzi1-4 {
+            display: flex;
+            align-items: center;
+        }
+        /* 一个骰子 位置5 */
+        .touzi1-5 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* 一个骰子 位置6 */
+        .touzi1-6 {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        /* 一个骰子 位置7 */
+        .touzi1-7 {
+            display: flex;
+            align-items: flex-end;
+        }
+        /* 一个骰子 位置8 */
+        .touzi1-8 {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        /* 一个骰子 位置9 */
+        .touzi1-9 {
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+        }
+        /* 两个骰子 */
+        /* 两个骰子 位置1*/
+        .touzi2-1 {
+            display: flex;
+            justify-content: space-between;
+        }
+        /* 两个骰子 位置2*/
+        .touzi2-2 {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        /* 两个骰子 位置3*/
+        .touzi2-3 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+        /* 两个骰子 位置4*/
+        .touzi2-4 {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+        /* 两个骰子 位置5*/
+        .touzi2-5 {
+            display: flex;
+        }
+        .item2-5 {
+            align-self: center;
+        }
+        /* 两个骰子 位置6*/
+        .touzi2-6 {
+            display: flex;
+            justify-content: space-between;
+        }
+        .item2-6 {
+            align-self: flex-end;
+        }
+        /* 三个骰子 */
+        .touzi3 {
+            display: flex;
+        }
+        .item3-2 {
+            align-self: center;
+        }
+        .item3-3 {
+            align-self: flex-end;
+        }
+        /* 四个骰子 */
+        .touzi4 {
+            width: 60px;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            /* 多条主轴 的时候生效 --  定义每一条轴的对齐方式 */
+            align-content: space-between;
+        }
+        .touzi4-2 {
+            display: flex;
+            justify-content: space-between;
+        }
+        .column {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        /* 六骰子 */
+        .touzi6 {
+            width: 79px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            /* 多条轴线 */
+            align-content: space-between;
+        }
+        .touzi6-2 {
+            height: 79px;
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+            align-content: space-between;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <section class="flex1">
+        <div class="other">1111</div>
+        <div class="height">如果有一个元素比其他元素都高，其他元素会被拉伸来填充**交叉轴**大小 -- 其他元素不设置固定高度 <br> 2222<br> 2222</div>
+        <div class="other">3333</div>
+    </section>
+    <section class="flex2">
+        <div class="wrap">flex 元素默认不换行，在主轴上会默认压缩</div>
+        <div class="wrap">111</div>
+        <div class="wrap">111</div>
+    </section>
+    <section class="flex3">
+        <div class="son son1">111</div>
+        <div class="son son2">222</div>
+        <div class="son">333</div>
+    </section>
+    <!-- 一个骰子 -->
+    <section class="touzi-wrap">
+        <section class="touzi touzi1-1">
+            <span class="item"></span>
+        </section>
+        <section class="touzi touzi1-2">
+            <span class="item"></span>
+        </section>
+        <section class="touzi touzi1-3">
+            <span class="item"></span>
+        </section>
+        <section class="touzi touzi1-4">
+            <span class="item"></span>
+        </section>
+        <section class="touzi touzi1-5">
+            <span class="item"></span>
+        </section>
+        <section class="touzi touzi1-6">
+            <span class="item"></span>
+        </section>
+        <section class="touzi touzi1-7">
+            <span class="item"></span>
+        </section>
+        <section class="touzi touzi1-8">
+            <span class="item"></span>
+        </section>
+        <section class="touzi touzi1-9">
+            <span class="item"></span>
+        </section>
+    </section>
+    <!-- 两个骰子 -->
+    <section class="touzi-wrap">
+        <section class="touzi touzi2-1">
+            <span class="item"></span>
+            <span class="item"></span>
+        </section>
+        <section class="touzi touzi2-2">
+            <span class="item"></span>
+            <span class="item"></span>
+        </section>
+        <section class="touzi touzi2-3">
+            <span class="item"></span>
+            <span class="item"></span>
+        </section>
+        <section class="touzi touzi2-4">
+            <span class="item"></span>
+            <span class="item"></span>
+        </section>
+        <section class="touzi touzi2-5">
+            <span class="item "></span>
+            <span class="item item2-5"></span>
+        </section>
+        <section class="touzi touzi2-6">
+            <span class="item"></span>
+            <span class="item item2-6"></span>
+        </section>
+    </section>
+    <!-- 三个骰子 -->
+    <section class="touzi-wrap">
+        <section class="touzi touzi3">
+            <span class="item"></span>
+            <span class="item item3-2"></span>
+            <span class="item item3-3"></span>
+        </section>
+    </section>
+    <!-- 四个骰子 -->
+    <section class="touzi-wrap">
+        <section class="touzi touzi4">
+            <span class="item"></span>
+            <span class="item"></span>
+            <span class="item"></span>
+            <span class="item item4-4"></span>
+        </section>
+        <section class="touzi touzi4-2">
+            <div class="column">
+                <span class="item"></span>
+                <span class="item"></span>
+            </div>
+            <div class="column">
+                <span class="item"></span>
+                <span class="item"></span>
+            </div>
+        </section>
+    </section>
+    <!-- 六骰子 -->
+    <section class="touzi-wrap">
+        <section class="touzi touzi6">
+            <span class="item"></span>
+            <span class="item"></span>
+            <span class="item"></span>
+            <span class="item"></span>
+            <span class="item"></span>
+            <span class="item"></span>
+        </section>
+        <section class="touzi touzi6-2">
+            <span class="item"></span>
+            <span class="item"></span>
+            <span class="item"></span>
+            <span class="item"></span>
+            <span class="item"></span>
+            <span class="item"></span>
+        </section>
+    </section>
+</body>
+</html>
