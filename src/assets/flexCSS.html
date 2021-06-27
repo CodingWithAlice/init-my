@@ -235,6 +235,41 @@
             /* flex: 0 0 25%; */
             flex-basis: 25%;
         }
+        /* 圣杯布局 */
+        .cup {
+            width: 100%;
+            height: 300px;
+            border: 2px solid yellowgreen;
+            display: flex;
+            flex-direction: column;
+        }
+        .body {
+            /* 撑开body */
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+        }
+        .left, .right {
+            flex: 0 0 25%;
+        }
+        .middle {
+            background-color: red;
+            flex: 1;
+        }
+        /* 双飞翼布局 */
+        .fly {
+            width: 100%;
+            height: 300px;
+            border: 2px solid burlywood;
+            display: flex;
+            flex-direction: column;
+        }
+        .fly-middle {
+            background-color: rgb(65, 65, 167);
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+        }
     </style>
 </head>
 <body>
@@ -372,6 +407,27 @@
         <div class="liu-item"></div>
         <div class="liu-item"></div>
         <div class="liu-item"></div>
+    </section>
+    <!-- 圣杯布局 -->
+    <section class="cup">
+        <header>顶部</header>
+        <section class="body">
+            <div class="left">left</div>
+            <div class="middle">middle</div>
+            <div class="right">right</div>
+        </section>
+        <footer>footer</footer>
+    </section>
+    <!-- 双飞翼布局 -->
+    <section class="fly">
+        <header>顶部</header>
+        <section class="body">
+            <div class="fly-middle">
+                <div class="left">left</div>
+                <div class="right">right</div>
+            </div>
+        </section>
+        <footer>footer</footer>
     </section>
 </body>
 </html>
