@@ -206,6 +206,35 @@
             align-content: space-between;
             justify-content: space-between;
         }
+        /* 悬挂式布局 */
+        .hang {
+            width: 140px;
+            display: flex;
+            border: 2px solid red;
+        }
+        .img {
+            width: 50px;
+            height: 50px;
+            margin-right: 1rem;
+        }
+        .content {
+            flex: 1;
+            word-break: break-all;
+        }
+        /* 流式布局 */
+        .liu {
+            display: flex;
+            width: 250px;
+            flex-wrap: wrap;
+        }
+        .liu-item {
+            width: 50px;
+            height: 50px;
+            border: 2px solid red;
+            box-sizing: border-box;
+            /* flex: 0 0 25%; */
+            flex-basis: 25%;
+        }
     </style>
 </head>
 <body>
@@ -326,6 +355,23 @@
             <span class="item"></span>
             <span class="item"></span>
         </section>
+    </section>
+    <!-- 悬挂式布局 -->
+    <section class="hang">
+        <img class="img" src="https://img.alicdn.com/i1/2210371867119/O1CN019hyzuR22SYH5WoOWL_!!2210371867119.jpg"/>
+        <p class="content">contentcontentcontentcontentcontentconten</p>
+    </section>
+    <!-- 流式布局 -->
+    <section class="liu">
+        <div class="liu-item"></div>
+        <div class="liu-item"></div>
+        <div class="liu-item"></div>
+        <div class="liu-item"></div>
+        <div class="liu-item"></div>
+        <div class="liu-item"></div>
+        <div class="liu-item"></div>
+        <div class="liu-item"></div>
+        <div class="liu-item"></div>
     </section>
 </body>
 </html>
