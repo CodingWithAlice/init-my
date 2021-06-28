@@ -27,17 +27,39 @@
           position: relative;
           z-index: -1;
         }
+        /* 层级上下文+层叠等级 */
+        .box {
+            display: flex;
+        }
+        .father {
+            background-color: blue;
+            padding: 10px;
+            z-index: 99;
+        }
+        .img {
+            width: 100px;
+            height: auto;
+            position: relative;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
       </style>
       
 </head>
 <body>
-    <div class="box">
+    <section>
         <div class="parent">
             parent
             <div class="child">child</div>
         </div>
-    </div>
+    </section>
     <p>层叠上下文中 父元素有属性 display:flex 不可以创建层叠上下文</p>
     <p>但是 子元素 的z-index 属性不为 auto 的时候，子元素为层叠上下文</p>
+    <section class="box">
+        <div class="father">
+            <img src="./IMG_0253.JPG" class="img" />
+        </div>
+    </section>
 </body>
 </html>
