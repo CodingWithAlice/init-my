@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>伪元素清除浮动</title>
+    <style>
+        .wen {
+            border: 2px solid red;
+        }
+        .clearfix::after {
+            content: '';
+            display: block;
+            clear: both;    
+        }
+        .cheng, .ling {
+            background-color: #eee;
+            width: 100px;
+            height: 100px;
+            float: left;
+        }
+        .ling {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <section class="wen clearfix">
+        <div class="cheng"></div>
+        <div class="ling"></div>
+        <!-- <p>contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent</p> -->
+    </section>
+</body>
+</html>
