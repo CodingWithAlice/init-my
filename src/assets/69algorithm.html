@@ -25,18 +25,22 @@
         if (x === 0) {
             return 0;
         }
+        let left = 0, right = x;
         let mid = Math.ceil(x / 2);
-        while(mid * mid < x) {
-            let temp = mid;
-            if(mid * mid === x) {
+        while(left < right) {
+            // 不用乘法，防止溢出
+            if (x / mid === mid) {
                 return mid;
             }
-            if(mid * mid > x) {
-                mid = Math.ceil(mid / 2);
-                continue
+            if (x / mid < mid) {
+                // 注意 ⚠️ ：通过判断条件已知 mid^2 大于 x
+                right = mid - 1;
+            } else {
+                left = mid;
             }
-            mid = Math.ceil((mid + temp) / 2);
+            mid = Math.ceil((left + right) / 2);
         }
+        return left
     }
 
 
