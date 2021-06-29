@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面通信 - onmessage</title>
+</head>
+<body>
+    <div>页面通信 - onmessage</div>
+    <script>
+        const bc = new BroadcastChannel('junzhe');
+        bc.onmessage = function(e) {
+            console.log('通讯收到的数据:', e.data);
+        };
+    </script>
+</body>
+</html>
