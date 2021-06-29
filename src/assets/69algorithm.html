@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>69. x 的平方根</title>
+</head>
+<script>
+// 方法一：遍历
+var mySqrt = function(x) {
+    let mid = Math.ceil(x/2);
+    console.log('mid=', mid);
+    let i = 0;
+    for(; i < mid; i++) {
+        if ( (i * i <= x) && ((i + 1) * (i + 1) > x)) {
+            return i;
+        }
+    }
+    return i
+};
+
+
+// 测试用例
+if (mySqrt(4) === 2) {
+    console.log('测试用例1通过');
+}
+if (mySqrt(8) === 2) {
+    console.log('测试用例2通过');
+}
+if (mySqrt(9) === 3) {
+    console.log('测试用例2通过');
+}
+</script>
+<body>
+    <div>计算并返回 x 的平方根，其中 x 是非负整数。</div>
+    <div>由于返回类型是整数，结果只保留整数的部分，小数部分将被舍去。</div>
+</body>
+</html>
