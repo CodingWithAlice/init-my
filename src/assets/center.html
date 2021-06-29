@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>盒子垂直水平居中</title>
+    <style>
+        .outer {
+            width: 500px;
+            height: 100px;
+            background-color: pink;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .father {
+            /* width: 100px; */
+            height: 100px;
+            position: relative;
+            background-color: #eee;
+        }
+        .position {
+            position: absolute;        
+            left:0;        
+            right:0;        
+            top: 0;        
+            bottom: 0;       
+            margin: auto;
+            width: 30px;
+            height: 30px;
+        }
+        .wenwenkexing{    
+            display: table-cell;    
+            width: 400px;    
+            height: 400px;    
+            vertical-align: middle;     
+            text-align: center;
+            background-color: #f7f7f7;
+        }
+    </style>
+</head>
+<body>
+    <!-- <section class="outer">
+        <div class="son">内容</div>
+    </section> -->
+    <!-- <section class="father">
+        <div class="position">
+            pos
+        </div>
+    </section> -->
+    <section class="wenwenkexing">
+        <p class="chengling">1</p>
+    </section>
+</body>
+</html>
