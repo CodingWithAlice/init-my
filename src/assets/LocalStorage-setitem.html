@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalStorage - setitem</title>
+</head>
+<body>
+    <div>LocalStorage - setitem</div>
+    <button id="btn">click to change localStorage</button>
+    <script>
+        document.getElementById('btn').addEventListener('click', () => {
+            let ts = +new Date();
+            let data = {
+                message: '是真的',
+                ts,
+            };
+            localStorage.setItem('junzhe', JSON.stringify(data));
+        })
+    </script>
+</body>
+</html>
