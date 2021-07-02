@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>821. 字符的最短距离</title>
+</head>
+<script>
+    var shortestToChar = function(s, c) {
+        let res = [];
+        let ifFirst = true;
+        while(s.length > 0) {
+            let index = s.indexOf(c);
+            s = s.substring(index + 1,);
+            let nextIndex = s.indexOf(c);
+            // 当前 index 为 0
+            if (index === 0) {
+                res.push(0);
+                ifFirst = false;
+                continue
+            }
+            // 第一次 
+            if(ifFirst) {
+                for(let i = index; i >= 0 ;i--) {
+                    res.push(i);
+                }
+                ifFirst = false;
+                // 第一次 + c 为最后一位
+                if(!s) {
+                    break
+                }
+                continue
+            }
+            
+            // 中间
+            if (index !== -1) {
+                let mid = Math.ceil(index / 2);
+                let isOdd = index % 2; 
+                for(let i = 1; i <= index; i++) {
+                    if(i <= mid) {
+                        res.push(i);
+                        continue
+                    }
+                    // 奇偶数
+                    if(isOdd) {
+                        mid--;
+                        isOdd = 0;
+                    }
+
+                    res.push(mid--);
+                }
+                res.push(0);
+                // 最后一个字母为 c 的情况
+                if (!s) {
+                    break
+                }
+                continue
+            }
+            
+
+            // 最后一个 c 
+            for(let i = 1; i < index ; i++) {
+                res.push(i);
+            }
+            // c 后面还有内容
+            if (index === -1) {
+                for(let i = 1; i <= s.length ; i++) {
+                    res.push(i);
+                }
+            }
+            
+            break
+        }
+        // console.log('res=', res);
+        return res
+    };
+    // 测试用例
+    if (shortestToChar("loveleetcode", 'e') === [3,2,1,0,1,0,0,1,2,2,1,0]) {
+        console.log('测试用例1通过');
+    }
+    // if (shortestToChar("aaab", 'b') === [3,2,1,0]) {
+    //     console.log('测试用例2通过');
+    // }
+    // if (shortestToChar("abba", 'b') === [1,0,0,1]) {
+    //     console.log('测试用例2通过');
+    // }
+    if (shortestToChar("cizokxcijwbyspcfcqws", 'c') === [0,1,2,3,2,1,0,1,2,3,4,3,2,1,0,1,0,1,2,3]) {
+        console.log('测试用例2通过');
+    }
+</script>
+
+<body>
+    <div>给你一个字符串 s 和一个字符 c ，且 c 是 s 中出现过的字符。 </div>
+    <div>
+        返回一个整数数组 answer ，其中 answer.length == s.length 且 answer[i] 是 s 中从下标 i 到离它 最近 的字符 c 的 距离 
+    </div>
+    <div>
+        两个下标 i 和 j 之间的 距离 为 abs(i - j) ，其中 abs 是绝对值函数。
+    </div>
+</body>
+
+</html>
