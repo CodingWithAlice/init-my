@@ -8,84 +8,110 @@
     <title>821. 字符的最短距离</title>
 </head>
 <script>
-    var shortestToChar = function(s, c) {
+    // 方法一：遍历字符串，按照位置划分
+    // var shortestToChar = function(s, c) {
+    //     let res = [];
+    //     let ifFirst = true;
+    //     while(s.length > 0) {
+    //         let index = s.indexOf(c);
+    //         s = s.substring(index + 1,);
+    //         let nextIndex = s.indexOf(c);
+    //         // 当前 index 为 0
+    //         if (index === 0) {
+    //             res.push(0);
+    //             ifFirst = false;
+    //             continue
+    //         }
+    //         // 第一次 
+    //         if(ifFirst) {
+    //             for(let i = index; i >= 0 ;i--) {
+    //                 res.push(i);
+    //             }
+    //             ifFirst = false;
+    //             // 第一次 + c 为最后一位
+    //             if(!s) {
+    //                 break
+    //             }
+    //             continue
+    //         }
+            
+    //         // 中间
+    //         if (index !== -1) {
+    //             let mid = Math.ceil(index / 2);
+    //             let isOdd = index % 2; 
+    //             for(let i = 1; i <= index; i++) {
+    //                 if(i <= mid) {
+    //                     res.push(i);
+    //                     continue
+    //                 }
+    //                 // 奇偶数
+    //                 if(isOdd) {
+    //                     mid--;
+    //                     isOdd = 0;
+    //                 }
+
+    //                 res.push(mid--);
+    //             }
+    //             res.push(0);
+    //             // 最后一个字母为 c 的情况
+    //             if (!s) {
+    //                 break
+    //             }
+    //             continue
+    //         }
+            
+
+    //         // 最后一个 c 
+    //         for(let i = 1; i < index ; i++) {
+    //             res.push(i);
+    //         }
+    //         // c 后面还有内容
+    //         if (index === -1) {
+    //             for(let i = 1; i <= s.length ; i++) {
+    //                 res.push(i);
+    //             }
+    //         }
+            
+    //         break
+    //     }
+    //     // console.log('res=', res);
+    //     return res
+    // };
+    
+    // 方法二：比较当前 i 与前后字符串位置的大小，取较小者为结果
+    var shortestToChar = (s,c) => {
         let res = [];
-        let ifFirst = true;
-        while(s.length > 0) {
-            let index = s.indexOf(c);
-            s = s.substring(index + 1,);
-            let nextIndex = s.indexOf(c);
-            // 当前 index 为 0
-            if (index === 0) {
-                res.push(0);
-                ifFirst = false;
-                continue
+        let now = s.indexOf(c);
+        let prev = now;
+        for(let i = 0;i < s.length ; i++) {
+            now = s.indexOf(c, i);
+            if (i <= prev) {
+                res.push(now - i);
             }
-            // 第一次 
-            if(ifFirst) {
-                for(let i = index; i >= 0 ;i--) {
-                    res.push(i);
-                }
-                ifFirst = false;
-                // 第一次 + c 为最后一位
-                if(!s) {
-                    break
-                }
-                continue
+            if (i > prev && i <= now) {
+                let dis = Math.min((now - i), (i - prev));
+                res.push(dis);
             }
-            
-            // 中间
-            if (index !== -1) {
-                let mid = Math.ceil(index / 2);
-                let isOdd = index % 2; 
-                for(let i = 1; i <= index; i++) {
-                    if(i <= mid) {
-                        res.push(i);
-                        continue
-                    }
-                    // 奇偶数
-                    if(isOdd) {
-                        mid--;
-                        isOdd = 0;
-                    }
-
-                    res.push(mid--);
-                }
-                res.push(0);
-                // 最后一个字母为 c 的情况
-                if (!s) {
-                    break
-                }
-                continue
+            if (now === -1) {
+                res.push(i - prev);
             }
-            
-
-            // 最后一个 c 
-            for(let i = 1; i < index ; i++) {
-                res.push(i);
+            if (i === now) {
+                prev = now;
             }
-            // c 后面还有内容
-            if (index === -1) {
-                for(let i = 1; i <= s.length ; i++) {
-                    res.push(i);
-                }
-            }
-            
-            break
         }
-        // console.log('res=', res);
         return res
-    };
+    }
+    
     // 测试用例
     if (shortestToChar("loveleetcode", 'e') === [3,2,1,0,1,0,0,1,2,2,1,0]) {
         console.log('测试用例1通过');
     }
-    // if (shortestToChar("aaab", 'b') === [3,2,1,0]) {
-    //     console.log('测试用例2通过');
-    // }
-    // if (shortestToChar("abba", 'b') === [1,0,0,1]) {
-    //     console.log('测试用例2通过');
-    // }
+    if (shortestToChar("aaab", 'b') === [3,2,1,0]) {
+        console.log('测试用例2通过');
+    }
+    if (shortestToChar("abba", 'b') === [1,0,0,1]) {
+        console.log('测试用例2通过');
+    }
     if (shortestToChar("cizokxcijwbyspcfcqws", 'c') === [0,1,2,3,2,1,0,1,2,3,4,3,2,1,0,1,0,1,2,3]) {
         console.log('测试用例2通过');
     }
