@@ -9,8 +9,16 @@
 </head>
 <script>
     // 方法一
+    // var reverseString = function (s) {
+    //     return s.reverse();
+    // };
+    // 方法二
     var reverseString = function (s) {
-        return s.reverse();
+        let mid = Math.floor(s.length / 2);
+        for(let i = 0; i < mid ; i++) {
+            [s[i], s[s.length - 1 - i]] = [s[s.length - 1 - i], s[i]];
+        }
+        return s
     };
 
     // 测试用例
@@ -25,11 +33,11 @@
         }
     ];
     test.forEach((item, index) => {
-        if (climbStairs(item.key) === item.value) {
+        if (reverseString(item.key) === item.value) {
             console.log(`测试用例${index + 1}通过测试，入参为${item.key}`);
             return
         }
-        console.log(`测试用例${index + 1}未通过测试，入参为${item.key},预期结果为${item.value},实际结果为${climbStairs(item.key)}`);
+        console.log(`测试用例${index + 1}未通过测试，入参为${item.key},预期结果为${item.value},实际结果为${reverseString(item.key)}`);
     })
 </script>
 
