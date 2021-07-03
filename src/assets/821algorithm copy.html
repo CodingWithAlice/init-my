@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>70. 爬楼梯</title>
+</head>
+<script>
+    /**
+ * @param {number} n
+ * @return {number}
+ */
+var climbStairs = function(n) {
+    let twoNum = Math.floor(n / 2); // 最多有 twoNum 个 2
+    let oneNum = n % 2;// 最多有 oneNum 个 2
+    // 以 2 的个数作为次数累计
+    let times = 0; // 0 个 2 -- 记一次
+    for(let i = 0; i <= twoNum; i++) {
+        // 处理阶乘
+        function factorialize(num) {
+            if(num == 0){
+                return 1;
+            }
+        return num * factorialize(num-1);
+        }
+        // 处理全是 1 或者全是2 - 偶数
+        if (i === 0 || (i === twoNum && oneNum === 0)) {
+            times += 1;
+            continue
+        }
+        // 或者全是2，一个1 - 奇数
+        if (i === twoNum && oneNum === 1) {
+            times += twoNum + 1;
+            continue
+        }
+        let top = i; //  2 的个数
+        let bottom  = ((twoNum - i) * 2 + oneNum) + i; // 总的 2 和 1 的个数
+        // 概率
+        let plus = factorialize(bottom) / (factorialize(top) * factorialize(bottom - top));
+        times += plus;
+
+    }
+    return times;
+};
+
+// 测试用例
+let test = [
+    {
+        key: 2,
+        value: 2,
+    },
+    {
+        key: 3,
+        value: 3,
+    },
+    {
+        key: 4,
+        value: 5,
+    },
+    {
+        key: 5,
+        value: 8,
+    },
+    {
+        key: 6,
+        value: 13,
+    }
+];
+test.forEach((item, index) => {
+    if (climbStairs(item.key) === item.value) {
+        console.log(`测试用例${index + 1}通过测试，入参为${item.key}`);
+        return
+    }
+    console.log(`测试用例${index + 1}未通过测试，入参为${item.key},预期结果为${item.value},实际结果为${climbStairs(item.key)}`);
+})
+
+</script>
+
+<body>
+    <div>
+        假设你正在爬楼梯。需要 n 阶你才能到达楼顶。<br>
+        每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？<br>
+        注意：给定 n 是一个正整数。
+    </div>
+</body>
+
+</html>
