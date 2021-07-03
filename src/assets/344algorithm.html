@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>344. 反转字符串</title>
+</head>
+<script>
+    // 方法一
+    var reverseString = function (s) {
+        return s.reverse();
+    };
+
+    // 测试用例
+    let test = [
+        {
+            key: ["h", "e", "l", "l", "o"],
+            value: ["o", "l", "l", "e", "h"],
+        },
+        {
+            key: ["H", "a", "n", "n", "a", "h"],
+            value: ["h", "a", "n", "n", "a", "H"],
+        }
+    ];
+    test.forEach((item, index) => {
+        if (climbStairs(item.key) === item.value) {
+            console.log(`测试用例${index + 1}通过测试，入参为${item.key}`);
+            return
+        }
+        console.log(`测试用例${index + 1}未通过测试，入参为${item.key},预期结果为${item.value},实际结果为${climbStairs(item.key)}`);
+    })
+</script>
+
+<body>
+    <div>
+        编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 char[] 的形式给出。<br>
+        不要给另外的数组分配额外的空间，你必须原地修改输入数组、使用 O(1) 的额外空间解决这一问题。<br>
+        你可以假设数组中的所有字符都是 ASCII 码表中的可打印字符。
+    </div>
+</body>
+
+</html>
