@@ -9,20 +9,44 @@
 </head>
 <script>
     // 方法一:转换成字符串处理
-    var isPalindrome = function (x) {
-        x = x.toString();
-        let length = x.length;
-        let mid = Math.floor(length / 2);
-        for(let i = 0; i < mid; i++) {
-            if(x[i] !== x[length - 1 -i]) {
+    // var isPalindrome = function (x) {
+    //     x = x.toString();
+    //     let length = x.length;
+    //     let mid = Math.floor(length / 2);
+    //     for(let i = 0; i < mid; i++) {
+    //         if(x[i] !== x[length - 1 -i]) {
+    //             return false
+    //         }
+    //     }
+    //     return true
+    // };
+    // 方法二：
+    let isPalindrome = (x) => {
+        if(x < 0) {
+            return false
+        }
+        // 通过余数处理
+        let length = x.toString().length;
+        for(let i = 0; i < Math.floor(length / 2); i++) {
+            let left = parseInt(x / Math.pow(10, length - 1 - i)) % 10;
+            let right = parseInt(x % Math.pow(10, i + 1) / Math.pow(10, i));
+            if(left !== right) {
                 return false
             }
         }
         return true
-    };
+    }
 
     // 测试用例
     let test = [
+        {
+            key: 1000000001,
+            value: true,
+        },
+        {
+            key: 1000021,
+            value: false,
+        },
         {
             key: 121,
             value: true,
@@ -38,6 +62,14 @@
         {
             key: -101,
             value: false,
+        },
+        {
+            key: 9999,
+            value: true,
+        },
+        {
+            key: 2222222,
+            value: true,
         },
     ];
     test.forEach((item, index) => {
