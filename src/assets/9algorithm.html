@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9. 回文数</title>
+</head>
+<script>
+    // 方法一:转换成字符串处理
+    var isPalindrome = function (x) {
+        x = x.toString();
+        let length = x.length;
+        let mid = Math.floor(length / 2);
+        for(let i = 0; i < mid; i++) {
+            if(x[i] !== x[length - 1 -i]) {
+                return false
+            }
+        }
+        return true
+    };
+
+    // 测试用例
+    let test = [
+        {
+            key: 121,
+            value: true,
+        },
+        {
+            key: -121,
+            value: false,
+        },
+        {
+            key: 10,
+            value: false,
+        },
+        {
+            key: -101,
+            value: false,
+        },
+    ];
+    test.forEach((item, index) => {
+        if (isPalindrome(item.key) === item.value) {
+            console.log(`测试用例${index + 1}通过测试，入参为${item.key}`);
+            return
+        }
+        console.log(`测试用例${index + 1}未通过测试，入参为${item.key},预期结果为${item.value},实际结果为${isPalindrome(item.key)}`);
+    })
+</script>
+
+<body>
+    <div>
+        给你一个整数 x ，如果 x 是一个回文整数，返回 true ；否则，返回 false 。<br>
+        回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。例如，121 是回文，而 123 不是。<br>
+        进阶：你能不将整数转为字符串来解决这个问题吗？
+    </div>
+</body>
+
+</html>
