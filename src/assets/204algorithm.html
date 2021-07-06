@@ -9,30 +9,52 @@
 </head>
 <script>
     // 方法一：暴力遍历 - 超出时间限制
-    var countPrimes = function (n) {
-        let times = 0;
+    // var countPrimes = function (n) {
+    //     let times = 0;
+    //     if (n < 2) {
+    //         return 0
+    //     }
+    //     let isZhi = (x) => {
+    //         // 2 为质数
+    //         if (x === 2) {
+    //             return true;
+    //         }
+    //         for (let i = 2; i <= Math.sqrt(x); i++) {
+    //             if (x % i === 0) {
+    //                 return false;
+    //             }
+    //         }
+    //         return true
+    //     }
+    //     for (let i = 2; i < n; i++) {
+    //         if (isZhi(i)) {
+    //             times += 1;
+    //         }
+    //     }
+    //     return times
+    // };
+
+    // 方法二：埃氏筛
+    let countPrimes = (n) => {
         if (n < 2) {
             return 0
         }
-        let isZhi = (x) => {
-            // 2 为质数
-            if (x === 2) {
-                return true;
-            }
-            for (let i = 2; i <= Math.sqrt(x); i++) {
-                if (x % i === 0) {
-                    return false;
+        let isPrime = new Array(n).fill(1); // 默认所有数为质数
+        let res = 0; // 质数数量
+        for(let i = 2; i < n; i++) {
+            // 如果当前数为质数
+            if(isPrime[i]) {
+                res += 1;
+                //  i * i - 很精髓，因为 i 的那些小于 i 的倍数，如 2i、3i 一定已经被标记过了
+                // j += i - 标记小于 n 的，当前质数的所有质数为合数
+                for(let j = i * i; j < n; j += i) {
+                    isPrime[j] = 0;
                 }
             }
-            return true
+            
         }
-        for (let i = 2; i < n; i++) {
-            if (isZhi(i)) {
-                times += 1;
-            }
-        }
-        return times
-    };
+        return res
+    }
     // 测试用例
     let test = [
         {
