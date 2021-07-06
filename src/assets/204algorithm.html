@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>204. 计数质数</title>
+</head>
+<script>
+    // 方法一：暴力遍历 - 超出时间限制
+    var countPrimes = function (n) {
+        let times = 0;
+        if (n < 2) {
+            return 0
+        }
+        let isZhi = (x) => {
+            // 2 为质数
+            if (x === 2) {
+                return true;
+            }
+            for (let i = 2; i <= Math.sqrt(x); i++) {
+                if (x % i === 0) {
+                    return false;
+                }
+            }
+            return true
+        }
+        for (let i = 2; i < n; i++) {
+            if (isZhi(i)) {
+                times += 1;
+            }
+        }
+        return times
+    };
+    // 测试用例
+    let test = [
+        {
+            key: 10,
+            value: 4,
+        },
+        {
+            key: 0,
+            value: 0,
+        },
+        {
+            key: 1,
+            value: 0,
+        },
+
+    ];
+    test.forEach((item, index) => {
+        if (countPrimes(item.key) === item.value) {
+            console.log(`测试用例${index + 1}通过测试，入参为${item.key}`);
+            return
+        }
+        console.log(`测试用例${index + 1}未通过测试，入参为${item.key},预期结果为${item.value},实际结果为${countPrimes(item.key)}`);
+    })
+</script>
+
+<body>
+    <div>
+        统计所有小于非负整数 n 的质数的数量。
+    </div>
+</body>
+
+</html>
