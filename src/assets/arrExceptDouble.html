@@ -40,10 +40,15 @@
         }
         return res
     }
+    // 方法三：Set
+    var unique = (arr) => {
+        return [...new Set(arr)]
+    }
 
     // 测试
     var arr = [1, 23, 34, 45, 1, 6, 4, 23];
-    unique(arr); // [1, 23, 34, 45, 6, 4]
+    let res = unique(arr); // [1, 23, 34, 45, 6, 4]
+    console.log('res=', res);
     </script>
 </body>
 </html>
