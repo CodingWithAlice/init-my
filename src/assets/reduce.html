@@ -11,14 +11,31 @@
 <body>
     <script>
         // 简单了解 reduce
-        const array1 = [1, 2, 3, 4];
-        const reducer = (pre, cur) => {
-            console.log(pre, cur);
-            return pre + cur;
-        }
-        let res = array1.reduce(reducer, 5);
+        // const array1 = [1, 2, 3, 4];
+        // const reducer = (pre, cur) => {
+        //     console.log(pre, cur);
+        //     return pre + cur;
+        // }
+        // let res = array1.reduce(reducer, 5);
 
-        
+        // 按属性对Object进行分类
+        var arr = [{ name: 'Max', age: 21 }, { name: 'Max', age: 20 }, { name: 'Jane', age: 20 }];
+
+        function groupBy(objectArray, property) {
+            return objectArray.reduce((pre, cur) => {
+                // 取 age 属性的值作为对象 pre 的 key 值
+                var key = cur[property];
+                // 在 pre 数组中以 key 值分类
+                if (!pre[key]) {
+                    pre[key] = [];
+                }
+                pre[key].push(cur);
+                // 将 pre 传递
+                return pre;
+            }, {});
+        }
+
+        var res = groupBy(arr, 'name');
         console.log('res=', res);
     </script>
 </body>
