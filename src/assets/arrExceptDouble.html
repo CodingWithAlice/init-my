@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数组去重</title>
+</head>
+<body>
+    <script>
+    // 方法一：hash存储
+    var unique = (arr) => {
+        let hash = {};
+        let res = [];
+        // for (let i = 0; i < arr.length; i++) {
+        //     if(!hash[arr[i]]) {
+        //         hash[arr[i]] = true;
+        //         res.push(arr[i]);
+        //     }
+        // }
+        // 数组 - for-of；对象 - for-in
+        for (let item of arr) {
+            if(!hash[item]) {
+                hash[item] = true;
+                res.push(item);
+            }
+        }
+        return res
+    }
+    // 测试
+    var arr = [1, 23, 34, 45, 1, 6, 4, 23];
+    unique(arr);
+    </script>
+</body>
+</html>
