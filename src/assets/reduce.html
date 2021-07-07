@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reduce相关用例</title>
+</head>
+
+<body>
+    <script>
+        // 简单了解 reduce
+        const array1 = [1, 2, 3, 4];
+        const reducer = (pre, cur) => {
+            console.log(pre, cur);
+            return pre + cur;
+        }
+        let res = array1.reduce(reducer, 5);
+
+        
+        console.log('res=', res);
+    </script>
+</body>
+
+</html>
