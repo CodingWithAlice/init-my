@@ -30,15 +30,22 @@
         //     return res;
         // }
         // 方法三：正则
-        var flatFun = (arrays) => {
-            let str = JSON.stringify(arrays); // 处理成字符串
-            // 正则1
-            // arr = str.replace(/(\]|\[|\"|\")/g, '').split(',');
+        // var flatFun = (arrays) => {
+        //     let str = JSON.stringify(arrays); // 处理成字符串
+        //     // 正则1
+        //     // arr = str.replace(/(\]|\[|\"|\")/g, '').split(',');
 
-            // 正则2
-            let str2 = str.replace(/(\]|\[|\"|\")/g, '');
-            str2 = '[' + str2 + ']';
-            ary = JSON.parse(str2);
+        //     // 正则2
+        //     let str2 = str.replace(/(\]|\[|\"|\")/g, '');
+        //     str2 = '[' + str2 + ']';
+        //     ary = JSON.parse(str2);
+        // }
+        // 方法四
+        var flatFun = (arrays) => {
+            return arrays.reduce((pre, cur) => {
+                // return pre.concat(Array.isArray(cur) ? flatFun(cur) : cur);
+                return (Array.isArray(cur) ? pre.concat(flatFun(cur)) : pre.concat(cur));
+            },[])
         }
 
         // 测试用例
