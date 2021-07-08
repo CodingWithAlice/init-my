@@ -15,31 +15,42 @@
         //     return arr.flat(0);
         // }
         // 方法二：递归
-        function flatFun(arr) {
-            let res = [];
-            arr.forEach(item => {
-                if (Array.isArray(item)) {
-                    // 递归写法一：
-                    res = res.concat(arguments.callee(item));
-                    // 递归写法二：
-                    // res = res.concat(flatFun(item));
-                } else {
-                    res.push(item);
-                }
-            });
-            return res;
+        // function flatFun(arr) {
+        //     let res = [];
+        //     arr.forEach(item => {
+        //         if (Array.isArray(item)) {
+        //             // 递归写法一：
+        //             res = res.concat(arguments.callee(item));
+        //             // 递归写法二：
+        //             // res = res.concat(flatFun(item));
+        //         } else {
+        //             res.push(item);
+        //         }
+        //     });
+        //     return res;
+        // }
+        // 方法三：正则
+        var flatFun = (arrays) => {
+            let str = JSON.stringify(arrays); // 处理成字符串
+            // 正则1
+            // arr = str.replace(/(\]|\[|\"|\")/g, '').split(',');
+
+            // 正则2
+            let str2 = str.replace(/(\]|\[|\"|\")/g, '');
+            str2 = '[' + str2 + ']';
+            ary = JSON.parse(str2);
         }
 
         // 测试用例
         let test = [
-            {
-                key: ["🐷", ["🐶", "🐶"], ["🐶", ["🐑", ["🐲"]], "🐷"]],
-                value: []
-            },
             // {
-            //     key: [1, [2], 1, 1, [2, [3, 3], 2, 2, [3, 3, 3, [4, 4, 4]], 2], 1, 1],
-            //     value: 2,
+            //     key: ["🐷", ["🐶", "🐶"], ["🐶", ["🐑", ["🐲"]], "🐷"]],
+            //     value: []
             // },
+            {
+                key: [1, [2], 1, 1, [2, [3, 3], 2, 2, [3, 3, 3, [4, 4, 4]], 2], 1, 1],
+                value: 2,
+            },
         ];
         test.forEach((item, index) => {
             if (flatFun(item.key) === item.value) {
