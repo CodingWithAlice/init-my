@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flat的多种实现方法</title>
+</head>
+
+<body>
+    <script>
+        // 方法一：原 flat 数组
+        // var flatFun = (arr) => {
+        //     return arr.flat(0);
+        // }
+        // 方法二：递归
+        function flatFun(arr) {
+            let res = [];
+            arr.forEach(item => {
+                if (Array.isArray(item)) {
+                    // 递归写法一：
+                    res = res.concat(arguments.callee(item));
+                    // 递归写法二：
+                    // res = res.concat(flatFun(item));
+                } else {
+                    res.push(item);
+                }
+            });
+            return res;
+        }
+
+        // 测试用例
+        let test = [
+            {
+                key: ["🐷", ["🐶", "🐶"], ["🐶", ["🐑", ["🐲"]], "🐷"]],
+                value: []
+            },
+            // {
+            //     key: [1, [2], 1, 1, [2, [3, 3], 2, 2, [3, 3, 3, [4, 4, 4]], 2], 1, 1],
+            //     value: 2,
+            // },
+        ];
+        test.forEach((item, index) => {
+            if (flatFun(item.key) === item.value) {
+                console.log(`测试用例${index + 1}通过测试，入参为${item.key}`);
+                return
+            }
+            console.log(`测试用例${index + 1}未通过测试，入参为${item.key},预期结果为${item.value},实际结果为${flatFun(item.key)}`);
+        })
+    </script>
+
+</body>
+
+</html>
