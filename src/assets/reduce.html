@@ -10,7 +10,7 @@
 
 <body>
     <script>
-        // 简单了解 reduce
+        // 案例1:简单了解 reduce
         // const array1 = [1, 2, 3, 4];
         // const reducer = (pre, cur) => {
         //     console.log(pre, cur);
@@ -18,7 +18,7 @@
         // }
         // let res = array1.reduce(reducer, 5);
 
-        // 按属性对Object进行分类
+        // 案例2:按属性对Object进行分类
         // var arr = [{ name: 'Max', age: 21 }, { name: 'Max', age: 20 }, { name: 'Jane', age: 20 }];
 
         // function groupBy(array, property) {
@@ -37,37 +37,51 @@
 
         // var res = groupBy(arr, 'name');
 
-        // 按序运行Promise
-        function runPromiseInSequence(arr, input) {
-            return arr.reduce(
-                (pre, cur) => {
-                    console.log('pre=', pre);
-                    console.log('cur=', cur);
-                    return pre.then(cur)
-                }, // reducer
-                Promise.resolve(input) // initialValue
-            );
-        }
+        // 案例3:按序运行Promise
+        // function runPromiseInSequence(arr, input) {
+        //     return arr.reduce(
+        //         (pre, cur) => {
+        //             console.log('pre=', pre);
+        //             console.log('cur=', cur);
+        //             return pre.then(cur)
+        //         }, // reducer
+        //         Promise.resolve(input) // initialValue
+        //     );
+        // }
 
-        let p1 = a => new Promise((resolve, reject) => {
-            resolve(a * 1);
-        });
+        // let p1 = a => new Promise((resolve, reject) => {
+        //     resolve(a * 1);
+        // });
 
-        let p2 = a => new Promise((resolve, reject) => {
-            resolve(a * 2);
-        });
+        // let p2 = a => new Promise((resolve, reject) => {
+        //     resolve(a * 2);
+        // });
 
-        let f3 = a => a * 3;
+        // let f3 = a => a * 3;
 
-        let p4 = a => new Promise((resolve, reject) => {
-            resolve(a * 4);
-        });
+        // let p4 = a => new Promise((resolve, reject) => {
+        //     resolve(a * 4);
+        // });
 
-        const promiseArr = [p1, p2, f3, p4];
-        runPromiseInSequence(promiseArr, 1)
-            .then((res) => {
-                console.log(res);
-            });
+        // const promiseArr = [p1, p2, f3, p4];
+        // runPromiseInSequence(promiseArr, 1)
+        //     .then((res) => {
+        //         console.log(res);
+        //     });
+
+        // 案例4:reduce 实现 map
+        Array.prototype.mapUsingReduce = function (callback, thisArg) {
+            return this.reduce(function (pre, cur, index, array) {
+                pre[index] = callback.call(thisArg, cur, index, array);
+                return pre;
+            }, []);
+        };
+
+        [1, 2, , 3].mapUsingReduce(
+            (currentValue, index, array) => {
+                console.log(`${currentValue} + ${index} + ${array}`);
+            }
+        ); // [5, 7, , 10]
     </script>
 </body>
 
