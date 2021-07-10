@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,11 +11,13 @@
             display: flex;
             flex-direction: column;
         }
+
         input {
             width: 200px;
         }
     </style>
 </head>
+
 <body>
     <div class="wrap">
         没有防抖的input：<input id="input1" type="text">
@@ -22,29 +25,45 @@
         节流后的input：<input id="input3" type="text">
     </div>
     <script>
+        console.log('当前时间=', new Date().getUTCSeconds());
         let ajax = (content) => {
-            console.log('ajax - ', content, (new Date()));
+            console.log('ajax - ', content, new Date());
         }
         // 添加防抖处理
-        let debounce = (callback, delay) => {
+        let debounce = (callback, delay, flag) => {
+            console.log('执行 denounce', delay);
             return (arguments) => {
+                console.log(flag, '清理 timeId=', callback.timeId, '秒数=', new Date().getSeconds());
                 clearTimeout(callback.timeId);
                 callback.timeId = setTimeout(() => {
                     callback.call(this, arguments);
                 }, delay)
+                console.log(flag, '生成 timeId=', callback.timeId, '秒数=', new Date().getSeconds());
             }
         }
-        let debounceAjax = debounce(ajax, 1000);
+        // let debounceAjax = debounce(ajax, 1000);
 
-        let input1 = document.getElementById('input1');
-        let input2 = document.getElementById('input2');
-        let input3 = document.getElementById('input3');
-        input1.addEventListener('keyup', (e) => {
-            ajax(e.target.value);
-        });
-        input2.addEventListener('keyup', (e) => {
-            debounceAjax(e.target.value);
-        });
+        // let input1 = document.getElementById('input1');
+        // let input2 = document.getElementById('input2');
+        // let input3 = document.getElementById('input3');
+        // input1.addEventListener('keyup', (e) => {
+        //     ajax(e.target.value);
+        // });
+        // input2.addEventListener('keyup', (e) => {
+        //     debounceAjax(e.target.value);
+        // });
+
+
+        let biu = function () {
+            console.log('🌹🌹🌹🌹', new Date())
+        }
+        let boom = function () {
+            console.log('🐶🐶🐶🐶', new Date())
+        }
+
+        setInterval(debounce(biu, 1000, '🌹'), 2000)
+        setInterval(debounce(boom, 4000, '🐶'), 3000)
     </script>
 </body>
+
 </html>
