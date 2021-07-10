@@ -5,19 +5,46 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>防抖函数</title>
+    <style>
+        .wrap {
+            display: flex;
+            flex-direction: column;
+        }
+        input {
+            width: 200px;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        <input id="input" type="text">
+    <div class="wrap">
+        没有防抖的input：<input id="input1" type="text">
+        防抖后的input：<input id="input2" type="text">
+        节流后的input：<input id="input3" type="text">
     </div>
     <script>
         let ajax = (content) => {
-            console.log('ajax - ', content);
+            console.log('ajax - ', content, (new Date()));
         }
-        let input = document.getElementById('input');
-        input.addEventListener('keyup', (e) => {
+        // 添加防抖处理
+        let debounce = (callback, delay) => {
+            return (arguments) => {
+                clearTimeout(callback.timeId);
+                callback.timeId = setTimeout(() => {
+                    callback.call(this, arguments);
+                }, delay)
+            }
+        }
+        let debounceAjax = debounce(ajax, 1000);
+
+        let input1 = document.getElementById('input1');
+        let input2 = document.getElementById('input2');
+        let input3 = document.getElementById('input3');
+        input1.addEventListener('keyup', (e) => {
             ajax(e.target.value);
-        })
+        });
+        input2.addEventListener('keyup', (e) => {
+            debounceAjax(e.target.value);
+        });
     </script>
 </body>
 </html>
