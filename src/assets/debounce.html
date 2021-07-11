@@ -72,6 +72,9 @@
         }
         let throttleAjax = throttle(ajax, 1000);
 
+        // 解决问题 外部的 delay 时间小于 防抖的 delay时间 - 函数不会执行
+        setInterval(throttle(jun, 3000), 2000);
+
         let input1 = document.getElementById('input1');
         let input2 = document.getElementById('input2');
         let input3 = document.getElementById('input3');
