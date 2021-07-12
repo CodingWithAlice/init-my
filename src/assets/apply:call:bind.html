@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>apply/call/bind</title>
+</head>
+
+<body>
+    <script>
+        function add(a, b) {
+            console.log('add test=', typeof this);
+            return a + b;
+        }
+
+        function sub(a, b) {
+            return a - b;
+        }
+        // let sub = {
+        //     arr: [1,2,3],
+        //     test: 111,
+        // };
+
+        let newAdd = add.bind(sub, 5, 3);
+        console.log('newAdd=', newAdd);
+        let res = newAdd();
+        // let res = add.bind(sub, 5, 3)();
+        console.log('res=', res);
+
+        // -----------------------
+
+        let arr1 = [1, 2, 3];
+        let arr2 = [4, 5, 6];
+        let arr3 = [7, 8, 9];
+
+        Array.prototype.push.apply(arr1, arr2);
+        // 其实是 apply 方法把 arr2 数组进行了拆解，效果等同于 arr1.push(4,5,6);
+        // console.log('arr1=', arr1);
+        arr1.push(arr3);
+        // console.log('arr1=', arr1);
+
+        // ---------------
+
+        function superClass() {
+            this.a = 1;
+            this.print = function () {
+                console.log('superClass', this.a);
+            }
+        }
+
+        function subClass() {
+            superClass.call(this); // 继承了 superClass 的 print 方法和 a 变量
+            this.print();
+        }
+        // console.log('subClass=', subClass);
+        // subClass(); // a
+
+        // --------------
+
+        let array = [1, 2, 3, 4];
+        let max1 = Math.max.apply(null, array);
+        let max2 = Math.max.apply({}, array);
+        // console.log('max1=', max1);
+        // console.log('max2=', max2);
+    </script>
+</body>
+
+</html>
