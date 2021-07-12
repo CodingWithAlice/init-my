@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实现一个 bind 方法</title>
+</head>
+
+<body>
+    <div>
+        <button id="button">button</button>
+        <div id='text'></div>
+    </div>
+    <script>
+        let button = document.getElementById('button');
+        let text = document.getElementById('text');
+        // button.onclick = function() {
+        //     alert(this.id);
+        // }.bind(text);
+        // button.onclick = (() => {
+        //     alert(this.id);
+        // }).bind(text); // undefined 因为箭头函数的 this 不能改变
+
+        // -----------------------
+
+        // 用 apply 实现 bind
+        // Function.prototype.newBind = function(context) {
+        //     let self = this; // 调用 bind 的函数
+        //     return (arguments) => {
+        //         self.call(context, arguments);
+        //     }
+        // }
+        Function.prototype.newBind = function (context) {
+            let self = this; // 调用 bind 的函数
+            let args = [].slice.call(arguments, 1); // 调用 bind 时的参数
+            return function() {
+                // self.apply(fun, [].concat.apply([].slice.call(arguments), args));
+                self.apply(context, [...arguments,...args]);
+            }
+        }
+        let b = 'window中b';
+        let c = {
+            b: 'c中b',
+        }
+        function newFun() {
+            console.log('newFun中的 arguments=',arguments);
+            console.log('this.b 取得是c中的b么？=', this.b);
+        }
+
+        let res = newFun.newBind(c, 66, 77);
+        console.log('res=', res);
+        res('这是给newFun 的参数1', '这是给newFun 的参数2');
+
+    </script>
+</body>
+
+</html>
