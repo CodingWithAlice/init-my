@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>函数柯里化/去柯里化</title>
+</head>
+
+<body>
+    <!-- 柯里化：参数复用 -->
+    <script>
+        // 第一版
+        var curry = function (fn) {
+            var args = [].slice.call(arguments, 1);
+            return function () {
+                var newArgs = args.concat([].slice.call(arguments));
+                return fn.apply(this, newArgs);
+            };
+        };
+        
+        // 测试用例
+        function add(a, b) {
+            return a + b;
+        }
+
+        var addCurry = curry(add, 1, 2);
+        addCurry() // 3
+        //或者
+        var addCurry = curry(add, 1);
+        addCurry(2) // 3
+        //或者
+        var addCurry = curry(add);
+        addCurry(1, 2) // 3
+    </script>
+    <!-- 去柯里化 -->
+    <!-- <script>
+        // 利用 for 循环，将 Array 的原生方法 去柯里化
+        for (let i = 0, fn, ary = ['push', 'shift', 'forEach']; fn = ary[i];) {
+            Array[fn] = Array.prototype[fn].uncurrying1();
+        }
+
+
+        // 去柯里化 - 方法一
+        Function.prototype.uncurrying1 = function () {
+            let self = this;
+            return function () {
+                let obj = Array.prototype.shift.call(arguments);
+                return self.apply(obj, arguments);
+            }
+        }
+        // 去柯里化 - 方法二
+        Function.prototype.uncurrying2 = function () {
+            let self = this;
+            return function () {
+                return Function.prototype.call.apply(self, arguments);
+            }
+        }
+
+
+        // 测试用例 - 类数组
+        let example = {
+            length: 3,
+            0: a,
+            1: b,
+            2: c,
+        };
+
+        Array.push(example, 4);
+        console.log('example', example);
+
+        let shiftRes = Array.shift(example);
+        console.log('shiftRes=', shiftRes);
+        console.log('example', example);
+
+        Array.forEach(example, (element, index) => {
+            console.log('element=', element, '----', index);
+        });
+    </script> -->
+</body>
+
+</html>
