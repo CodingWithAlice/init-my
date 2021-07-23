@@ -28,7 +28,7 @@
             let len = fn.length; // JS函数的length属性 length 是函数对象的一个属性值，指该函数有多少个必须要传入的参数，那些已定义了 默认值的参数不算在内 ，比如function（xx = 0）的length是0。
 
             return function () {
-                let _args = [].slice.apply(arguments).concat(args);
+                let _args = [].slice.call(arguments).concat(args);
 
                 // 如果参数小于最初的 length ，则继续递归调用 - 收集参数
                 if (_args.length < len) {
@@ -61,6 +61,8 @@
 
         let processAdd = processCurry(add);
         let addRes = processAdd(1)(2); // 3
+
+        console.log(res, res1, addRes);
     </script>
     <!-- 去柯里化 -->
     <!-- <script>
