@@ -23,24 +23,24 @@
             };
         };
         // 第二版 - 支持多参数传递
-        var processCurry = function(fn, args) {
+        var processCurry = function (fn, args = []) {
             let _this = this; // 保留 this 上下文
             let len = fn.length; // JS函数的length属性 length 是函数对象的一个属性值，指该函数有多少个必须要传入的参数，那些已定义了 默认值的参数不算在内 ，比如function（xx = 0）的length是0。
-            let _args = args || [];
 
-            return function() {
-                let args =  _args.concat([].slice.apply(arguments));
+            return function () {
+                let _args = [].slice.apply(arguments).concat(args);
+
                 // 如果参数小于最初的 length ，则继续递归调用 - 收集参数
-                if (args.length < len) {
-                    return processCurry.call(_this, fn, args)
+                if (_args.length < len) {
+                    return processCurry.call(_this, fn, _args)
                 }
                 // 参数收集完毕，则执行 fn
-                return fn.apply(this, args);
+                return fn.apply(this, _args);
             }
         }
 
         // 测试用例
-        let add = (a,b) => a + b;
+        let add = (a, b) => a + b;
 
         var addCurry = curry(add, 1, 2);
         addCurry() // 3
@@ -54,11 +54,13 @@
         // 方法二测试用例
         let multiple = (a, b, c) => a * b * c;
         let processMultiple = processCurry(multiple);
-        let res = processMultiple(2)(3)(4);
+        let res = processMultiple(2)(3)(4); // 24
+
+        let processMultiple1 = processCurry(multiple, 3);
+        let res1 = processMultiple1(4)(5); // 60
 
         let processAdd = processCurry(add);
-        let addRes = processAdd(1)(2);
-
+        let addRes = processAdd(1)(2); // 3
     </script>
     <!-- 去柯里化 -->
     <!-- <script>
