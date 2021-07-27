@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解构赋值理解</title>
+</head>
+
+<body>
+    <script>
+        const metadata = {
+            title: '俊哲',
+            translations: [
+                {
+                    locale: '果酱',
+                    title: '栀子花'
+                }
+            ],
+            url: '世人皆爱有情人'
+        };
+
+        let {
+            title: gjxm,
+            translations: [
+                {
+                    title: zzh,
+                },
+            ],
+        } = metadata;
+
+        console.log(gjxm);
+        console.log(zzh);
+
+        var people = [{
+            name: '浪浪钉',
+            family: {
+                mother: '栀子花',
+                father: '高级项目',
+            },
+            age: 35
+        },
+        {
+            name: '四季山庄',
+            family: {
+                mother: '周子舒',
+                father: '温客行',
+            },
+            age: 25
+        }];
+
+        for (var {
+            name: n,
+            family: {
+                father: f
+            }
+        } of people) {
+            console.log('name: ' + n + ', father: ' + f);
+        }
+
+    </script>
+</body>
+
+</html>
