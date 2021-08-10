@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let arr = [1, 2, 3];
+        let obj = {};
+        function fun(arrTemp, objTemp) {
+            arrTemp = [];
+            objTemp.a = 1;
+            objTemp = { b: 2 };
+            objTemp.c = 3;
+            console.log('objTemp=', objTemp); // {b:2, c:3}
+        }
+        fun(arr, obj);
+        console.log('arr=', arr, 'obj=', obj);
+        // arr = [1, 2, 3];
+        // obj = {a:1};
+
+    </script>
+</body>
+
+</html>
