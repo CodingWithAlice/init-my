@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xpath</title>
+</head>
+
+<body>
+    <div>传入id="span_3"的元素，输出的 xpath 是 body>ul[0]>li[0]>span[2] </div>
+    <ul>
+        <li>
+            <span>1</span>
+        </li>
+        <li>
+            <span>2</span>
+            <span>3</span>
+            <span id="span_3">4</span>
+        </li>
+    </ul>
+    <script>
+        function getPath($ele) {
+            function path(el, obj) {
+                if (el.nodeName === 'BODY') {
+                    obj['BODY'] = ''
+                    return obj
+                } else if (el.parentNode.nodeName === 'BODY') {
+                    var children = el.parentNode.childNodes;
+                    for (var i = 0, len = children.length; i < len; i++) {
+                        if (el === children[i]) {
+                            obj[el.nodeName] = i
+                        }
+                    }
+                    obj['BODY'] = ''
+                    return obj
+                } else {
+                    var children = el.parentNode.childNodes;
+                    for (var i = 0, len = children.length; i < len; i++) {
+                        if (el === children[i]) {
+                            obj[el.nodeName] = i
+                        }
+                    }
+                    path(el.parentNode, obj)
+                }
+            }
+            let o = {};
+            path($ele, o);
+            var str = '';
+            for (var k in o) {
+                if (o[k] === '') {
+                    str += k + "&";
+                } else {
+                    str += k + "[" + o[k] + "]" + "&";
+                }
+            }
+            return str.trim().split("&").reverse().join(">").slice(1).toLowerCase()
+        }
+        // 使用
+        let span = document.getElementById('span_3');
+        console.log(getPath(span));
+    </script>
+</body>
+
+</html>
