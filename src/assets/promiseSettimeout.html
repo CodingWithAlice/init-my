@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>promisesetTimeout函数</title>
+</head>
+
+<body>
+    <div>实现一个promisesetTimeout方法，该方法接收两个参数：第一个参数为promise，第二个参数为number类型；</div>
+    <div>
+        该方法作用为：
+        <p>1、若promise在第二个参数给定的时间内处于pending状态，则返回一个rejected的promise，其reason为new Error('promise time out')</p>
+        <p>2、若promise在第二个参数给定的时间内处于非pengding状态，则返回该promise</p>
+    </div>
+    <script>
+        let timeout = (time) => new Promise((resolve, reject) => {
+            setTimeout(reject, time, new Error('promise time out'));
+        })
+        let promisesetTimeout = (promise, time) => {
+            return Promise.race([promise, timeout(time)])
+        }
+        let p = (time) => new Promise((resolve) => {
+            setTimeout(resolve, time, '俊哲')
+        })
+        console.log(promisesetTimeout(p(5000), 1000));
+    </script>
+
+</body>
+
+</html>
