@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洋葱圈模型</title>
+</head>
+
+<body>
+    <div>
+        组合函数：将一组需要顺序执行的函数，复合为一个函数，外层函数的参数实际是内层函数的返回值
+    </div>
+    <script>
+        const add = (x, y) => x + y;
+        const square = z => z * z;
+
+        // 先加后平方
+        // const fn = (x, y) => square(add(x, y)); // 方案一
+        // const compose = (fn1, fn2) => (...args) => fn2(fn1(...args)); // 方案二
+        const compose = (...[first, ...other]) => (...args) => {
+            let res = first(...args);
+            other.forEach(fn => {
+                res = fn(res);
+            })
+            return res;
+        }
+        const fn = compose(add, square);// 方案三
+        console.log('结果=', fn(1, 2));
+    </script>
+</body>
+
+</html>
