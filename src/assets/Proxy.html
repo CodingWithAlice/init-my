@@ -43,21 +43,21 @@
         // fproxy.prototype === Object.prototype // true
         // fproxy.foo === "Hello, foo" // true
 
-        // proxy 实现链式调用
+        // 利用 Proxy，可以将读取属性的操作（get），转变为执行某个函数，从而实现属性的链式操作
         var pipe = function (value) {
             var funcStack = [];
             var oproxy = new Proxy({} , {
                 get : function (pipeObject, fnName) {
-                    console.log('value=', value);
-                    console.log('get被执行了', 'pipeObject=', pipeObject, 'fnName=', fnName);
+                    // console.log('value=', value);
+                    // console.log('get被执行了', 'pipeObject=', pipeObject, 'fnName=', fnName);
                     if (fnName === 'get') {
                         return funcStack.reduce(function (pre, cur) {
-                            console.log('pre=', pre);
+                            // console.log('pre=', pre);
                             return cur(pre);
                         },value);
                     }
                     funcStack.push(window[fnName]);
-                    console.log('funcStack=', funcStack);
+                    // console.log('funcStack=', funcStack);
                     return oproxy;
                 }
             });
@@ -70,7 +70,42 @@
         var reverseInt = n => n.toString().split("").reverse().join("") | 0;
 
         let res = pipe(3).double.pow.reverseInt.get; // 63 
-        console.log('res=', res);
+        // console.log('res=', res);
+
+        // 利用get拦截，实现一个生成各种 DOM 节点的通用函数dom
+        const dom = new Proxy({}, {
+            get(target, property) {
+                console.log('property=', property);
+                return function(attrs = {}, ...children) {
+                    console.log('attrs=', attrs);
+                    console.log('children=', children);
+                    const el = document.createElement(property);
+                    for (let prop of Object.keys(attrs)) {
+                        el.setAttribute(prop, attrs[prop]);
+                    }
+                    for (let child of children) {
+                        if (typeof child === 'string') {
+                            child = document.createTextNode(child);
+                        }
+                        el.appendChild(child);
+                    }
+                    return el;
+                }
+            }
+        });
+
+        const el = dom.div({},
+            'Hello, my name is ',
+            dom.a({href: '//example.com'}, 'Mark'),
+            '. I like:',
+            dom.ul({},
+                dom.li({}, 'The web'),
+                dom.li({}, 'Food'),
+                dom.li({}, '…actually that\'s it')
+            )
+        );
+
+        document.body.appendChild(el);
     </script>
     
 </body>
