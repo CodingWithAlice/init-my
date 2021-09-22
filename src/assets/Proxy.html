@@ -116,6 +116,7 @@
         const observable = obj => new Proxy(obj, {set}); // 返回原始对象的代理，拦截赋值操作
 
         function set(target, key, value, receiver) {
+            // 实现原有功能
             const result = Reflect.set(target, key, value, receiver);
             // 拦截函数set之中，会自动执行所有观察者
             queuedObservers.forEach(observer => observer());
