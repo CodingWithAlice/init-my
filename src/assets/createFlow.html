@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>createFlow函数问题</title>
+</head>
+<body>
+    <script>
+        // 遍历队列实现
+        var createFlow = (arr = []) => {
+            let queue = arr.flat();
+            const run = async function(cb) {
+                for(let fn of queue) {
+                    let task = fn.run ? fn.run : fn;
+                    await task();
+                }
+                cb && cb();
+            }
+            return {run}
+        }
+        // 方法二：reduce实现
+        // const createFlow = (lists = []) => {
+        //     let tasks = lists.flat()
+            
+        //     const run = (cb) => {
+        //         let [first, ...others] = [...tasks];
+        //         return others.reduce((promise, task) => {
+        //             task = task.run ? task.run : task;
+        //             return Promise.resolve(promise).then(_ => task())
+        //         }, first()).then(cb);
+        //     }
+        //     return { run }
+        // }
+
+        
+        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+        const subFlow = createFlow([() => delay(1000).then(() => console.log("c"))]);
+        console.log('subFlow=', subFlow);
+
+        createFlow([
+            () => console.log("a"),
+            () => console.log("b"),
+            subFlow,
+            [() => delay(1000).then(() => console.log("d")), () => console.log("e")],
+        ]).run(() => {
+            console.log("done");
+        });
+    </script>
+</body>
+</html>
