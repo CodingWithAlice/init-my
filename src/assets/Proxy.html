@@ -43,7 +43,34 @@
         // fproxy.prototype === Object.prototype // true
         // fproxy.foo === "Hello, foo" // true
 
-        
+        // proxy 实现链式调用
+        var pipe = function (value) {
+            var funcStack = [];
+            var oproxy = new Proxy({} , {
+                get : function (pipeObject, fnName) {
+                    console.log('value=', value);
+                    console.log('get被执行了', 'pipeObject=', pipeObject, 'fnName=', fnName);
+                    if (fnName === 'get') {
+                        return funcStack.reduce(function (pre, cur) {
+                            console.log('pre=', pre);
+                            return cur(pre);
+                        },value);
+                    }
+                    funcStack.push(window[fnName]);
+                    console.log('funcStack=', funcStack);
+                    return oproxy;
+                }
+            });
+
+            return oproxy;
+        }
+
+        var double = n => n * 2;
+        var pow    = n => n * n;
+        var reverseInt = n => n.toString().split("").reverse().join("") | 0;
+
+        let res = pipe(3).double.pow.reverseInt.get; // 63 
+        console.log('res=', res);
     </script>
     
 </body>
