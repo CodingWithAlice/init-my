@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>es6 - Proxy</title>
+</head>
+<body>
+    <script>
+        // 认识 proxy
+        var handler = {
+            get: function(target, name) {
+                console.log('get🐶🐶🐶🐶🐶');
+                if (name === 'prototype') {
+                    return Object.prototype;
+                }
+                return 'Hello, ' + name;
+            },
+
+            apply: function(target, thisBinding, args) {
+                console.log('apply🌹🌹🌹🌹');
+                console.log('target=', target);
+                console.log('thisBinding=', thisBinding);
+                console.log('args=', args);
+                return args[0];
+            },
+
+            construct: function(target, args) {
+                console.log('construct🍃🍃🍃🍃');
+                return {value: args[1]};
+            }
+        };
+
+        var fproxy = new Proxy(function(x, y) {
+            console.log('x+y');
+            return x + y;
+        }, handler);
+
+        // fproxy(1, 2); // 1
+        // console.log('fproxy(1, 2)=', fproxy(1, 2));
+        // new fproxy(1, 2) // {value: 2}
+        // fproxy.prototype === Object.prototype // true
+        // fproxy.foo === "Hello, foo" // true
+
+        
+    </script>
+    
+</body>
+</html>
