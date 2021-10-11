@@ -26,7 +26,7 @@
       background-color: goldenrod;
     }
 
-    .container {
+    /* .container {
       padding: 0 220px 0 200px;
       overflow: hidden;
     }
@@ -57,6 +57,20 @@
     .middle {
       width: 100%;
       background-color: blue;
+    } */
+    .container {
+        display: flex;
+    }
+    .left, .right {
+        flex: 0 0 200px;
+        background-color: red;
+    }
+    .left {
+        order: -1;
+    }
+    .middle {
+        flex: 1;
+        background-color: yellow;
     }
   </style>
 </head>
