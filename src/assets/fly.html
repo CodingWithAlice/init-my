@@ -12,7 +12,7 @@
       padding: 0;
     }
 
-    .header,
+    /* .header,
     .footer {
       height: 100px;
       line-height: 100px;
@@ -61,12 +61,33 @@
       min-height: 130px;
       background: blue;
       word-break: break-all;
+    } */
+
+    .outer {
+        width: 100vw;
+        background-color: yellow;
+        display: flex;
+    }
+    .middle {
+        flex:1;
+        display: flex;
+        justify-content: space-between;
+    }
+    .left , .right {
+        /* background-color: red; */
+        width: 100px;
     }
   </style>
 </head>
 
 <body>
-  <div class="header">header</div>
+    <div class="outer">
+        <div class="middle">
+            <div class="left">1</div>
+            <div class="right">2</div>
+        </div>
+    </div>
+  <!-- <div class="header">header</div>
   <div class="container">
     <div class="middle">
       <div class="inner">
@@ -98,7 +119,7 @@
       </p>
     </div>
   </div>
-  <div class="footer">footer</div>
+  <div class="footer">footer</div> -->
 </body>
 
 </html>
