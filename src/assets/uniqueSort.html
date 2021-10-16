@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>去重+排序</title>
+</head>
+<body>
+    <div>
+        题目：对数组去重，然后 升序 排序
+    </div>
+    <script>
+        let  array = ['2', 'b', 'a', '9', '4', '9', '2', 'b'];
+        let uniqueSort = (arg) => {
+            // 去重
+            let arr = [];
+            for(let item of arg) {
+                if(arr.indexOf(item) < 0) {
+                    arr.push(item);
+                }
+            }
+
+            // 排序 升序 - 快排
+            var quickSort = (arr) => {
+                // 退出条件
+                if(arr.length <= 1) {
+                    return arr;
+                }
+                let midIdx = Math.floor(arr.length / 2);
+                let midValue = arr.splice(midIdx, 1)[0];
+                let left = [];
+                let right = [];
+                for(let i = 0 ;i < arr.length; i++) {
+                    if (arr[i] > midValue) {
+                        right.push(arr[i]);
+                        continue;
+                    }
+                    left.push(arr[i]);
+                }
+                return quickSort(left).concat([midValue],quickSort(right));
+            }
+
+            return quickSort(arr);
+        }
+        let res = uniqueSort(array);
+        console.log('res=', res);
+    </script>
+</body>
+</html>
