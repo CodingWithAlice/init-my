@@ -11,11 +11,12 @@
     function statement(invoice, plays) {
       let totalAmount = 0;
       let volumeCredits = 0;
-      let result = `Statement for ${invoice.customer} \n`;
+      let result = `Statement for ${invoice.customer} \n\n`;
       const format = new Intl.NumberFormat("en-US", {
         style: "currency", currency: "USD",
         minimumFractionDigits: 2
       }).format;
+
       for(let perf of invoice.performances) {
         const play = plays[perf.playID];
         let thisAmount = 0;
@@ -46,14 +47,55 @@
         }
 
         // print lines for this order
-        result += `${play.name}: ${format(thisAmount/100)} (${perf.audience} seats)\n`;
+        result += `${play.name}: ${format(thisAmount/100)} (${perf.audience} seats)\n\n`;
         totalAmount += totalAmount;
       }
 
       result += `Amount owed is ${format(totalAmount/100)} \n`;
       result += `You earned ${volumeCredits} credits\n`;
+      // todo delete - 测试的校验数据
+      if(totalAmount !== 0) {
+      console.log('❌ totalAmount 应该为 0，但是现在是', totalAmount);
+      }
+      if(volumeCredits !== 47) {
+        console.log('❌ volumeCredits 应该为 47，但是现在是', volumeCredits);
+      }
       return result;
     }
+
+    const invoice = {
+      customer: "BigCo",
+      performances: [
+        {
+          playID: "hamlet",
+          audience: 55,
+        },
+        {
+          playID: "as-like",
+          audience: 35,
+        },
+        {
+          playID: "othello",
+          audience: 40,
+        },
+      ]
+    };
+    const plays = {
+      hamlet: {
+        name: "Hamlet",
+        type: "tragedy"
+      },
+      "as-like": {
+        name: "As you like it",
+        type: "comedy",
+      },
+      othello: {
+        name: "Othello",
+        type: "tragedy"
+      }
+    };
+    let res = statement(invoice, plays);
+    console.log('🌹\n', res);
   </script>
 </body>
 </html>
