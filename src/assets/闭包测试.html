@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闭包测试</title>
+</head>
+<body>
+    <script>
+        // let Person = (function () {
+        //     let _name = '';
+        //     let _age = '';
+        //     function _Person(name, age, sex) {
+        //         _name = name;
+        //         _age = age;
+        //         this.sex = sex;
+        //         this.printName = function () {
+        //             console.log(_name);
+        //         }
+        //     }
+        //     _Person.prototype.printAge = function() {
+        //         console.log(_age);
+        //     }
+        //     _Person.prototype.printSex = function() {
+        //         console.log(this.sex);
+        //     }
+
+        //     return _Person;
+        // })();
+
+        // let person = new Person('coco', 3, '女');
+        // person.printName(); 
+        // person.printAge(); // 3
+        // person.printSex();
+
+
+        let Person = (function () {
+        let name = '';
+        let age = '11';
+        function _Person(_name, age, sex) {
+            debugger
+            console.log('argument=', ...arguments);
+            name = _name;
+            age = age;
+            this.sex = sex;
+            this.printName = function () {
+                console.log(name);
+            }
+        }
+        _Person.prototype.printAge = function() {
+            console.log(age);
+        }
+        _Person.prototype.printSex = function() {
+            console.log(this.sex);
+        }
+
+        return _Person;
+        })();
+
+        let person = new Person('coco', 3, '女');
+        person.printName(); 
+        person.printAge(); // '' 
+        person.printSex();
+    </script>
+</body>
+</html>

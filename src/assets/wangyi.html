@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网易笔试题</title>
+</head>
+<body>
+    <div>
+        
+    </div>
+    <script>
+        //  🌹1.防抖函数
+        function debounce(callback, delay) {
+            return function () {
+                let outArg = arguments;
+                clearTimeout(callback.timeId);
+                callback.timeId = setTimeout(function() {
+                    callback.apply(this, outArg);
+                }, delay);
+            }
+        }
+        
+
+        let fun = function() {
+            console.log('fun 🖨️🖨️🖨️=', arguments);
+        }
+        // 🌹2.节流函数
+        function throttle(callback, delay) {
+            let last;
+            return function() {
+                let now = +new Date();
+                let args = arguments;
+                if (last && now < last + delay) {
+                    clearTimeout(callback.timeId);
+                    callback.timeId = setTimeout(function() {
+                        last = now;
+                        callback.apply(this, args);
+                    }, delay);
+                } else {
+                    last = now;
+                    callback.apply(this, args);
+                }
+            }
+        }
+        
+
+
+
+        // 🌹3.bind 实现
+        function bind(func, context){
+            let args = [].slice.call(arguments, 2);
+            return function() {
+                func.apply(context, args.concat([].slice.call(arguments)));
+            }
+        }
+
+        function callback() {
+            console.log(this.value);
+        }
+        const obj =  {
+            value: 1
+        }
+
+        const f = bind(callback, obj, '1111')
+
+        f('22222') //输出 1
+
+        // 🌹4.事件系统
+        class Events {
+            constructor(){
+                this.obj = {}
+            }
+            on(eventName, handler) {
+                if(!this.obj[eventName]){
+                    this.obj[eventName] = [handler];
+                }else {
+                    this.obj[eventName].push(handler);
+                }
+            }
+
+            off(eventName, handler) {
+                if(!this.obj[eventName]){
+                    console.error('not exist.');
+                }else {
+                    this.obj[eventName] = null;
+                }
+            }
+
+            trigger(eventName, args) {
+                if(!this.obj[eventName]){
+                    console.error('not exist.');
+                }else {
+                    // 运用打印1到10的问题
+                    for(let i=0; i<this.obj[eventName].length; i++) {
+                        this.obj[eventName][i](args);
+                    }
+                }
+            }
+        }
+
+        const events = new Events();
+
+        events.on('click', (args) => console.log(args));
+
+        events.trigger('click', 3) // 输出 3
+
+
+        // 🌹 🤔️🤔️🤔️🤔️🤔️ - 怎么获得对象本身的名称 5.字符串替换
+        function replace(str, obj) {
+            for(let key in obj) {
+                // console.log('match', str.match(/\{.*?\}/g));
+                str.replace(`{${obj}.${key}}`, `${obj.key}`);
+            }
+            return str
+        }
+
+        const a = {
+            b: 1,
+            c: 2
+        }
+        replace('123{a.b}456{a.c}xxx{a.d}awd', a);
+        // 输出 12314562xxx{a.d}awd
+
+        // 🌹6.大数加法函数
+        // 假设A、B为string类型表示的数字，函数输出为两数之和
+        // 数字可能为非整数
+
+        // 请实现：
+        function add(strNumA, strNumB){
+            let maxLen = Math.max(strNumA.length, strNumB.length);
+            strNumA = strNumA.padStart(maxLen, '0');
+            strNumB = strNumB.padStart(maxLen, '0');
+            
+
+            let total = 0;
+            let jin = 0;
+            let sum = '';
+            for(let i = maxLen - 1; i >= 0; i--) {
+                // 处理小数点
+                if(isNaN(parseInt(strNumA[i])) || isNaN(parseInt(strNumA[i]))) {
+                    continue;
+                }
+                total = parseInt(strNumA[i]) + parseInt(strNumB[i]) + jin;
+                jin = Math.floor(total / 10);
+                sum = total % 10 + sum;
+            }
+            if(jin === 1) {
+                sum = '1' + sum;
+            }
+            return sum;
+        }
+
+        add('45747', '7079879') // 3.5 
+
+        // 🌹7.实现一个setInterval
+        function setIntervalMock(fn, time){
+            function interval(){
+                setTimeout(interval, time);
+                fn();
+            }
+            setTimeout(interval, time)
+        }
+
+        let test = function() {
+            console.log('2222');
+        }
+        setIntervalMock(test, 1000);
+
+        // 🌹8.判断括号匹配
+        // 判断括号匹配
+        // 给定⼀个只包含 '() {} []' 6种字符的字符串，实现⼀个⽅法来检测该字符串是否合法，其规则为'()'、'{}'、'[]'必须互相匹配，可嵌套。
+        const isValid = () => {
+
+        }
+
+
+        // 🌹9.实现⼀个Promise.allSettled
+        // Promise.allSettled 可以将多个 Promise 实例包装成⼀个新的 Promise 实例，它总会返回⼀个结果数组，数组中的每⼀项分别是每个 Promise 的运⾏结果
+        Promise.allSettled = function (promises) {
+            return new Promise((resolve, reject) => {
+                promises = Array.isArray(promises) ? promises : [];
+                let len = promises.length;
+
+                const argslen = len;
+                // 如果传入的是一个空数组，那么就直接返回一个resolved的空数组promise对象
+                if (len === 0) return resolve([]);
+                // 将传入的参数转化为数组，赋给args变量
+                let args = Array.prototype.slice.call(promises);
+                // 计算当前是否所有的 promise 执行完成，执行完毕则resolve
+                const compute = () => {
+                    if(--len === 0) { 
+                        resolve(args);
+                    }
+                }
+                function resolvePromise(index, value) {
+                    // 判断传入的是否是 promise 类型
+                    if(value instanceof Promise) { 
+                        const then = value.then;
+                        then.call(value, function(val) {
+                            args[index] = { status: 'fulfilled', value: val}
+                            compute()
+                        }, function(e) {
+                            args[index] = { status: 'rejected', reason: e }
+                            compute()
+                        })
+                    } else {
+                        args[index] = { status: 'fulfilled', value: value}
+                        compute()
+                    }
+                }
+
+                for(let i = 0; i < argslen; i++){
+                    resolvePromise(i, args[i])
+                }
+            })
+        }
+
+        const promise1 = Promise.resolve(3);
+        const promise2 = new Promise((resolve, reject) => setTimeout(reject, 100, 'foo'));
+        const promises = [promise1, promise2];
+
+        Promise.allSettled(promises).
+        then((results) => results.forEach((result) => console.log(result.status)));
+
+        // expected output:
+        // "fulfilled"
+        // "rejected"
+
+
+        // 🌹10.实现 Promise.all
+        var p1 = function(time) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(1);
+                }, time);
+            });
+        };
+        var p2 = function(time) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(2);
+                }, time);
+            });
+        };
+
+        function promiseAll(promises) {
+            return new Promise((resolve, reject) => {
+                if(!Array.isArray(promises)) {
+                    return reject(new TypeError('arguments must be an array'));
+                }
+                let resolvedCounter = 0;
+                let promiseNum = promises.length;
+                let resolvedValues = new Array(promiseNum);
+                for (let i = 0; i < promiseNum; i++) {
+                    Promise
+                        .resolve(promises[i])
+                        .then((value) => {
+                            resolvedCounter++;
+                            resolvedValues[i] = value;
+                            if (resolvedCounter === promiseNum) {
+                                resolve(resolvedValues);
+                            }
+                        }, (reason) => {
+                            reject(reason);
+                        });
+                }
+            });
+        }
+
+        promiseAll([p1(1000), p2(2000)]).then((r) => console.log(r));
+    </script>
+</body>
+</html>
