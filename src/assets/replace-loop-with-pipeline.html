@@ -16,17 +16,35 @@
       let firstLine = true;
       const result = [];
       for (const line of lines) {
+        // 忽略第一行 -> slice(1)
         if (firstLine) {
           firstLine = false;
           continue;
         }
+        // 忽略所有空行 -> filter
         if (line.trim() === "") continue;
+        // 转换成数组 -> map
         const record = line.split(',');
-        if(record[1].trim() === "India") {
-          result.push({city: record[0].trim(), phone: record[2].trim()})
+        // 过滤JunZhe记录 -> filter
+        if (record[1].trim() === "JunZhe") {
+          // 处理格式 -> map
+          result.push({ city: record[0].trim(), phone: record[2].trim() })
         }
       }
       return result;
+    }
+  </script>
+
+  <script>
+    function acquireData(input) {
+      const lines = input.split('\n');
+      return lines
+            .slice(1)
+            .filter(line => line.trim() !== "")
+            .map(line => line.split(','))
+            .filter(fields => fields[1].trim() === "JunZhe")
+            .map(fields => ({ city: fields[0].trim(), phone: fields[2].trim() }))
+            ;
     }
   </script>
 </body>
