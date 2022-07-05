@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拆分阶段</title>
+</head>
+
+<body>
+  <script>
+    // 这是一段计算订单价格的代码，订单中的商品是什么，并不需要关心
+    function priceOrder(product, quantity, shippingMethod) {
+      const basePrice = product.basePrice * quantity;
+      const discount = Math.max(quantity - product.discountThreshold, 0) * product.basePrice * product.discountRate;
+      const shippingPerCase = (basePrice > shippingMethod.discountThreshold) ? shippingMethod.discountedFee : shippingMethod.feePerCase;
+      const shippingCost = quantity * shippingPerCase;
+      const price = basePrice - discount + shippingCost;
+      return price;
+    }
+  </script>
+</body>
+
+</html>
