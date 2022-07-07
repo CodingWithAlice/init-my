@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>以多态取代条件表达式</title>
+</head>
+<body>
+  <script>
+    // 原函数
+    function plumages(birds) {
+      return new Map(birds.map((b) => [b.name, plumage(b)]));
+    }
+    function plumage(bird) {
+      switch(bird.type) {
+        case 'EuropeanSwallow':
+          return 'average';
+        case 'AfricanSwallow':
+          return (bird.numberOfCoconuts > 2) ? 'tired' : 'average';
+        case 'NorwegianBlueParrot':
+          return (bird.voltage > 100) ? 'scorched' : 'beautiful';
+        default:
+          return 'unkown';
+      }
+    }
+
+    function speed(birds) {
+      return new Map(birds.map((b) => [b.name, airSpeedVelocity(b)]));
+    }
+    function airSpeedVelocity(bird) {
+      switch(bird.type) {
+        case 'EuropeanSwallow':
+          return 35;
+        case 'AfricanSwallow':
+          return 40 - bird.numberOfCoconuts * 2;
+        case 'NorwegianBlueParrot':
+          return (bird.isNailed) ? 0 : 10 + bird.voltage / 10;
+        default:
+          return null;
+      }
+    }
+  </script>
+</body>
+</html>
