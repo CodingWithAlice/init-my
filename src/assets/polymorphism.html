@@ -43,11 +43,12 @@
   </script>
   <script>
     function plumage(bird) {
-      return new Bird(bird).plumage;
+      return createBird(bird).plumage;
     }
     function airSpeedVelocity(bird) {
-      return new Bird(bird).airSpeedVelocity;
+      return createBird(bird).airSpeedVelocity;
     }
+    
     function createBird(bird) {
       switch(bird.type) {
         case 'EuropeanSwallow':
@@ -61,45 +62,42 @@
       }
     }
     
-    class EuropeanSwallow extends Bird {
-
-    }
-
-    class AfricanSwallow extends Bird {
-      
-    }
-
-    class NorwegianBlueParrot extends Bird {
-      
-    }
-
     class Bird {
       constructor(birdObject){
         Object.assign(this, birdObject);
       }
       get plumage() {
-        switch(bird.type) {
-          case 'EuropeanSwallow':
-            return 'average';
-          case 'AfricanSwallow':
-            return (bird.numberOfCoconuts > 2) ? 'tired' : 'average';
-          case 'NorwegianBlueParrot':
-            return (bird.voltage > 100) ? 'scorched' : 'beautiful';
-          default:
-            return 'unkown';
-        }
+        return 'unkown';
       }
       get airSpeedVelocity() {
-        switch(bird.type) {
-          case 'EuropeanSwallow':
-            return 35;
-          case 'AfricanSwallow':
-            return 40 - bird.numberOfCoconuts * 2;
-          case 'NorwegianBlueParrot':
-            return (bird.isNailed) ? 0 : 10 + bird.voltage / 10;
-          default:
-            return null;
-        }
+        return null;
+      }
+    }
+
+    class EuropeanSwallow extends Bird {
+      get plumage() {
+        return 'average';
+      }
+      get airSpeedVelocity() {
+        return 35;
+      }
+    }
+
+    class AfricanSwallow extends Bird {
+      get plumage() {
+        return (this.numberOfCoconuts > 2) ? 'tired' : 'average';
+      }
+      get airSpeedVelocity() {
+        return 40 - this.numberOfCoconuts * 2;
+      }
+    }
+
+    class NorwegianBlueParrot extends Bird {
+      get plumage() {
+        return (this.voltage > 100) ? 'scorched' : 'beautiful';
+      }
+      get airSpeedVelocity() {
+        return (this.isNailed) ? 0 : 10 + this.voltage / 10;
       }
     }
   </script>
