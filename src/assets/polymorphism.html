@@ -41,5 +41,42 @@
       }
     }
   </script>
+  <script>
+    function plumage(bird) {
+      return new Bird(bird).plumage;
+    }
+    function airSpeedVelocity(bird) {
+      return new Bird(bird).airSpeedVelocity;
+    }
+    class Bird {
+      constructor(birdObject){
+        Object.assign(this, birdObject);
+      }
+      get plumage() {
+        switch(bird.type) {
+          case 'EuropeanSwallow':
+            return 'average';
+          case 'AfricanSwallow':
+            return (bird.numberOfCoconuts > 2) ? 'tired' : 'average';
+          case 'NorwegianBlueParrot':
+            return (bird.voltage > 100) ? 'scorched' : 'beautiful';
+          default:
+            return 'unkown';
+        }
+      }
+      get airSpeedVelocity() {
+        switch(bird.type) {
+          case 'EuropeanSwallow':
+            return 35;
+          case 'AfricanSwallow':
+            return 40 - bird.numberOfCoconuts * 2;
+          case 'NorwegianBlueParrot':
+            return (bird.isNailed) ? 0 : 10 + bird.voltage / 10;
+          default:
+            return null;
+        }
+      }
+    }
+  </script>
 </body>
 </html>
