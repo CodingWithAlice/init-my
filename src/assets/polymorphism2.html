@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>对远洋航 船的航行进行投资评级 </title>
+</head>
+
+<body>
+  <script>
+    // 原函数 - 评级
+    function rating(voyage, history) {
+      // 盈利潜力分数
+      const vpf = voyageProfitFactor(voyage, history);
+      // 风险分数
+      const vr = voyageRisk(voyage);
+      // 风险分数
+      const chr = captainHistoryRisk(voyage, history);
+      if (vpf * 3 > (vr + chr * 2)) return "A"; else return "B";
+    }
+
+    // 风险分数
+    function voyageRisk(voyage) {
+      let result = 1;
+      if (voyage.length > 4) result += 2;
+      if (voyage.length > 8) result += voyage.length - 8;
+      if (["china", "east-indies"].includes(voyage.zone)) result += 4;
+      return Math.max(result, 0);
+    }
+
+    // 风险分数
+    function captainHistoryRisk(voyage, history) {
+      let result = 1;
+      if (history.length < 5) result += 4;
+      result += history.filter(v => v.profit < 0).length;
+      if (voyage.zone === "china" && hasChina(history)) result -= 2;
+      return Math.max(result, 0);
+    }
+
+    function hasChina(history) {
+      return history.some(v => "china" === v.zone);
+    }
+
+    // 盈利潜力分数
+    function voyageProfitFactor(voyage, history) {
+      let result = 2;
+      if (voyage.zone === "china") result += 1;
+      if (voyage.zone === "east-indies") result += 1;
+      if (voyage.zone === "china" && hasChina(history)) {
+        result += 3;
+        if (history.length > 10) result += 1;
+        if (voyage.length > 12) result += 1;
+        if (voyage.length > 18) result -= 1;
+      } else {
+        if (history.length > 8) result += 1;
+        if (voyage.length > 14) result -= 1;
+      }
+      return result;
+    }
+
+    // 调用
+
+    const voyage = {
+      zone: "west-indies", length: 10
+    };
+    const history = [
+      {
+        zone: "east-indies",
+        profit: 5
+      },
+      {
+        zone: "west-indies",
+        profit: 15
+      },
+      {
+        zone: "china",
+        profit: -2
+      },
+      {
+        zone: "west-africa",
+        profit: 7
+      },
+    ];
+    const myRating = rating(voyage, history);
+    console.log('myRating=', myRating);
+
+  </script>
+  <script>
+    // 函数组合成类
+    class Reading {
+      constructor(data) {
+        this._customer = data.customer;
+        this._quantity = data.quantity;
+        this._month = data.month;
+        this._year = data.year;
+      }
+
+      get customer() { return this._customer; }
+      get quantity() { return this._quantity; }
+      get month() { return this._month; }
+      get year() { return this._year; }
+
+      get calculateBaseCharge() {
+        return baseRate(this.month, this.year) * this.quantity;
+      }
+
+      get baseCharge() {
+        return baseRate(this.month, this.year) * this.quantity;
+      }
+
+      get taxableCharge() {
+        return Math.max(0, this.baseCharge - taxThreshold(this.year));
+      }
+    }
+  </script>
+</body>
+
+</html>
