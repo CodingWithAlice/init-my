@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> 144 函数组合成类 </title>
+</head>
+
+<body>
+  <script>
+    // 144 函数组合成类
+    class Reading {
+      constructor(data) {
+        this._customer = data.customer;
+        this._quantity = data.quantity;
+        this._month = data.month;
+        this._year = data.year;
+      }
+
+      get customer() { return this._customer; }
+      get quantity() { return this._quantity; }
+      get month() { return this._month; }
+      get year() { return this._year; }
+
+      get calculateBaseCharge() {
+        return baseRate(this.month, this.year) * this.quantity;
+      }
+
+      get baseCharge() {
+        return baseRate(this.month, this.year) * this.quantity;
+      }
+
+      get taxableCharge() {
+        return Math.max(0, this.baseCharge - taxThreshold(this.year));
+      }
+    }
+  </script>
+
+</body>
+
+</html>
