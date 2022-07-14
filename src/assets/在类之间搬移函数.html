@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> 198 在函数之间搬移函数 </title>
+</head>
+
+<body>
+  <script>
+    class Account {
+      get bankCharge() {
+        let result = 4.5;
+        if (this._daysOverdrawn > 0) result += this.overdraftCharge;
+        return result;
+      }
+
+      get overdraftCharge() {
+        if (this.type.isPremium) {
+          const baseCharge = 10;
+          if (this.daysOverdrawn <= 7)
+            return baseCharge;
+          else
+            return baseCharge + (this.daysOverdrawn - 7) * 0.85;
+        } else
+          return this.daysOverdrawn * 1.75;
+      }
+    }
+  </script>
+
+</body>
+
+</html>
