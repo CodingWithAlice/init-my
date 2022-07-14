@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> 198 搬移内嵌函数至顶层 </title>
+</head>
+
+<body>
+  <script>
+    //  计算一条GPS轨迹 记录的总距离
+    function trackSummary(points) {
+      const totalTime = calculateTime();
+      const totalDistance = calculateDistance();
+      const pace = totalTime / 60 / totalDistance;
+      return {
+        time: totalTime,
+        distance: totalDistance,
+        pace: pace
+      };
+
+      function calculateDistance() {
+        let result = 0;
+        for (let i = 1; i < points.length; i++) {
+          result += distance(points[i - 1], points[i]);
+        }
+        return result;
+      }
+
+      function distance(p1, p2) { }
+      function radians(degrees) { }
+      function calculateTime() { }
+    }
+
+  </script>
+
+</body>
+
+</html>
