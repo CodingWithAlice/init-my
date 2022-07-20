@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>174 以对象取代基本类型</title>
 </head>
+
 <body>
   <script>
     class Order {
-      constructor(data) { 
+      constructor(data) {
         this.priority = data.priority; // more initialization
       }
 
@@ -19,22 +21,49 @@
 
       get priorityString() {
         return this._priority.toString();
-      } 
+      }
       set priority(aString) {
         this._priority = new Priority(aString);
       }
     }
 
-    class Priority { 
+    class Priority {
       constructor(value) {
         if (value instanceof Priority) return value;
-        this._value = value;
-      } 
-      
+        if (Priority.legalValues().includes(value))
+          this._value = value;
+        else
+          throw new Error(`<${value}> is invalid for Priority`);
+      }
+
       toString() {
         return this._value;
-      } 
+      }
+      get _index() {
+        return Priority.legalValues().findIndex(s => s === this._value);
+      }
+
+      static legalValues() {
+        return ['low', 'normal', 'high', 'rush'];
+      }
+
+      equals(other) {
+        return this._index === other._index;
+      }
+
+      higherThan(other) {
+        return this._index > other._index;
+      }
+      lowerThan(other) {
+        return this._index < other._index;
+      }
     }
+
+    // 客户端调用形式变得更加有可读性
+    highPriorityCount = orders
+      .filter(o => o.priority.higherThan(new Priority("normal")))
+      .length;
   </script>
 </body>
+
 </html>
