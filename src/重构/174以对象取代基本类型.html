@@ -14,6 +14,10 @@
       }
 
       get priority() {
+        return this._priority;
+      }
+
+      get priorityString() {
         return this._priority.toString();
       } 
       set priority(aString) {
@@ -23,6 +27,7 @@
 
     class Priority { 
       constructor(value) {
+        if (value instanceof Priority) return value;
         this._value = value;
       } 
       
