@@ -13,15 +13,15 @@
     function distanceTravelled(scenario, time) {
       let result;
       // acc - 保存第一个力造成的初始加速度
-      let acc = scenario.primaryForce / scenario.mass;
+      const primaryAcceleration = scenario.primaryForce / scenario.mass;
       let primaryTime = Math.min(time, scenario.delay);
-      result = 0.5 * acc * primaryTime * primaryTime;
+      result = 0.5 * primaryAcceleration * primaryTime * primaryTime;
       let secondaryTime = time - scenario.delay;
       if (secondaryTime > 0) {
-        let primaryVelocity = acc * scenario.delay;
+        let primaryVelocity = primaryAcceleration * scenario.delay;
         // acc - 保存两个力共同造成的加速 度
-        acc = (scenario.primaryForce + scenario.secondaryForce) / scenario.mass;
-        result += primaryVelocity * secondaryTime + 0.5 * acc * secondaryTime * secondaryTime;
+        const secondaryAcceleration = (scenario.primaryForce + scenario.secondaryForce) / scenario.mass;
+        result += primaryVelocity * secondaryTime + 0.5 * secondaryAcceleration * secondaryTime * secondaryTime;
       }
       return result;
     }
