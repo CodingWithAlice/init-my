@@ -23,15 +23,13 @@
       ]
     };
     // 函数
-    function readingsOutsideRange(station, min, max, range) {
+    function readingsOutsideRange(station, range) {
       return station.readings
-        .filter(r => r.temp < min || r.temp > max);
+        .filter(r => r.temp < range.min || r.temp > range.max);
     }
     // 调用
     const range = new NumberRange(operatingPlan.temperatureFloor, operatingPlan.temperatureCeiling);
-    alerts = readingsOutsideRange(station,
-      operatingPlan.temperatureFloor,
-      operatingPlan.temperatureCeiling, range);
+    alerts = readingsOutsideRange(station, range);
 
 
     // 优化点：min 和 max 一直作为结伴数据
