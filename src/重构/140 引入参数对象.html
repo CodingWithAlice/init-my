@@ -23,14 +23,29 @@
       ]
     };
     // 函数
-    function readingsOutsideRange(station, min, max) {
+    function readingsOutsideRange(station, min, max, range) {
       return station.readings
         .filter(r => r.temp < min || r.temp > max);
     }
     // 调用
+    const range = new NumberRange(operatingPlan.temperatureFloor, operatingPlan.temperatureCeiling);
     alerts = readingsOutsideRange(station,
       operatingPlan.temperatureFloor,
-      operatingPlan.temperatureCeiling);
+      operatingPlan.temperatureCeiling, range);
+
+
+    // 优化点：min 和 max 一直作为结伴数据
+    class NumberRange {
+      constructor(min, max) {
+        this._data = { min: min, max: max };
+      }
+      get min() {
+        return this._data.min;
+      }
+      get max() {
+        return this._data.max;
+      }
+    }
   </script>
 </body>
 
