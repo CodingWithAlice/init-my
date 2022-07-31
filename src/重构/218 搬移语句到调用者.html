@@ -14,7 +14,8 @@
     function renderPerson(outStream, person) {
       outStream.write(`<p>${person.name}</p>\n`);
       renderPhoto(outStream, person.photo);
-      emitPhotoData(outStream, person.photo);
+      zztmp(outStream, photo);
+      outStream.write(`<p>location: ${photo.location}</p>\n`);
     }
 
     function listRecentPhotos(outStream, photos) {
@@ -22,14 +23,10 @@
         .filter(p => p.date > recentDateCutoff())
         .forEach(p => {
           outStream.write("<div>\n");
-          emitPhotoData(outStream, p);
+          zztmp(outStream, photo);
+          outStream.write(`<p>location: ${photo.location}</p>\n`);
           outStream.write("</div>\n");
         });
-    }
-
-    function emitPhotoData(outStream, photo) {
-      zztmp(outStream, photo);
-      outStream.write(`<p>location: ${photo.location}</p>\n`);
     }
 
     // 将那些最终希 望留在emitPhotoData函数里的语句先提炼出去
