@@ -25,7 +25,7 @@
     // 函数
     function readingsOutsideRange(station, range) {
       return station.readings
-        .filter(r => r.temp < range.min || r.temp > range.max);
+        .filter(r => !range.contains(r.temp));
     }
     // 调用
     const range = new NumberRange(operatingPlan.temperatureFloor, operatingPlan.temperatureCeiling);
@@ -42,6 +42,11 @@
       }
       get max() {
         return this._data.max;
+      }
+      // 观察成对出现的值如何被使用，将一些有用的行为搬进类中
+      // 在范围内
+      contains(arg) {
+        return (arg >= this.min && arg <= this.max);
       }
     }
   </script>
