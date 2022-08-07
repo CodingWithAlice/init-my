@@ -8,12 +8,10 @@ class PerformanceCalculator {
     throw new Error('subclass responsibility');
   }
 
+  // 大多数剧类在计算积分时都会检查观众数是否达到30，仅一小部分品类有所不同
+  // 将更为通用的逻辑放到超类作为默认条件， 出现特殊场景时按需覆盖它
   get volumeCredits() {
-    let result = 0;
-    result += Math.max(this.performance.audience - 30, 0);
-    if ("comedy" === this.play.type)
-      result += Math.floor(this.performance.audience / 5);
-    return result;
+    return  Math.max(this.performance.audience - 30, 0);
   }
 }
 class TragedyCalculator extends PerformanceCalculator {
@@ -34,6 +32,10 @@ class ComedyCalculator extends PerformanceCalculator {
     }
     result += 300 * this.performance.audience;
     return result;
+  }
+
+  get volumeCredits() {
+    return super.volumeCredits + Math.floor(this.performance.audience / 5);
   }
 }
 
