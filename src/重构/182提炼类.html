@@ -11,8 +11,22 @@
 <body>
   <script>
     class Person {
+      // 2、在构造Person类时创建 TelephoneNumber类的一个实例
+      constructor() {
+        this._telephoneNumber = new TelephoneNumber();
+      }
       get name() { return this._name; }
       set name(arg) { this._name = arg; }
+      // 3、搬移字段
+      get telephoneNumber() { return this._telephoneNumber.telephoneNumber; }
+      get officeAreaCode() { return this._telephoneNumber.officeAreaCode; }
+      set officeAreaCode(arg) { this._telephoneNumber.officeAreaCode = arg; }
+      get officeNumber() { return this._telephoneNumber.officeNumber; }
+      set officeNumber(arg) { this._telephoneNumber.officeNumber = arg; }
+    }
+
+    // 1、将与电话号码相关的行为分离到一个独立的类
+    class TelephoneNumber {
       get telephoneNumber() { return `(${this.officeAreaCode}) ${this.officeNumber}`; }
       get officeAreaCode() { return this._officeAreaCode; }
       set officeAreaCode(arg) { this._officeAreaCode = arg; }
