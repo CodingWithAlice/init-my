@@ -25,18 +25,18 @@
 
     class Shipment {
       get trackingInfo() {
-        return this._trackingInformation.display;
+        // 3、对display方法应用内联函数
+        // return this._trackingInformation.display;
+        return `${this.shippingCompany}: ${this.trackingNumber}`;
       }
-
-      get trackingInformation() {return this._trackingInformation;}
-
-      set trackingInformation(aTrackingInformation) {
-        this._trackingInformation = aTrackingInformation;
-      }
+      
+      // 1、创建一个委托方法
+      set shippingCompany(arg) {this._shippingCompany = arg;}
+      get shippingCompany() {return this._shippingCompany}
     }
 
-    // 调用方
-    aShipment.trackingInformation.shippingCompany = request.vendor;
+    // 2、将调用方改为调用委托方法
+    aShipment.shippingCompany = request.vendor;
 
   </script>
 </body>
