@@ -16,20 +16,52 @@
       }
 
       get officeAreaCode() { return this._telephoneNumber.areaCode; }
-      set officeAreaCode(arg) { this._telephoneNumber.areaCode = arg; }
+      set officeAreaCode(arg) {
+        // 2、逐一查看设值函数的调用者，并将其改为重新赋值整个对象
+        // this._telephoneNumber.areaCode = arg; 
+        this._telephoneNumber = new TelephoneNumber(arg, this.officeNumber);
+      }
 
       // 从前拥有电话号码信息的Person类仍然有一些函数在修改新对象的属性
       get officeNumber() { return this._telephoneNumber.number; }
-      set officeNumber(arg) { this._telephoneNumber.number = arg; }
+      set officeNumber(arg) {
+        // 2、逐一查看设值函数的调用者，并将其改为重新赋值整个对象
+        // this._telephoneNumber.number = arg; 
+        this._telephoneNumber = new TelephoneNumber(this.officeAreaCode, arg);
+      }
     }
 
+    // 3、此时 TelephoneNumber已经是不可变的类， 将其变成真正的值对象了
     class TelephoneNumber {
+      // 第一件事是把TelephoneNumber类变成不可变的
+      // 1、对它的字段运用移除设值函数：把这两个字段的初始值加到构造函数中，并迫使构造函数调用设值函数
+      constructor(areaCode, number) {
+        this._areaCode = areaCode;
+        this._number = number;
+      }
+
       get areaCode() { return this._areaCode; }
       set areaCode(arg) { this._areaCode = arg; }
 
       get number() { return this._number; }
       set number(arg) { this._number = arg; }
+
+      // 3.1 是不是真正的值对象，要看是否基于值 判断相等性
+      equals(other) {
+        if (!(other instanceof TelephoneNumber))
+          return false;
+        return this.areaCode === other.areaCode &&
+          this.number === other.number;
+      }
     }
+
+    // 3.2 对相等性测试
+    // 在这个测试中创建了两个各自独立的对象，并验证它们相等
+    it('telephone equals', function () {
+      assert(
+        new TelephoneNumber("312", "555-0142")
+          .equals(new TelephoneNumber("312", "555-0142")));
+    });
   </script>
 </body>
 
