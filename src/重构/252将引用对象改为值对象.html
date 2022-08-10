@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>252将引用对象改为值对象</title>
+</head>
+
+<body>
+  <script>
+    class Person {
+      constructor() {
+        this._telephoneNumber = new TelephoneNumber();
+      }
+
+      get officeAreaCode() { return this._telephoneNumber.areaCode; }
+      set officeAreaCode(arg) { this._telephoneNumber.areaCode = arg; }
+
+      // 从前拥有电话号码信息的Person类仍然有一些函数在修改新对象的属性
+      get officeNumber() { return this._telephoneNumber.number; }
+      set officeNumber(arg) { this._telephoneNumber.number = arg; }
+    }
+
+    class TelephoneNumber {
+      get areaCode() { return this._areaCode; }
+      set areaCode(arg) { this._areaCode = arg; }
+
+      get number() { return this._number; }
+      set number(arg) { this._number = arg; }
+    }
+  </script>
+</body>
+
+</html>
