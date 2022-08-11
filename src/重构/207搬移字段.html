@@ -10,27 +10,39 @@
 
 <body>
   <script>
+    // 实现目标：将折扣率（discountRate）字段从Customer类中搬移到 CustomerContract 里
     // 顾客
     class Customer {
       constructor(name, discountRate) {
         this._name = name;
-        this._discountRate = discountRate;
         this._contract = new CustomerContract(dateToday());
+        // 将 _setDiscountRate 函数调用语句挪动到创建对象的语句之后
+        // 保证修改的时候，存在对象可以修改
+        this._setDiscountRate(discountRate);
       }
 
-      get discountRate() { return this._discountRate; }
+      get discountRate() {return this._contract.discountRate;} 
+      // 1、封装变量（132） - 将对 _discountRate 字段的访问封装起来
+      _setDiscountRate(aNumber) { this._discountRate = aNumber; }
+
       becomePreferred() {
-        this._discountRate += 0.03;
-        // other nice things 
+        this._setDiscountRate(this.discountRate + 0.03);
       }
       applyDiscount(amount) {
-        return amount.subtract(amount.multiply(this._discountRate));
+        return amount.subtract(amount.multiply(this.discountRate));
       }
     }
 
     // 与顾客关联的一 个“合同”
     class CustomerContract {
-      constructor(startDate) { this._startDate = startDate; }
+      constructor(startDate, discountRate) {
+        this._startDate = startDate;
+        // 2、添加一个对应的字段和访问 函数
+        this._discountRate = discountRate;
+      }
+
+      get discountRate() {return this._discountRate;} 
+      set discountRate(arg) {this._discountRate = arg;}
     }
   </script>
 </body>
