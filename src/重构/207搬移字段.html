@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>207搬移字段</title>
+</head>
+
+<body>
+  <script>
+    // 顾客
+    class Customer {
+      constructor(name, discountRate) {
+        this._name = name;
+        this._discountRate = discountRate;
+        this._contract = new CustomerContract(dateToday());
+      }
+
+      get discountRate() { return this._discountRate; }
+      becomePreferred() {
+        this._discountRate += 0.03;
+        // other nice things 
+      }
+      applyDiscount(amount) {
+        return amount.subtract(amount.multiply(this._discountRate));
+      }
+    }
+
+    // 与顾客关联的一 个“合同”
+    class CustomerContract {
+      constructor(startDate) { this._startDate = startDate; }
+    }
+  </script>
+</body>
+
+</html>
