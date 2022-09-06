@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    266以卫语句取代嵌套条件表达式
+  </title>
+</head>
+
+<body>
+  <script>
+    // 常常以将条件表达式反转，从而实现以卫语句取代嵌套条件表达式
+    // 原函数
+    function adjustedCapital(anInstrument) {
+      let result = 0;
+      if (anInstrument.capital > 0) {
+        if (anInstrument.interestRate > 0 && anInstrument.duration > 0) {
+          result = (anInstrument.income / anInstrument.duration) * anInstrument.adjustmentFactor;
+        }
+      }
+      return result;
+    }
+    // step1: 插入卫语句
+    function adjustedCapital(anInstrument) {
+      let result = 0;
+      if (anInstrument.capital <= 0) return result; // 反转条件
+      // if (!(anInstrument.interestRate > 0 && anInstrument.duration > 0)) return result;
+      // 简化成
+      if (anInstrument.interestRate <= 0 || anInstrument.duration <= 0) return result;
+      return (anInstrument.income / anInstrument.duration) * anInstrument.adjustmentFactor;
+    }
+    // step2: 合并
+    function adjustedCapital(anInstrument) {
+      let result = 0;
+      if (anInstrument.capital <= 0 ||
+        anInstrument.interestRate <= 0 ||
+        anInstrument.duration <= 0) return result;
+      return (anInstrument.income / anInstrument.duration) * anInstrument.adjustmentFactor;
+    }
+  </script>
+</body>
+
+</html>
