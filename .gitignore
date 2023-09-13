@@ -2,6 +2,7 @@
 node_modules
 /dist
 .gitignore
+.git-credentials
 
 # local env files
 .env.local

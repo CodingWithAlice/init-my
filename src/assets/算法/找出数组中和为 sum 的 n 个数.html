@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找出数组中和为 sum 的 n 个数</title>
+</head>
+<script>
+    /**
+     * 思路: 递归回溯
+     *  首先我们结合将传入的 n 变成一个 condidates 数组 
+         index 来记录遍历到数组的位置内部的 target 表示还需要多少值到目标值，conbine 是我们的组合出来的一组答案
+        我们开始递归：- 一种情况是跳过当前值 - 一种情况是继续递归当前值
+        考虑到每个数都可以被重复选择，所以我们先判断 target 减去 当前下标位置的值后，是否是大于 0
+        - 如果大于等于 0，则可以重复遍历这个 index
+        - 如果小于 0，则跳过当前 index，执行 index+1
+    */
+    var combinationSum = function (n, target) {
+        let result = [];
+        let candidates = [];
+        for (let i = 1; i <= n; i++) {
+            candidates[i - 1] = i;
+        }
+        console.log('🌹 candidates=', candidates)
+        const dfs = (conbine, target, index) => {
+            if (index == candidates.length) {
+                return;
+            }
+            if (target == 0) {
+                result.push(conbine);
+                return;
+            }
+            console.log('--> 递归调用 dfs 函数')
+            dfs(conbine, target, index + 1);
+            console.log('🌲递归 return 后，执行函数后续 target=', target, 'index=', index)
+            if (target - candidates[index] >= 0) {
+                dfs([...conbine, candidates[index]], target - candidates[index], index);
+            }
+
+        }
+        dfs([], target, 0);
+        return result;
+    };
+    combinationSum(2, 3);
+</script>
+
+<body>
+    <div>
+        题目 输入两个整数n和sum，从数列1，2，3...n 中随意取几个数，使其和等于sum，要求将其中所有的可能组合列出来
+        示例 输入： n = 2 , target = 3
+        所求解集为： [ [ 1, 2 ], [ 1, 1, 1 ] ]
+    </div>
+</body>
+
+</html>
