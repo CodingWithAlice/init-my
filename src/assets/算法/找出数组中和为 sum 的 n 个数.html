@@ -8,50 +8,43 @@
     <title>找出数组中和为 sum 的 n 个数</title>
 </head>
 <script>
-    /**
-     * 思路: 递归回溯
-     *  首先我们结合将传入的 n 变成一个 condidates 数组 
-         index 来记录遍历到数组的位置内部的 target 表示还需要多少值到目标值，conbine 是我们的组合出来的一组答案
-        我们开始递归：- 一种情况是跳过当前值 - 一种情况是继续递归当前值
-        考虑到每个数都可以被重复选择，所以我们先判断 target 减去 当前下标位置的值后，是否是大于 0
-        - 如果大于等于 0，则可以重复遍历这个 index
-        - 如果小于 0，则跳过当前 index，执行 index+1
-    */
-    var combinationSum = function (n, target) {
-        let result = [];
-        let candidates = [];
-        for (let i = 1; i <= n; i++) {
-            candidates[i - 1] = i;
+    function getAllCombine(array, n, sum, temp) {
+        // 长度 为 n
+        if (temp.length === n) {
+            // 求 temp 中的和
+            if (temp.reduce((t, c) => t + c) === sum) {
+                return temp;
+            }
+            return;
         }
-        console.log('🌹 candidates=', candidates)
-        const dfs = (conbine, target, index) => {
-            if (index == candidates.length) {
-                return;
+        // 遍历 array
+        for (let i = 0; i < array.length; i++) {
+            // 取 array 的第一项
+            const current = array.shift();
+            temp.push(current);
+            // 递归 -> array 已被改变；temp也已改变
+            const result = getAllCombine(array, n, sum, temp);
+            // 有返回值则结束循环
+            if (result) {
+                return result;
             }
-            if (target == 0) {
-                result.push(conbine);
-                return;
-            }
-            console.log('--> 递归调用 dfs 函数')
-            dfs(conbine, target, index + 1);
-            console.log('🌲递归 return 后，执行函数后续 target=', target, 'index=', index)
-            if (target - candidates[index] >= 0) {
-                dfs([...conbine, candidates[index]], target - candidates[index], index);
-            }
+            // 没有返回值，代表没有找到对应的数字 -> 移除 temp 中的当前数字，通过 i 继续遍历下一项
+            temp.pop();
+            array.push(current);
+        }
+    }
+    const arr = [1, 2, 3, 4, 5, 6];
 
-        }
-        dfs([], target, 0);
-        return result;
-    };
-    combinationSum(2, 3);
+    console.log(getAllCombine(arr, 3, 10, []));
+
+
 </script>
 
 <body>
     <div>
-        题目 输入两个整数n和sum，从数列1，2，3...n 中随意取几个数，使其和等于sum，要求将其中所有的可能组合列出来
-        示例 输入： n = 2 , target = 3
-        所求解集为： [ [ 1, 2 ], [ 1, 1, 1 ] ]
+        给定无序、不重复的数组data，取出 n 个数，使其相加和为sum
     </div>
+    <img src="../../images//IMG_4384D1EE7115-1.jpeg" alt="详情解析">
 </body>
 
 </html>
