@@ -28,6 +28,40 @@
         }
         const fn = compose(add, square);// 方案三
         console.log('结果=', fn(1, 2));
+
+
+
+
+        // 🌹 蚂蚁一面 3.简单实现洋葱模型，让输入可以按序输出
+        // 1, 2, 3, mid, 1 end, 2 end, 3 end 
+        async function fun1() {
+            console.log('1');
+            await next();
+            console.log('1 end');
+        }
+
+        async function fun2() {
+            console.log('2');
+            await next();
+            console.log('2 end');
+        }
+        
+        async function fun3() {
+            console.log('3');
+            await next();
+            console.log('3 end');
+        }
+
+        function fun4() {
+            console.log('mid')
+            new Promise((resolve) => {
+                console.log('4');
+                resolve();
+            }).then(function() {
+                console.log('5');
+            })
+        }
+
     </script>
 </body>
 

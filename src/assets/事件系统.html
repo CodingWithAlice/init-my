@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事件系统</title>
+</head>
+<body>
+    <div>
+        
+    </div>
+    <script>
+
+        
+        // 🌹2.事件系统
+        // on、off、once（执行一次后不再执行）、filter（过滤传入的事件）
+        class Events {
+            constructor(){
+                this.events = {}
+            }
+            // 事件监听
+            on (evt, callback, ctx) {
+                if (!this.events[ evt ]) {
+                this.events[ evt ] = []
+                }
+                
+                this.events[ evt ].push(callback)
+
+                return this
+            }
+            // 发布事件
+            emit (evt, ...payload) {
+                const callbacks = this.events[ evt ]
+
+                if (callbacks) {
+                callbacks.forEach((cb) => cb.apply(this, payload))
+                }
+
+                return this
+            }
+            off(evt, handler) {
+                // 啥都没传，所有的事件都取消
+                if (typeof evt === 'undefined') {
+                    delete this.events
+                } else if (typeof evt === 'string') {
+                // 删除指定事件的回调 
+                    if (typeof callback === 'function') {
+                        this.events[ evt ] = this.events[ evt ].filter((cb) => cb !== callback)
+                    } else {
+                        // 删除整个事件
+                        delete this.events[ evt ]
+                    }
+                }
+
+                return this
+            }
+
+            trigger(evt, args) {
+            }
+
+            // 只进行一次的事件订阅
+            once (evt, callback, ctx) {
+                const proxyCallback = (...payload) => {
+                    callback.apply(ctx, payload)
+                    // 回调函数执行完成之后就删除事件订阅
+                    this.off(evt, proxyCallback)
+                }
+
+                this.on(evt, proxyCallback, ctx)
+            }
+            
+
+            filter() {
+
+            }
+        }
+        
+        
+    </script>
+</body>
+</html>
