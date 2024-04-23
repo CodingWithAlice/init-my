@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mergePromise</title>
+</head>
+
+<body>
+    <!-- 柯里化：参数复用 -->
+    <script defer>
+        const timeout = ms =>
+            new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve()
+                }, ms)
+            })
+
+
+        const ajax1 = () =>
+            timeout(2000).then(() => {
+                console.log('1')
+                return 1
+            })
+
+
+        const ajax2 = () =>
+            timeout(1000).then(() => {
+                console.log('2')
+                return 2
+            })
+
+
+        const ajax3 = () =>
+            timeout(2000).then(() => {
+                console.log('3')
+                return 3
+            })
+
+        // const mergePromise = ajaxArray => {
+        // 在这里实现你的代码
+        // }
+
+        const mergePromise = ajaxArray => {
+            // 在这里实现你的代码
+            if (ajaxArray.length === 0) return [];
+            const res = [];
+            ajaxArray.forEach(async (p, i) => {
+                // console.log('pResult , i=', pResult, i);
+                Promise.resolve(p).then((result) => {
+                    const pResult = await result();
+                    res[i] = (pResult)
+                    console.log('result=', result)
+                }).catch(() => reject())
+            })
+            return Promise.resolve(res)
+        }
+
+
+        mergePromise([ajax1, ajax2, ajax3]).then(data => {
+            console.log('done')
+            console.log(data) // data 为 [1, 2, 3]
+        })
+
+
+        // 分别输出
+        // 1
+        // 2
+        // 3
+        // done
+        // [1, 2, 3]
+    </script>
+</body>
+
+</html>
