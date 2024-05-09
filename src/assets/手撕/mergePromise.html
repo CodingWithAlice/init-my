@@ -5,42 +5,69 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mergePromise - 待实现 todo</title>
+    <title>mergePromise</title>
 </head>
 
 <body>
     <script defer>
-        const timeout = ms =>
+        // 这就是一个 sleep 函数
+        const sleep = time =>
             new Promise((resolve, reject) => {
                 setTimeout(() => {
                     resolve()
-                }, ms)
+                }, time)
             })
 
 
         const ajax1 = () =>
-            timeout(2000).then(() => {
+            sleep(2000).then(() => {
                 console.log('1')
                 return 1
             })
 
 
         const ajax2 = () =>
-            timeout(1000).then(() => {
+            sleep(1000).then(() => {
                 console.log('2')
                 return 2
             })
 
 
         const ajax3 = () =>
-            timeout(2000).then(() => {
+            sleep(2000).then(() => {
                 console.log('3')
                 return 3
             })
+        // 分别输出
+        // 1
+        // 2
+        // 3
+        // done
+        // [1, 2, 3]
 
-        // const mergePromise = ajaxArray => {
-        // 在这里实现你的代码
-        // }
+        /*
+            分析：1、三个输入函数都是包裹了一层睡眠函数的 Promise
+            2、按序执行会按照 sleep 指定时长后输出； 2 1 3
+            3、想要实现按序执行，三个 sleep 函数不能进入一个宏任务
+        **/
+
+        // 方法1 - 手动执行
+        // 重点：手动执行，利用下一个 then + setTimeout 进入下一个宏任务
+        function mergePromise1(ajaxArray) {
+            let arr = [];
+            return ajaxArray[0]().then(data => {
+                arr.push(data);
+                // 重点
+                return ajaxArray[1]();
+            }).then(data => {
+                arr.push(data);
+                // 重点
+                return ajaxArray[2]();
+            }).then(data => {
+                arr.push(data);
+                return arr;
+            });
+        }
 
         const mergePromise = ajaxArray => {
             // 在这里实现你的代码
@@ -59,17 +86,11 @@
 
 
         mergePromise([ajax1, ajax2, ajax3]).then(data => {
-            console.log('done')
-            console.log(data) // data 为 [1, 2, 3]
+            console.log('done');
+            console.log(data);
         })
 
 
-        // 分别输出
-        // 1
-        // 2
-        // 3
-        // done
-        // [1, 2, 3]
     </script>
 </body>
 
