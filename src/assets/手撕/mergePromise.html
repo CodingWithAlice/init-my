@@ -51,7 +51,7 @@
             3、想要实现按序执行，三个 sleep 函数不能进入一个宏任务
         **/
 
-        // 方法1 - 手动执行
+        // 方法1 - Promise嵌套
         // 重点：手动执行，利用下一个 then + setTimeout 进入下一个宏任务
         function mergePromise1(ajaxArray) {
             let arr = [];
@@ -69,23 +69,21 @@
             });
         }
 
-        const mergePromise = ajaxArray => {
-            // 在这里实现你的代码
-            if (ajaxArray.length === 0) return [];
-            const res = [];
-            ajaxArray.forEach(async (p, i) => {
-                // console.log('pResult , i=', pResult, i);
-                Promise.resolve(p).then((result) => {
-                    const pResult = await result();
-                    res[i] = (pResult)
-                    console.log('result=', result)
-                }).catch(() => reject())
-            })
-            return Promise.resolve(res)
+        // 方法2 - 和方法一一个逻辑，写法更简单
+        function mergePromise2(ajaxArray) {
+            let p = Promise.resolve();
+            let arr = [];
+            ajaxArray.forEach(promise => {
+                p = p.then(promise).then((data) => {
+                    arr.push(data);
+                    return arr;
+                });
+            });
+            return p;
         }
 
 
-        mergePromise([ajax1, ajax2, ajax3]).then(data => {
+        mergePromise2([ajax1, ajax2, ajax3]).then(data => {
             console.log('done');
             console.log(data);
         })
