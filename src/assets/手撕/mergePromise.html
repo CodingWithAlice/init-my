@@ -82,8 +82,20 @@
             return p;
         }
 
+        // 方法3 - async/await 按序实现
+        const mergePromise3 = async ajaxArray => {
+            // 在这里实现你的代码
+            let arr = [];
+            for (let p of ajaxArray) {
+                let res = await p();
+                arr.push(res);
+            }
+            return arr;
 
-        mergePromise2([ajax1, ajax2, ajax3]).then(data => {
+        }
+
+
+        mergePromise3([ajax1, ajax2, ajax3]).then(data => {
             console.log('done');
             console.log(data);
         })
