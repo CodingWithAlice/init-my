@@ -73,12 +73,14 @@
         function mergePromise2(ajaxArray) {
             let p = Promise.resolve();
             let arr = [];
+            // 将输入的 ajaxArr 作为 p 的 then 存储
             ajaxArray.forEach(promise => {
                 p = p.then(promise).then((data) => {
                     arr.push(data);
                     return arr;
                 });
             });
+            // 注意：这里返回的是一个 Promise
             return p;
         }
 
@@ -95,7 +97,7 @@
         }
 
 
-        mergePromise3([ajax1, ajax2, ajax3]).then(data => {
+        mergePromise2([ajax1, ajax2, ajax3]).then(data => {
             console.log('done');
             console.log(data);
         })
