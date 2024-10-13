@@ -8,12 +8,95 @@
     <title>输出二叉树左视图</title>
 </head>
 <script>
-   // 溯源算法 / 层序遍历
+    // 常见解决方法：溯源算法 / 层序遍历
+
+    // 分析：左视图 - 保存每一层的第一个节点
+    // 方法1: 层次遍历
+    function leftView(root) {
+        if (!root) return [];
+        let res = [];
+        let queue = [];
+        queue.push(root);
+        while (queue.length > 0) {
+            let len = queue.length;
+            for (let i = 0; i < len; i++) {
+                let q = queue.shift();
+                if (q.left) { queue.push(q.left) }
+                if (q.right) { queue.push(q.right) }
+                if (q.length === 1) { res.push(q.value) }
+            }
+
+        }
+        return res
+    }
+    // 扩展：右视图 - 保存每一层的最后一个节点
+    function rightView() {
+
+    }
+
+    // 验证
+    // 创建二叉树
+
+    // 创建节点
+    class TreeNode {
+        constructor(value, left, right) {
+            this.value = value || 0;
+            this.left = left || null;
+            this.right = right || null;
+        }
+    }
+    // 插入左孩子，并返回左孩子
+    let insertLNode = (root, value) => {
+        if (value) {
+            root.left = new TreeNode(value)
+            return root.left;
+        }
+    }
+    // 插入右孩子，并返回右孩子
+    let insertRNode = (root, value) => {
+        if (value) {
+            root.right = new TreeNode(value)
+            return root.right;
+        }
+    }
+    // 二叉树创建函数
+    let createTree = function (nodes) {
+        // 第一项为根节点
+        let root = new TreeNode(nodes[0]);
+        let result = [], i = 1;
+        result.push(root);
+        while (result.length !== 0) {
+            let node = result.shift();
+            console.log(1111, result);
+            console.log(22222, node)
+            if (node) {
+                if (i < nodes.length) {
+                    // 左节点
+                    result.push(insertLNode(node, nodes[i]));
+                    // 右节点
+                    result.push(insertRNode(node, nodes[i + 1]));
+                }
+                i += 2;
+            }
+        }
+        return root
+    }
+    let example = createTree([1, 2, 4, 23, null, 23, 45, 3, 124, 346, null, 1, 0, 90, null]);
+
+    // 递归遍历
+    function traverse(root) {
+        // 前序遍历
+        root.left ? traverse(root.left) : '';
+        // 后序遍历
+        root.right ? traverse(root.right) : '';
+    }
+
 </script>
 
 <body>
     <div>
         输出二叉树左视图
+        描述：树被从左侧访问时可见的节点集合；它接受树的根作为参数
     </div>
 </body>
 

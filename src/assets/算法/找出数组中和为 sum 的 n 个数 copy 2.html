@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>样例输入：versions = ['0.1.1', '2.3.3', '0.302.1', '4.2', '4.3.5', '4.3.4.5']
+        输出：['0.1.1', '0.302.1', '2.3.3', '4.3.4.5', '4.3.5']</title>
+</head>
+<script>
+    function getSortVersion(arr) {
+        if(arr.length === 0) return [];
+        const result = [];
+        debugger
+        for(let i = 0; i < arr.length - 1; i++){
+            console.log('🌹', arr[i], arr[i+1])
+            const min = sort(arr[i],arr[i+1]);
+            if(min === arr[i + 1]) {
+                [arr[i], arr[i+1]] = [arr[i+1], arr[i]]
+            }
+        }
+        return arr
+    }
+    // 得到
+    function sort(numA, numB) {
+        let i = 0;
+        const a = numA.split('.');
+        const b = numB.split('.');
+        while(a[i] && b[i]) {
+            if(+a[i] > +b[i]) {
+                return b
+            } else if(+a[i] === +b[i]) {
+                i++;
+            } else {
+                return a
+            }
+        }
+        if(!a[i]) {
+            return a
+        }
+        if(!b[i]) {
+            return b
+        }
+    }
+
+    const arr = ['0.1.1', '2.3.3', '0.302.1', '4.2', '4.3.5', '4.3.4.5'];
+
+    console.log(1111, getSortVersion(arr));
+
+
+</script>
+
+<body>
+    <div>
+        给定无序、不重复的数组data，取出 n 个数，使其相加和为sum
+    </div>
+    <img src="../../images//IMG_4384D1EE7115-1.jpeg" alt="详情解析">
+</body>
+
+</html>

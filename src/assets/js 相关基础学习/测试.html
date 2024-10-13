@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试</title>
+</head>
+<style>
+    .title {
+        font-family: Nunito, "Arial Rounded MT Bold", "Helvetica Rounded", Arial, san-serif;
+        color: #d0bb78;
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 200px;
+        text-shadow:
+            -1px 1px 0 #743132,
+            -2px 2px 0 #743132,
+            -3px 3px 0 #743132,
+            /* 以 1px 为单位累加 */
+            -22px 22px 0 #743132,
+            -23px 23px 0 #743132;
+    }
+
+    .impressed {
+        background-color: #6990e1;
+        color: #31446B;
+        text-shadow: 0 -1px 1px #b3d6f9, 0 1px 0 #243350;
+        font-size: 50px;
+    }
+
+    .embossed {
+        background-color: #3c5486;
+        color: #92B1EF;
+        text-shadow: 0 -1px 0 #243350, 0 1px 0 #def2fe;
+        font-size: 50px;
+    }
+
+    .ddd {
+        font-family: Nunito, "Arial Rounded MT Bold", "Helvetica Rounded", Arial, san-serif;
+        color: #d0bb78;
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 50px;
+        text-shadow:
+            /* 首先，各个方向上的白色阴影构成轮廓 */
+            -2px 2px 0 #fff,
+            0px 2px 0 #fff,
+            0px 3px 0 #fff,
+            3px 0px 0 #fff,
+            -3px 0px 0 #fff,
+            2px 2px 0 #fff,
+            2px -2px 0 #fff,
+            -2px -2px 0 #fff,
+            /* ......其次，交错叠加的阴影让颜色沿两个方向凸显 */
+            -3px 3px 0 #743b34,
+            -4px 3px 0 #a8564b,
+            -4px 5px 0 #743b34,
+            -5px 4px 0 #a8564b,
+            -5px 6px 0 #743b34,
+            /* ....继续叠加.... */
+            -22px 21px 0 #a8564d,
+            -22px 23px 0 #743b34,
+            -23px 22px 0 #a8564d,
+            -23px 24px 0 #743b34,
+    }
+
+    .ellipsis {
+        color: slateblue;
+        /* single-line */
+        /* overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis; */
+
+        /* multi-lines */
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+
+        /* 下方出现文字 */
+        padding: 30px;
+
+        /* 解决 */
+        line-height: 30px;
+        /* 高度=行高*行数-padding（webkit-line-clamp） */
+        height: 60px;
+    }
+</style>
+
+<body>
+    <script src="test.js">
+        // 理解 for-of 执行循环的时候，第一次就是执行可迭代对象的 next()
+        function* generatorA() {
+            // console.log('1');
+            yield '1';
+            // console.log('1');
+            yield '2';
+            return '3';
+        }
+        function* generatorB(obj) {
+            console.log('B');
+            console.log('B yield value: ', yield* generatorA()); // bar
+            console.log('B end');
+        }
+        for (let i of generatorB()) {
+            console.log('for-of i=', i); // foo qiu 
+        }
+        // const gB = generatorB();
+        // console.log('B =', gB.next());
+        // console.log('B next =', gB.next());
+
+        // const gA = generatorA();
+        // console.log('A', gA.next());
+        // console.log('A next', gA.next());
+        // console.log('A next next', gA.next());
+
+        // function* generatorC() {
+        //     console.log(111);
+        // }
+        // let gC = generatorC(); // 不执行生成器函数内部代码，只生成生成器对象
+        // gC.next(); // 打印出 111
+
+        // for (let i of generatorC()) {
+        //     console.log('i=', i);
+        // }
+    </script>
+    <script src="test.js">
+        // 核心：理解 yield* 实现递归算法
+        function* nTimes(n) {
+            console.log('nTimes n=', n);
+            if (n > 0) {
+                // console.log('进');
+                yield* nTimes(n - 1);
+                // console.log('执行 n - 1');
+                yield n - 1;
+            }
+        }
+        // for (const x of nTimes(3)) {
+        //     console.log(x);
+        // }
+
+        // const t1 = nTimes(1);
+        // console.log('1 next', t1.next());
+        // console.log('1 next next', t1.next());
+
+        // const t2 = nTimes(2);
+        // console.log('2 next', t2.next());
+        // console.log('2 next next', t2.next());
+        // console.log('2 next next next', t2.next());
+
+        // const t3 = nTimes(3);
+        // console.log('3 next', t3.next());
+        // console.log('3 next next', t3.next());
+        // console.log('3 next next next', t3.next());
+        // console.log('3 next next next next', t3.next());
+    </script>
+    <script src="test.js">
+        // 生成随机的双向图
+        class Node {
+            constructor(id) {
+                this.id = id;
+                this.neighbors = new Set();
+            }
+            connect(node) {
+                if (node !== this) {
+                    // 给彼此的 neighbors 添加节点
+                    this.neighbors.add(node);
+                    node.neighbors.add(this);
+                }
+            }
+        }
+        class RandomGraph {
+            constructor(size) {
+                this.nodes = new Set();
+                // 创建节点
+                for (let i = 0; i < size; ++i) {
+                    this.nodes.add(new Node(i));
+                }
+                // 随机连接节点
+                const threshold = 1 / size;
+                for (const x of this.nodes) {
+                    for (const y of this.nodes) {
+                        // 随机产生连接
+                        if (Math.random() < threshold) {
+                            x.connect(y);
+                        }
+                    }
+                }
+            }
+            print() {
+                for (const node of this.nodes) {
+                    const ids = [...node.neighbors]
+                        .map((n) => n.id)
+                        .join(',');
+                    console.log(`${node.id}: ${ids}`);
+                }
+            }
+            // 测试某个图是否连通 - 即是否没有不可到达的节点
+            // 只要从一个节点开始，然后尽力访问每个节点就可以了
+            // 非常简洁的深度优先遍历
+            isConnected() {
+                const visitedNodes = new Set();
+                function* traverse(nodes) {
+                    for (const node of nodes) {
+                        // 核心：如果已访问集合里面没有该节点，则添加到集合中，并继续深度遍历
+                        if (!visitedNodes.has(node)) {
+                            // console.log('visitedNodes 不包含 node.id=', node.id);
+                            yield node;
+                            // console.log('traverse=', node.neighbors);
+                            yield* traverse(node.neighbors);
+                        }
+                    }
+                }
+                // 取得集合中的第一个节点
+                const firstNode = this.nodes[Symbol.iterator]().next().value;
+                // 使用递归生成器迭代每个节点
+                for (const node of traverse([firstNode])) {
+                    // console.log('add node.id=', node.id);
+                    visitedNodes.add(node);
+                }
+                return visitedNodes.size === this.nodes.size;
+            }
+        }
+        const g = new RandomGraph(6);
+        g.print();
+        console.log('答案=', g.isConnected());
+    </script>
+    <script src="test.js">
+        // 实现 new 操作符
+        function objProtoFunction() {
+            let obj = new Object();
+            let Constructor = [].shift.call(arguments); // 获取第一个参数-构造函数
+            obj.__proto__ = Constructor.prototype;
+            let ret = Constructor.apply(obj, arguments);
+            return typeof ret === 'object' ? ret : obj;
+        }
+    </script>
+    <script src="test.js">
+        // 原型链继承
+        function SuperType() {
+            this.property = true;
+        }
+        SuperType.prototype.getSuperValue = function () {
+            return this.property;
+        };
+        function SubType() {
+            this.subproperty = false;
+        }
+        // 继承 SuperType 
+        SubType.prototype = new SuperType(); // 核心
+        SubType.prototype.getSubValue = function () {
+            return this.subproperty;
+        };
+        let instance = new SubType();
+        console.log(instance.getSuperValue()); // true
+    </script>
+    <script src="test.js">
+        // 寄生式组合继承
+        function inheritPrototype(subType, superType) {
+            let prototype = object(superType.prototype); // 创建对象
+            prototype.constructor = subType; // 增强对象 
+            subType.prototype = prototype; // 赋值对象
+        }
+        // 创建一个
+        function object(o) {
+            function F() { }
+            F.prototype = o;
+            return new F();
+        }
+
+        function SuperType(name) {
+            this.name = name;
+            this.colors = ["red", "blue", "green"];
+        }
+        SuperType.prototype.sayName = function () {
+            console.log(this.name);
+        };
+        function SubType(name, age) {
+            SuperType.call(this, name);
+            this.age = age;
+        }
+
+        inheritPrototype(SubType, SuperType);
+        SubType.prototype.sayAge = function () {
+            console.log(this.age);
+        };
+    </script>
+    <!-- <button style="height: 20px; color: pink; width: 150px">1111</button>
+    <span style="height: 50px; background-color: pink; width: 200px; height:88px">这是span</span>
+    <div style="height: 50px; background-color: pink; height:88px">这是div</div>
+    <span style="height: 20px; background-color: burlywood; ">spanspanspan<div
+            style="height: 50px; background-color: rgb(190, 222, 135); ">divdiv</div></span>
+    <div class="title">测试用页面</div>
+    <div class="impressed"> impressed 测试用页面</div>
+    <div class="embossed"> embossed 测试用页面</div>
+    <div class="ddd"> 3D 测试用页面</div>
+    <div> 3D 测试用页面</div> -->
+    <div class="ellipsis">
+        溢出文本测试在书里论证大脑有很强的“适应性”，也就是类似于伦敦出租车司机的海马体比正常人大；吉尼斯世界记录把很多我们自认为人体的极限都打破了；音乐家、盲人因为极度依赖手指的敏感性，大脑对应的部位分布的神经元或者是区域都会比一般人大，在这些例子之下，有一个“平衡感”的认知深深印入了我的脑子。书里提到的如果不“刻意”走出舒适圈，就无法进步，甚至会退步，因为身体有一个平衡体系，
+        努力维持一切保持原样，不论是你的肌肉强度、体重、技巧、能力。想要变强，各种意义上的，都要打破这个平衡。在我身上很好的例子是乒乓球和长跑。我一直处于很会打快球，但是不会接旋球。但是接旋球真的很难练，反切这种切过去都会太远，渐渐我几乎没再怎么碰乒乓球。后来我开始练长跑，一开始追求跑得远，拼意志力就好了，计数方式从操场8圈到25km。偶然接触跑团后，很多过来人说只要想一辈子跑下去，就要练习跑步姿势，要关注心率、步长。但在历经1年多的训练里面，始终不得其法，配速提不上去，心率还很高；甚至跑得还会变慢，这么四五年折腾下来，我变得没有那么喜欢跑步了。今年开始举铁，直到举铁我才发现运动的进步是可以被量化的，甚至这种多推3kg或者一组多做3个的成就感，会让我对每次训练都很期待，而不是靠着我的热爱和坚持在做。意识到自己每次到了瓶颈，没有再深入研究，其实浪费了很多自己可以突破“平衡系统”的机会。当然，现在想起来也不晚，我要打破身体构建的平衡系统，让身体的代谢、肌肉习惯新的平衡，让自己的脂肪和肌肉进入到新的平衡，体重进入到新的平衡态，所以我要在不受伤的情况下猛猛练，不断构建新的平衡系统。
+    </div>
+</body>
+
+</html>

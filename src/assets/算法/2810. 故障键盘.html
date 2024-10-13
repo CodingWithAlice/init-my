@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2810. 故障键盘</title>
+</head>
+<body>
+    <div>
+        你的笔记本键盘存在故障，每当你在上面输入字符 'i' 时，它会反转你所写的字符串。而输入其他字符则可以正常工作。
+
+        给你一个下标从 0 开始的字符串 s ，请你用故障键盘依次输入每个字符。
+
+        返回最终笔记本屏幕上输出的字符串。
+
+        条件：
+        1、1 <= s.length <= 100
+        2、s 由小写英文字母组成
+        3、s[0] != 'i'
+        
+        示例：
+        输入1: string -> 输出：rtsng
+        输入2: poiinter -> ponter
+        输入3: viwif -> wvf
+    </div>
+    <script>
+        var finalString = function(s) {
+            let index = 0; // 记录字符中最后一个 i 的下标
+            let times = 0; // 记录 i 出现的次数
+            for(let i = 0; i < s.length; i++) {
+                if(s[i] === 'i') {
+                    index = i;
+                    times ++;
+                }
+            }
+            // 将字符分隔
+            const temp = s.split('');
+            let left = temp.slice(0, index).filter((o) => {
+                return o !== 'i';
+            });
+            // ⚠️注意：考虑边界条件，字符串中没有 i，也就是 index = 0 的情况
+            let right = temp.slice(index === 0 ? index : index + 1, );
+            // 出现次数为奇数
+            if(times % 2 === 1) {
+                return left.reverse().concat(right).join('');
+            } else {
+                return left.concat(right).join('');
+            }
+        }
+        console.log('finalString1=', finalString('string'));
+        console.log('finalString2=', finalString('poiinter'));
+    </script>
+</body>
+</html>
