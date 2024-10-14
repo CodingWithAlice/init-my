@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>取消promise状态转换-封装</title>
+</head>
+
+<body>
+
+    <details>红宝书 P346 《期约取消》</details>
+    <button id="start">开始按钮</button>
+    <button id="cancel">取消按钮</button>
+</body>
+
+<script>
+    /**
+     * 理解：
+     * 类：CancelToken 类主要用于在初始化的时候，给实例 promise 属性 - 一个解决的期约
+     * 开始按钮：给「开始」按钮绑定一个定时器 timeId，在 delay 后自动将当前期约状态设置为 resolved
+     * 取消按钮：给「取消」按钮绑定取消函数 - 即类中的 promise 属性中的 cancelFn 的参数，点击后，触发执行，promise 属性状态改变为 resolve -> 触发绑定在类上的 promise 属性的 then 中的 onResolved 执行程序：clearTimeout 清理了定时器 timeId -> 当前期约状态依旧不变
+     * 核心：
+     * 类的 promise 属性，绑定了 then 方法，在状态切换后会清理定时器 clearTimeout 
+     * 将要转换的 promise 的转换（即执行 resolve() 或者执行 reject()）的时机放在一个定时器里面
+     * 只要清理了定时器，就可以取消 promise 的状态改变
+     * 而清理定时器的时机是点击按钮
+     * 要再次点击开始按钮，promise 的状态依旧可以改变，相当于依旧需要重新计时
+     * 
+    */
+    class CancelToken {
+        constructor(cancelFn) {
+            // new 的过程中，会把 promise 属性添加到实例 - promise 返回了一个promise
+            this.promise = new Promise((resolve, reject) => {
+                // 同步执行 cancelFn，参数为
+                cancelFn(() => {
+                    setTimeout(console.log, 0, "delay 取消");
+                    resolve();
+                });
+            });
+        }
+    }
+    const startButton = document.querySelector('#start');
+    const cancelButton = document.querySelector('#cancel');
+
+    function cancellableDelayedResolve(delay) {
+        setTimeout(console.log, 0, "设置 delay"); // 进入异步消息队列，并且第一个被执行
+        // 返回一个 Promise
+        return new Promise((resolve, reject) => {
+            // timeId 一个计时器 - 点击 start 按钮 delay 秒后
+            const timeId = setTimeout((() => {
+                setTimeout(console.log, 0, "delayed resolve");
+                resolve();
+            }), delay);
+
+            // 实例化一个 CancelToken 实例 - 传入函数，即初始化的 cancelFn
+            const cancelToken = new CancelToken((cancelCallback) => {
+                // 给取消按钮绑定函数 - 只要点击了取消按钮，就会执行 cancelFn 函数，即把 promise 状态切换为 resolve
+                cancelButton.addEventListener("click", cancelCallback);
+            });
+            // CancelToken 的实例的 promise 属性
+            cancelToken.promise.then(() => {
+                clearTimeout(timeId);
+            });
+        });
+    }
+    // 单机开始按钮 - 调用 cancellableDelayedResolve
+    startButton.addEventListener("click", () => cancellableDelayedResolve(3000));
+</script>
+
+</html>
