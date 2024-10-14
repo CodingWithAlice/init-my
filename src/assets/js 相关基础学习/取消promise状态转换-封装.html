@@ -67,5 +67,29 @@
     // 单机开始按钮 - 调用 cancellableDelayedResolve
     startButton.addEventListener("click", () => cancellableDelayedResolve(3000));
 </script>
+<script>
+    // 自己写，最简单的实现方式 - 没有用类
+    const startBtn = document.querySelector('#start');
+    const cancelBtn = document.querySelector('#cancel');
+
+    function returnP(delay) {
+        return new Promise((resolve, reject) => {
+            let cancelFunc = () => {
+                return Promise.resolve();
+            }
+
+            cancelFunc().then(() => {
+                clearTimeout(timeId);
+            })
+
+            const timeId = setTimeout(() => {
+                resolve();
+            }, delay);
+            cancelBtn.addEventListener('click', cancelFunc);
+        })
+    }
+
+    startBtn.addEventListener('click', returnP(2000));
+</script>
 
 </html>
