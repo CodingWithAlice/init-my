@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise进度通知</title>
+</head>
+
+<body>
+    <details>红宝书 第十一章 P346</details>
+    <img src="../../images/promise-process.jpeg" alt="">
+    <script>
+        // 扩展 Promise - 添加 notify 方法
+        class TrackablePromise extends Promise {
+            constructor(executor) { // 实例化的时候传入执行器
+                const notifyHandlers = [];
+                // super 可以调用父类构造函数 - 即 Promise
+                super(
+                    (resolve, reject) => {
+                        return executor(
+                            resolve,
+                            reject,
+                            (status) => {
+                                notifyHandlers.map((handler) => handler(status));
+                            }
+                        );
+                    }
+                );
+                this.notifyHandlers = notifyHandlers;
+            }
+            // notify 把传入的 handler 存储进数组中
+            notify(notifyHandler) {
+                this.notifyHandlers.push(notifyHandler);
+                return this;
+            }
+        }
+        // 实例化的时候 传入一个函数作为 executor
+        // 实例化结束后：实例 p 拥有的只有属性 notifyHandlers:[]，原型上有 notify constructor
+        let p = new TrackablePromise(
+            (resolve, reject, notifyFun) => {
+                function countdown(x) {
+                    if (x > 0) {
+                        notifyFun(`${20 * x}% remaining`);
+                        setTimeout(() => countdown(x - 1), 1000);
+                    } else {
+                        resolve();
+                    }
+                }
+                countdown(3);
+            }
+        );
+
+        // 调用 - 传入了一个定时器，打印 x
+        p.notify((x) => setTimeout(console.log, 0, 'progress:', x));
+        p.then(() => setTimeout(console.log, 0, 'completed'));
+    </script>
+</body>
+
+</html>
