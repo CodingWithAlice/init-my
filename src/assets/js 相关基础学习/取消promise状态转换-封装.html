@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>取消promise状态转换-封装</title>
+    <style>
+        .plan2 {
+            display: flex;
+        }
+    </style>
 </head>
 
 <body>
@@ -12,9 +17,15 @@
     <details>红宝书 P346 《期约取消》</details>
     <button id="start">开始按钮</button>
     <button id="cancel">取消按钮</button>
+    <div class="plan2">
+        方法二问题：
+        <img src="../../images/取消promise状态转换.png" alt="取消多次 如图">
+    </div>
+
 </body>
 
-<script>
+<script src="../a.js">
+    // 方法一
     /**
      * 理解：
      * 类：CancelToken 类主要用于在初始化的时候，给实例 promise 属性 - 一个解决的期约
@@ -68,28 +79,26 @@
     startButton.addEventListener("click", () => cancellableDelayedResolve(3000));
 </script>
 <script>
+    // 方法二
     // 自己写，最简单的实现方式 - 没有用类
+    // 存在问题：执行一次 returnP 就会导致 取消按钮 通过 addEventListener 绑定一个 cancelFunc 函数 -> 导致 取消按钮 上绑定多个 cancelFunc 函数 - 取消多次 如图 
     const startBtn = document.querySelector('#start');
     const cancelBtn = document.querySelector('#cancel');
 
     function returnP(delay) {
         return new Promise((resolve, reject) => {
             let cancelFunc = () => {
-                return Promise.resolve();
-            }
-
-            cancelFunc().then(() => {
                 clearTimeout(timeId);
-            })
+            }
 
             const timeId = setTimeout(() => {
                 resolve();
             }, delay);
-            cancelBtn.addEventListener('click', cancelFunc);
+            cancelBtn.addEventListener('click', cancelFunc); // 绑定多次
         })
     }
 
-    startBtn.addEventListener('click', returnP(2000));
+    startBtn.addEventListener('click', () => returnP(2000));
 </script>
 
 </html>
