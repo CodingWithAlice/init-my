@@ -10,7 +10,7 @@
 <body>
     <details>红宝书 第十一章 P346</details>
     <img src="../../images/promise-process.jpeg" alt="">
-    <script>
+    <script src="../a.js">
         // 扩展 Promise - 添加 notify 方法
         class TrackablePromise extends Promise {
             constructor(executor) { // 实例化的时候传入执行器
@@ -54,6 +54,47 @@
         // 调用 - 传入了一个定时器，打印 x
         p.notify((x) => setTimeout(console.log, 0, 'progress:', x));
         p.then(() => setTimeout(console.log, 0, 'completed'));
+    </script>
+    <script>
+        // 自己写
+        // 10.21 第一次 - 在类中用数组->没有时间差（重新理解逻辑）
+        class MyPromise extends Promise {
+            constructor(executor) {
+                console.log('executor=', executor);
+
+                const handlers = []
+                super((resolve, reject) => {
+                    return executor(resolve, reject, (status) => {
+                        handlers.map((handler) => handler(status));
+                    })
+
+                });
+                this.handlers = handlers;
+            }
+
+            notify(fun) {
+                this.handlers.push(fun);
+                return this;
+            }
+        }
+        const promise = new MyPromise((resolve, reject, notifyFun) => {
+            console.log('notifyFun=', notifyFun);
+
+            function countDown(n) {
+                if (n > 0) {
+                    // 第一次执行时，由于
+                    notifyFun(`${20 * n}% remained`);
+                    setTimeout(() => {
+                        countDown(n - 1)
+                    }, 1000);
+                } else {
+                    resolve();
+                }
+            }
+            countDown(5)
+        });
+        promise.notify((x) => setTimeout(console.log, 0, 'progress:', x));
+        promise.then(() => setTimeout(console.log, 0, 'completed'));
     </script>
 </body>
 
