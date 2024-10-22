@@ -62,14 +62,14 @@
             constructor(executor) {
                 console.log('executor=', executor);
 
-                const handlers = []
+const handlers = []
+                const arr = [];
                 super((resolve, reject) => {
-                    return executor(resolve, reject, (status) => {
-                        handlers.map((handler) => handler(status));
+                    return executor(resolve, reject, (notes) => {
+                        arr.map(it => it(notes))
                     })
-
-                });
-                this.handlers = handlers;
+                })
+                this.handlers = arr; // 传递的是 [] 的地址，此时 this.handlers 和 arr 指向同一个存储空间，值也就同步了
             }
 
             notify(fun) {
@@ -82,7 +82,6 @@
 
             function countDown(n) {
                 if (n > 0) {
-                    // 第一次执行时，由于
                     notifyFun(`${20 * n}% remained`);
                     setTimeout(() => {
                         countDown(n - 1)
