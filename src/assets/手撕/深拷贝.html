@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>递归-实现深拷贝</title>
+</head>
+
+<body>
+    <script>
+        // 利用 for 循环可以简单实现为
+        function deepCopy(target) {
+            // 判断对象是引用数据还是基础数据 - 基础数据直接返回
+            if (typeof target !== 'object' || target === null) {
+                return target
+            }
+            let copy;
+            if (Array.isArray(target)) {
+                copy = [];
+                for (let i = 0; i < target.length; i++) {
+                    copy[i] = deepCopy(target[i]);
+                }
+            } else {
+                copy = {};
+                for (let key in target) {
+                    if (target.hasOwnProperty(key)) {
+                        copy[key] = deepCopy(target[key]);
+                    }
+                }
+            }
+            return copy;
+        }
+        let origin = { "a": 1, "bb": 2, 2: "aaaa", v: { "a": 1 }, 0: { "a": 1, "b": 1 } };
+        // let origin = [1, 2, 32, 3, { "a": 1 }, { "a": 1, "b": 1 }];
+        // let origin = [1, 2, 32, 3, [1, 22], { "a": 1, "b": 1 }];
+        let res = deepCopy(origin);
+        console.log('res=',res ,res === origin);
+
+
+        // reduce 的问题在于[[]]数组嵌套数组时，被打平
+        // 数组
+        // if (Array.isArray(target)) {
+        //     return target.reduce((pre, cur) => {
+        //         return pre.concat(deepCopy(cur))
+        //     }, []);
+        // } else {
+        //     // 对象
+        //     return Object.keys(target).reduce((pre, cur) => { return Object.assign(pre, { [cur]: deepCopy(target[cur]) }) }, {})
+        // }
+    </script>
+</body>
+
+</html>
