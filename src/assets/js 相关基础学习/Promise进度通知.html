@@ -58,11 +58,9 @@
     <script>
         // 自己写
         // 10.21 第一次 - 在类中用数组->没有时间差（重新理解逻辑）
+        // 10.22 第二次 - 在类中 this.handlers 和 arr 的同步，使用的是按值传递（地址）
         class MyPromise extends Promise {
             constructor(executor) {
-                console.log('executor=', executor);
-
-const handlers = []
                 const arr = [];
                 super((resolve, reject) => {
                     return executor(resolve, reject, (notes) => {
@@ -78,8 +76,6 @@ const handlers = []
             }
         }
         const promise = new MyPromise((resolve, reject, notifyFun) => {
-            console.log('notifyFun=', notifyFun);
-
             function countDown(n) {
                 if (n > 0) {
                     notifyFun(`${20 * n}% remained`);
