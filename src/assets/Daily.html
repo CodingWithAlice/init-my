@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日复盘快捷入口</title>
+    <style>
+        .highlight {
+            background-color: yellow;
+        }
+
+        .red {
+            color: red;
+        }
+
+        .input {
+            height: 24px;
+        }
+    </style>
+</head>
+
+<body>
+    <section>
+        <div class="total" id="total"></div>
+        <div class="date" id="date"></div>
+        <div class="details" id="details"></div>
+        <button id="add"> 添加一项 </button>
+    </section>
+    <script>
+        // 第一行
+        function transTime(time) {
+            let hour = Math.floor(time / 60);
+            let min = time % 60;
+            if (hour === 0) {
+                return `${min}m`
+            }
+            return `${hour}h${min}m`
+        }
+        document.getElementById('total').innerHTML = `总计： ${transTime(209)} 阅读：${transTime(149)} ` + `<span class="highlight">前端：${transTime(59)}</span>`;
+        // 第二行
+        function getTime(type) {
+            let time = new Date();
+            switch (type) {
+                case 'month':
+                    return time.getMonth() + 1;
+                    break;
+                case 'day':
+                    return time.getDate() - 1;
+                    break;
+                case 'week':
+                    const han = ['一', '二', '三', '四', '五', '六', '日'];
+                    return han[time.getDay() - 2];
+                    break;
+            }
+        }
+        document.getElementById('date').innerHTML = `<span class="red">${getTime('month')}.${getTime('day')}</span> 周${getTime('week')}`;
+        // 第三行开始计数
+        function getLines() {
+            let newDiv = document.createElement('div');
+            const line = `
+            <input class="input" type="time"/> ->
+            <input class="input" type="time"/>
+            <input class="input" list="activities"/>
+            <datalist id="activities">
+                <option value="复盘"></option>
+                <option value="前端"></option>
+                <option value="TED"></option>
+                <option value="阅读"></option>
+                <option value="运动"></option>
+                <option value="睡觉"></option>
+            </datalist>
+            <span id="duration"></span>
+            `;
+            newDiv.innerHTML = line
+            return newDiv
+        }
+
+        let button = document.getElementById('add');
+        let details = document.getElementById('details');
+
+        details.appendChild(getLines());
+
+        // 添加一项活动
+        button.onclick = function () {
+            details.appendChild(getLines());
+        }
+
+        // 点击时间 计算区间学习时长 + 更改顶部总计时长
+        function getDuration(start, end) {
+            let min = end.split(':')[1] - start.split(':')[1];
+            let hour = end.split(':')[0] - start.split(':')[0];
+            return transTime(hour * 60 + min);
+        }
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('input', function () {
+                // 改变学习活动类型
+                if (!!this.list) {
+                    const parent = this.parentElement;
+                    const inputs = [...parent.childNodes].filter(it => it.nodeName === 'INPUT');
+                    const duration = [...parent.childNodes].filter(it => it.id === 'duration');
+                    // 取两个 input time 的时间
+                    if (!!inputs[0] && !!inputs[1]) {
+                        duration[0].innerText = getDuration(inputs[0].value, inputs[1].value);
+                    }
+                }
+            });
+        });
+        // 计算间隔时间
+
+    </script>
+</body>
+
+</html>
