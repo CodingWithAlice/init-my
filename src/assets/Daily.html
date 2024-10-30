@@ -17,6 +17,23 @@
         .input {
             height: 24px;
         }
+
+        .act {
+            width: 72px;
+        }
+
+        .duration {
+            font-size: 14px;
+            width: 42px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .gap {
+            color: blueviolet;
+            font-weight: 700;
+            font-size: 14px;
+        }
     </style>
 </head>
 
@@ -28,17 +45,38 @@
         <button id="add"> 添加一项 </button>
     </section>
     <script>
-        // 第一行
+        /**
+         * 参数：总分钟数
+         * 输出：按小时 分钟格式输出
+        */
         function transTime(time) {
             let hour = Math.floor(time / 60);
             let min = time % 60;
+            // 为了处理睡眠
+            hour = hour < 0 ? hour + 24 : hour;
+            min = min < 0 ? min + 60 : min;
             if (hour === 0) {
                 return `${min}m`
             }
+            if (min === 0) {
+                return `${hour}m`
+            }
             return `${hour}h${min}m`
         }
-        document.getElementById('total').innerHTML = `总计： ${transTime(209)} 阅读：${transTime(149)} ` + `<span class="highlight">前端：${transTime(59)}</span>`;
-        // 第二行
+        /**
+         * 参数：开始时间，结束时间
+         * 输出：按小时 分钟格式输出
+        */
+        function getDuration(start, end) {
+            let min = end.split(':')[1] - start.split(':')[1];
+            let hour = end.split(':')[0] - start.split(':')[0];
+            return { value: transTime(hour * 60 + min), numValue: hour * 60 + min };
+        }
+
+        /**
+         * 参数：时间展示类型
+         * 输出：输出【前一天】的数据
+        */
         function getTime(type) {
             let time = new Date();
             switch (type) {
@@ -54,60 +92,107 @@
                     break;
             }
         }
-        document.getElementById('date').innerHTML = `<span class="red">${getTime('month')}.${getTime('day')}</span> 周${getTime('week')}`;
-        // 第三行开始计数
-        function getLines() {
+        // 累加所有时间
+        function addTimes(arr) {
+            return transTime(arr.reduce((pre, cur) => pre + cur, 0))
+        }
+        // 计算第一行展示值
+        function getFirstLine(arr) {
+            return `总计： ${addTimes(arr[0])} 阅读：${addTimes(arr[1])} ` + `<span class="highlight">前端：${addTimes(arr[2])}</span>`
+        }
+        // 计算间隔时间
+        function getGapTime(id, starts, ends) {
+            return getDuration(ends[id - 1], starts[id]).value;
+        }
+
+        // 输入内容
+        function getLines(id) {
+            // 创建 Element
             let newDiv = document.createElement('div');
-            const line = `
-            <input class="input" type="time"/> ->
-            <input class="input" type="time"/>
-            <input class="input" list="activities"/>
-            <datalist id="activities">
-                <option value="复盘"></option>
-                <option value="前端"></option>
-                <option value="TED"></option>
-                <option value="阅读"></option>
-                <option value="运动"></option>
-                <option value="睡觉"></option>
-            </datalist>
-            <span id="duration"></span>
-            `;
-            newDiv.innerHTML = line
+            newDiv.innerHTML = line;
+
+            // 给每个添加监听事件
+            const inputs = [...newDiv.childNodes].filter(it => it.nodeName === 'INPUT');
+            inputs.forEach(input => {
+                input.addEventListener('input', function () {
+                    // 改变学习活动类型
+                    if (!!this.list) {
+                        const parent = this.parentElement;
+                        const inputs = [...parent.childNodes].filter(it => it.nodeName === 'INPUT');
+                        const duration = [...parent.childNodes].filter(it => it.id === 'duration');
+                        const gap = [...parent.childNodes].filter(it => it.id === 'gap');
+                        gapElements[id] = gap[0];
+
+                        // 取两个 input time 的时间计算学习时长
+                        if (!!inputs[0].value && !!inputs[1].value) {
+                            // 记录起始时间
+                            startTimes[id] = inputs[0].value;
+                            endTimes[id] = inputs[1].value;
+
+                            // 计算区间
+                            let result = getDuration(inputs[0].value, inputs[1].value)
+                            duration[0].innerText = result.value;
+                            // 保存总计时间 - 第一行展示刷新
+                            if (this.value !== activities.sleep) {
+                                totalTimes[id] = result.numValue;
+                            }
+                            if (this.value === activities.read) {
+                                readTime[id] = result.numValue;
+                            }
+                            if (this.value === activities.f) {
+                                fTime[id] = result.numValue;
+                            }
+                            totalElement.innerHTML = getFirstLine([totalTimes, readTime, fTime]);
+
+                            // 计算间隔时间
+                            if (id !== 0) {
+                                gapElements[id - 1].innerText = getGapTime(id, startTimes, endTimes);
+                            }
+                        }
+                    }
+                });
+            });
+
             return newDiv
         }
 
+
+        // 自定义 每行输入框
+        const activities = { review: "复盘", f: "前端", TED: "TED", read: "阅读", sport: "运动", sleep: "睡觉" };
+        const line = `
+            <input class="input" type="time"/> 
+            - <span class="duration" id="duration">----</span> ->
+            <input class="input" type="time"/>
+            <input class="input act" list="activities"/>
+            <datalist id="activities">
+                <option value=${activities.review}></option>
+                <option value=${activities.f}></option>
+                <option value=${activities.TED}></option>
+                <option value=${activities.read}></option>
+                <option value=${activities.sport}></option>
+                <option value=${activities.sleep}></option>
+            </datalist>
+            <span class="gap" id="gap"></span>
+            `;
+
+        // 第一行
+        let totalTimes = [0], readTime = [0], fTime = [0];
+        let startTimes = [0], endTimes = [0], gapElements = [];
+        const totalElement = document.getElementById('total');
+        totalElement.innerHTML = getFirstLine([totalTimes, readTime, fTime]);
+
+        // 第二行
+        document.getElementById('date').innerHTML = `<span class="red">${getTime('month')}.${getTime('day')}</span> 周${getTime('week')}`;
+
+        // 监听添加按钮
         let button = document.getElementById('add');
         let details = document.getElementById('details');
-
-        details.appendChild(getLines());
-
-        // 添加一项活动
+        let linesId = 0;
+        details.appendChild(getLines(linesId));
         button.onclick = function () {
-            details.appendChild(getLines());
+            linesId++;
+            details.appendChild(getLines(linesId));
         }
-
-        // 点击时间 计算区间学习时长 + 更改顶部总计时长
-        function getDuration(start, end) {
-            let min = end.split(':')[1] - start.split(':')[1];
-            let hour = end.split(':')[0] - start.split(':')[0];
-            return transTime(hour * 60 + min);
-        }
-        const inputs = document.querySelectorAll('input');
-        inputs.forEach(input => {
-            input.addEventListener('input', function () {
-                // 改变学习活动类型
-                if (!!this.list) {
-                    const parent = this.parentElement;
-                    const inputs = [...parent.childNodes].filter(it => it.nodeName === 'INPUT');
-                    const duration = [...parent.childNodes].filter(it => it.id === 'duration');
-                    // 取两个 input time 的时间
-                    if (!!inputs[0] && !!inputs[1]) {
-                        duration[0].innerText = getDuration(inputs[0].value, inputs[1].value);
-                    }
-                }
-            });
-        });
-        // 计算间隔时间
 
     </script>
 </body>
