@@ -29,6 +29,14 @@
             text-align: center;
         }
 
+        .att {
+            background-color: pink;
+            width: 48px;
+            display: inline-block;
+            text-align: center;
+            color: black !important;
+        }
+
         .gap {
             color: blueviolet;
             font-weight: 700;
@@ -59,7 +67,7 @@
                 return `${min}m`
             }
             if (min === 0) {
-                return `${hour}m`
+                return `${hour}h`
             }
             return `${hour}h${min}m`
         }
@@ -102,7 +110,7 @@
         }
         // 计算间隔时间
         function getGapTime(id, starts, ends) {
-            return getDuration(ends[id - 1], starts[id]).value;
+            return getDuration(ends[id - 1], starts[id]);
         }
 
         // 输入内容
@@ -132,6 +140,7 @@
                             // 计算区间
                             let result = getDuration(inputs[0].value, inputs[1].value)
                             duration[0].innerText = result.value;
+                            durations[id] = result.numValue;
                             // 保存总计时间 - 第一行展示刷新
                             if (this.value !== activities.sleep) {
                                 totalTimes[id] = result.numValue;
@@ -146,7 +155,16 @@
 
                             // 计算间隔时间
                             if (id !== 0) {
-                                gapElements[id - 1].innerText = getGapTime(id, startTimes, endTimes);
+                                let gapTime = getGapTime(id, startTimes, endTimes);
+                                gapElements[id - 1].innerText = gapTime.value;
+                                // 高亮提示
+                                console.log('id=', id, 'durations=', durations, gapTime.numValue);
+
+                                if (durations[id - 1] < gapTime.numValue) {
+                                    console.log(gapElements);
+
+                                    gapElements[id - 1].className += ' att';
+                                }
                             }
                         }
                     }
@@ -178,6 +196,7 @@
         // 第一行
         let totalTimes = [0], readTime = [0], fTime = [0];
         let startTimes = [0], endTimes = [0], gapElements = [];
+        let durations = [];
         const totalElement = document.getElementById('total');
         totalElement.innerHTML = getFirstLine([totalTimes, readTime, fTime]);
 
