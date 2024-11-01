@@ -9,13 +9,13 @@
 </head>
 
 <body>
-    <div>实现一个promisesetTimeout方法，该方法接收两个参数：第一个参数为promise，第二个参数为number类型；</div>
+    <div>实现一个promiseSetTimeout方法，该方法接收两个参数：第一个参数为promise，第二个参数为number类型；</div>
     <div>
         该方法作用为：
         <p>1、若promise在第二个参数给定的时间内处于pending状态，则返回一个rejected的promise，其reason为new Error('promise time out')</p>
         <p>2、若promise在第二个参数给定的时间内处于非pengding状态，则返回该promise</p>
     </div>
-    <script>
+    <script src="../a.js">
         // 超时函数，返回一个自定义睡眠时长的，用于抛出错误的 Promise
         let timeout = (time) => new Promise((resolve, reject) => {
             setTimeout(reject, time, new Error('promise time out'));
@@ -31,7 +31,7 @@
         })
         console.log(promiseSetTimeout(p(5000), 1000));
     </script>
-    <script>
+    <script src="'../b.js">
         // 另一种常见考题（比较简单）；实现一个自定义 sleep 时长的函数 -> 是解上面题的理解前提
         // 对比组1
         function getData() {
@@ -43,7 +43,7 @@
             console.log(res)
         })
         // 立刻输出 hello
-    // 原因：setTimeout 接收一个函数，现在传的是 func() - 其实传入的是函数执行后的返回值，需要立即执行拿到返回值 -> setTimeout 到期后，返回的是 func() 的结果 - 一个状态为 fullfilled 的 Promise
+        // 原因：setTimeout 接收一个函数，现在传的是 func() - 其实传入的是函数执行后的返回值，需要立即执行拿到返回值 -> setTimeout 到期后，返回的是 func() 的结果 - 一个状态为 fullfilled 的 Promise
         // 对比组2
         function getData() {
             return new Promise((resolve, reject) => {
@@ -54,7 +54,7 @@
             console.log(res)
         })
         // 2s后输出hello
-        
+
 
         // 参考对比组1+对比组2 - 实现一个 sleep 函数
         // 1s 后执行的代码
@@ -74,6 +74,25 @@
             return res
         }
         sleepAsync()
+    </script>
+    <script>
+        async function promiseSetTimeout2(promise, delay) { 
+            return await Promise.race([
+                promise, new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        reject(new Error('promise time out'));
+                    }, delay);
+                })
+            ])
+        }
+        let p1 = (time) => new Promise((resolve) => {
+            setTimeout(() => {
+                resolve('p1');
+            }, time)
+        })
+        promiseSetTimeout2(p1(500), 1000).then((res) => {
+            console.log('输出', res);
+        });
     </script>
 </body>
 

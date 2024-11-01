@@ -161,7 +161,7 @@
                             duration[0].innerText = result.value;
                             durations[id] = result.numValue;
                             // 保存总计时间 - 第一行展示刷新
-                            if (this.value !== activities.sleep) {
+                            if (totalException.indexOf(this.value) === -1) { // 不计入总时长
                                 totalTimes[id] = result.numValue;
                             }
                             if (this.value === activities.read) {
@@ -177,8 +177,6 @@
                                 let gapTime = getGapTime(id, startTimes, endTimes);
                                 gapElements[id - 1].innerText = gapTime.value;
                                 // 高亮提示
-                                console.log('id=', id, 'durations=', durations, gapTime.numValue);
-
                                 if (durations[id - 1] < gapTime.numValue) {
                                     console.log(gapElements);
 
@@ -195,7 +193,8 @@
 
 
         // 自定义 每行输入框
-        const activities = { review: "复盘", f: "前端", TED: "TED", read: "阅读", sport: "运动", sleep: "睡觉" };
+        const activities = { review: "复盘", f: "前端", TED: "TED", read: "阅读", sport: "运动", sleep: "睡觉" , movie: '电影'};
+        const totalException = [activities.sleep, activities.movie];
         const line = `
             <input class="input" type="time"/> 
             - <span class="duration" id="duration">----</span> ->
@@ -208,6 +207,7 @@
                 <option value=${activities.read}></option>
                 <option value=${activities.sport}></option>
                 <option value=${activities.sleep}></option>
+                <option value=${activities.movie}></option>
             </datalist>
             <span class="gap" id="gap"></span>
             `;
