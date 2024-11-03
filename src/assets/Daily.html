@@ -54,6 +54,7 @@
         p {
             margin: 2px 0;
         }
+
         .top {
             margin-top: 25px;
         }
@@ -61,18 +62,48 @@
         .title {
             font-weight: 500;
         }
+        .father {
+            display: flex;
+            justify-content: space-around;
+        }
     </style>
 </head>
 
 <body>
-    <section>
-        <h1>每日复盘</h1>
-        <h2>一、时间统计</h2>
-        <div class="total" id="total"></div>
-        <div class="date" id="date"></div>
-        <div class="details" id="details"></div>
-        <button id="add"> 添加一项 </button>
-    </section>
+    <div class="father">
+        <section>
+            <!-- <h1>每日复盘</h1> -->
+            <h2>一、时间统计</h2>
+            <div class="total" id="total"></div>
+            <div class="date" id="date"></div>
+            <div class="details" id="details"></div>
+            <button id="add"> 添加一项 </button>
+        </section>
+        <section class="outer">
+            <h2>二、事项统计</h2>
+            <p class="top">前端学习时长： <input class="short"> 🎉🎉🎉</p>
+            <p class="title">【复盘】</p>
+            <p>① 睡眠 + 运动： </p>
+            <section>
+                <textarea class="input long" type="text" name="sports" id="sports" placeholder="运动情况"></textarea>
+                <textarea class="input long" type="text" name="sleep" id="sleep" placeholder="睡眠情况"></textarea>
+            </section>
+            <p>② 前端： </p>
+            <textarea class="input long" type="text" name="f" id="f" placeholder="学习情况"></textarea>
+            <p>③ TED+阅读： </p>
+            <section>
+                <textarea class="input long" type="text" name="TED" id="TED" placeholder="TED"></textarea>
+                <textarea class="input long" type="text" name="read" id="read" placeholder="阅读情况"></textarea>
+            </section>
+            <p class="title">【问题发现与分析】</p>
+            <textarea class="input long" type="text" name="problem" id="problem" placeholder="问题分析"></textarea>
+            <p class="title">【推荐解决方案】</p>
+            <section>
+                <p>有效时间 50% 问题 <input class="short" /></p>
+                <textarea class="input long" type="text" name="fix" id="fix" placeholder="问题解决"></textarea>
+            </section>
+        </section>
+    </div>
     <script>
         /**
          * 参数：总分钟数
@@ -197,7 +228,7 @@
 
 
         // 自定义 每行输入框
-        const activities = { review: "复盘", f: "前端", TED: "TED", read: "阅读", sport: "运动", sleep: "睡觉" , movie: '电影'};
+        const activities = { review: "复盘", f: "前端", TED: "TED", read: "阅读", sport: "运动", sleep: "睡觉", movie: '电影' };
         const totalException = [activities.sleep, activities.movie];
         const line = `
             <input class="input" type="time"/> 
@@ -237,30 +268,7 @@
         }
 
     </script>
-    <section class="outer">
-        <h2>二、事项统计</h2>
-        <p class="top">前端学习时长： <input class="short"> 🎉🎉🎉</p>
-        <p class="title">【复盘】</p>
-        <p>① 睡眠 + 运动： </p>
-        <section>
-            <textarea class="input long" type="text" name="sports" id="sports" placeholder="运动情况"></textarea>
-            <textarea class="input long" type="text" name="sleep" id="sleep" placeholder="睡眠情况"></textarea>
-        </section>
-        <p>② 前端： </p>
-        <textarea class="input long" type="text" name="f" id="f" placeholder="学习情况"></textarea>
-        <p>③ TED+阅读： </p>
-        <section>
-            <textarea class="input long" type="text" name="TED" id="TED" placeholder="TED"></textarea>
-            <textarea class="input long" type="text" name="read" id="read" placeholder="阅读情况"></textarea>
-        </section>
-        <p class="title">【问题发现与分析】</p>
-        <textarea class="input long" type="text" name="problem" id="problem" placeholder="问题分析"></textarea>
-        <p class="title">【推荐解决方案】</p>
-        <section>
-            <p>有效时间 50% 问题 <input class="short" /></p>
-            <textarea class="input long" type="text" name="fix" id="fix" placeholder="问题解决"></textarea>
-        </section>
-    </section>
+
 </body>
 
 </html>
