@@ -59,13 +59,15 @@
         }
 
         .title {
-            font-weight: 700;
+            font-weight: 500;
         }
     </style>
 </head>
 
 <body>
     <section>
+        <h1>每日复盘</h1>
+        <h2>一、时间统计</h2>
         <div class="total" id="total"></div>
         <div class="date" id="date"></div>
         <div class="details" id="details"></div>
@@ -115,7 +117,9 @@
                     break;
                 case 'week':
                     const han = ['一', '二', '三', '四', '五', '六', '日'];
-                    return han[time.getDay() - 2];
+                    console.log('time.getDay()=', time.getDay());
+                    const index = time.getDay() > 1 ? time.getDay() - 2 : time.getDay() + 5;
+                    return han[index];
                     break;
             }
         }
@@ -234,6 +238,7 @@
 
     </script>
     <section class="outer">
+        <h2>二、事项统计</h2>
         <p class="top">前端学习时长： <input class="short"> 🎉🎉🎉</p>
         <p class="title">【复盘】</p>
         <p>① 睡眠 + 运动： </p>
@@ -255,7 +260,6 @@
             <p>有效时间 50% 问题 <input class="short" /></p>
             <textarea class="input long" type="text" name="fix" id="fix" placeholder="问题解决"></textarea>
         </section>
-
     </section>
 </body>
 
