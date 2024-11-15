@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AB函数同时，之后C</title>
+</head>
+
+<body>
+    <div>给出一个场景，要求A、B请求执行结束后，再执行C请求，其中A、B请求同时开始，怎么实现</div>
+    <script>
+        // 方法：Promise.all
+        async function A() { console.log(new Date().getTime(), 'A') }
+        async function B() { console.log(new Date().getTime(), 'B') }
+        function C() { console.log(new Date().getTime(), 'C') }
+
+        Promise.all([A(), B()]).then(C);
+        // 等价于
+        async function executor() {
+            await Promise.all([A(), B()]);
+            C();
+        }
+        // executor()
+
+        // const A2 = async () => await console.log(new Date().getTime(),'A2');
+        // const B2 = async () => await console.log(new Date().getTime(),'B2');
+        // const C2 = () => console.log(new Date().getTime(), 'C2');
+        // (async function All() {
+        //     await Promise.all([A2(), B2()]);
+        //     C2();
+        // })();
+
+        window.addEventListener('message', function (event) {
+            if (event.origin === 'http://origin-of-page-A.com') {
+                console.log('页面 B 收到的消息：', event.data);
+                event.source.postMessage('这是页面 B 的回复消息', event.origin);
+            }
+        });
+    </script>
+</body>
+
+</html>

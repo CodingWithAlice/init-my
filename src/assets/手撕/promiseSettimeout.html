@@ -15,21 +15,21 @@
         <p>1、若promise在第二个参数给定的时间内处于pending状态，则返回一个rejected的promise，其reason为new Error('promise time out')</p>
         <p>2、若promise在第二个参数给定的时间内处于非pengding状态，则返回该promise</p>
     </div>
-    <script src="../a.js">
+    <script>
         // 超时函数，返回一个自定义睡眠时长的，用于抛出错误的 Promise
         let timeout = (time) => new Promise((resolve, reject) => {
             setTimeout(reject, time, new Error('promise time out'));
         })
         // 实现核心：通过 Promise.race 来控制返回 Promise 状态
-        let promiseSetTimeout = (promise, time) => {
-            return Promise.race([promise, timeout(time)])
+        let promiseSetTimeout = async (promise, time) => {
+            return await Promise.race([promise, timeout(time)])
         }
 
         // 使用示例 - 构造一个指定时长后执行的 sleep 函数
         let p = (time) => new Promise((resolve) => {
             setTimeout(resolve, time, 'rps')
         })
-        console.log(promiseSetTimeout(p(5000), 1000));
+        console.log('输出', promiseSetTimeout(p(5000), 1000));
     </script>
     <script src="'../b.js">
         // 另一种常见考题（比较简单）；实现一个自定义 sleep 时长的函数 -> 是解上面题的理解前提
@@ -75,7 +75,7 @@
         }
         sleepAsync()
     </script>
-    <script>
+    <script src="../a.js">
         async function promiseSetTimeout2(promise, delay) { 
             return await Promise.race([
                 promise, new Promise((resolve, reject) => {

@@ -1,29 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>发起XHR的简易请求代码</title>
 </head>
+
 <body>
     <script>
-        function xml() {
-            // 创建对象
+        function xml(url) {
+            // 1: 新建 XMLHttpRequest 对象 - 进行网络请求操作
             const xhr = new XMLHttpRequest();
-            // 发起请求
-            const result = xhr.send();
-            // 处理返回信息
-            switch(result.status) {
-                case 0:
-                    break;
-                case 4:
-                    if(result.code === '200'){
+            // 2: 注册相关事件回调处理函数 - 异步返回后，执行的回调函数
+            xhr.onreadystatechange = function () {
+                // 处理返回信息
+                switch (result.readyState) {
+                    case 0: // 请求未初始化
+                        break;
+                    case 4: // done
+                        if (this.status == 200 || this.status == 304) {
+                            console.log(this.responseText);
+                        }
+                        break;
+                }
+            };
+            xhr.ontimeout = function () { console.log('ontimeout'); }
+            xhr.onerror = function () { console.log('onerror'); }
+            // 3.创建请求
+            xhr.open('GET', url, true); // true - 异步
 
-                    }
-            }
-            // 返回信息
-            return 
+            // 4: 配置参数
+            xhr.timeout = 3000;
+            xhr.responseType = "text" // 设置响应返回的数据格式
+            xhr.setRequestHeader("X_TEST", "qiu.alice")
+
+            // 5: 发送请求
+            xhr.send();
         }
     </script>
 </body>
+
 </html>

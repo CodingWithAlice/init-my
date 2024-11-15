@@ -262,10 +262,10 @@
         let details = document.getElementById('details');
         let linesId = 0;
         details.appendChild(getLines(linesId));
-        button.onclick = function () {
+        button.addEventListener('click', function () {
             linesId++;
             details.appendChild(getLines(linesId));
-        }
+        });
 
     </script>
 

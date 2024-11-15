@@ -87,9 +87,72 @@
         /* 高度=行高*行数-padding（webkit-line-clamp） */
         height: 60px;
     }
+
+    .floatB {
+        background-color: #6990e1;
+    }
+
+    .floatB::after {
+        content: '';
+        clear: both;
+        display: inline-block;
+    }
+
+    .f {
+        float: left;
+    }
+</style>
+<style>
+    .content1,
+    .content2 {
+        width: 100px;
+        height: 100px;
+    }
+
+    .content1 {
+        margin-bottom: 50px;
+        background-color: chocolate;
+        /* display: flex; */
+        overflow: hidden;
+
+    }
+
+    .content2 {
+        margin-top: 50px;
+        background-color: blue;
+        /* display: flex; */
+        overflow: hidden;
+
+    }
+
+    /* 解决方案父盒子 flex */
+    .wrap {
+        /* display: flex;
+        flex-direction: column; */
+    }
 </style>
 
 <body>
+    <!-- <button style="height: 20px; color: pink; width: 150px">1111</button>
+    <span style="height: 50px; background-color: pink; width: 200px; height:88px">这是span</span>
+    <div style="height: 50px; background-color: pink; height:88px">这是div</div>
+    <span style="height: 20px; background-color: burlywood; ">spanspanspan<div
+            style="height: 50px; background-color: rgb(190, 222, 135); ">divdiv</div></span>
+    <div class="title">测试用页面</div>
+    <div class="impressed"> impressed 测试用页面</div>
+    <div class="embossed"> embossed 测试用页面</div>
+    <div class="ddd"> 3D 测试用页面</div>
+    <div> 3D 测试用页面</div> -->
+    <!-- <div class="ellipsis">
+        div
+    </div> -->
+    <p>aaaaa</p>
+    <div class="floatB">
+        <div class="f"></div>
+    </div>
+    <p>bbbb</p>
+
+    <!-- for-of -->
     <script src="test.js">
         // 理解 for-of 执行循环的时候，第一次就是执行可迭代对象的 next()
         function* generatorA() {
@@ -126,6 +189,7 @@
         //     console.log('i=', i);
         // }
     </script>
+    <!-- 核心：理解 yield* 实现递归算法 -->
     <script src="test.js">
         // 核心：理解 yield* 实现递归算法
         function* nTimes(n) {
@@ -287,20 +351,377 @@
             console.log(this.age);
         };
     </script>
-    <!-- <button style="height: 20px; color: pink; width: 150px">1111</button>
-    <span style="height: 50px; background-color: pink; width: 200px; height:88px">这是span</span>
-    <div style="height: 50px; background-color: pink; height:88px">这是div</div>
-    <span style="height: 20px; background-color: burlywood; ">spanspanspan<div
-            style="height: 50px; background-color: rgb(190, 222, 135); ">divdiv</div></span>
-    <div class="title">测试用页面</div>
-    <div class="impressed"> impressed 测试用页面</div>
-    <div class="embossed"> embossed 测试用页面</div>
-    <div class="ddd"> 3D 测试用页面</div>
-    <div> 3D 测试用页面</div> -->
-    <div class="ellipsis">
-        溢出文本测试在书里论证大脑有很强的“适应性”，也就是类似于伦敦出租车司机的海马体比正常人大；吉尼斯世界记录把很多我们自认为人体的极限都打破了；音乐家、盲人因为极度依赖手指的敏感性，大脑对应的部位分布的神经元或者是区域都会比一般人大，在这些例子之下，有一个“平衡感”的认知深深印入了我的脑子。书里提到的如果不“刻意”走出舒适圈，就无法进步，甚至会退步，因为身体有一个平衡体系，
-        努力维持一切保持原样，不论是你的肌肉强度、体重、技巧、能力。想要变强，各种意义上的，都要打破这个平衡。在我身上很好的例子是乒乓球和长跑。我一直处于很会打快球，但是不会接旋球。但是接旋球真的很难练，反切这种切过去都会太远，渐渐我几乎没再怎么碰乒乓球。后来我开始练长跑，一开始追求跑得远，拼意志力就好了，计数方式从操场8圈到25km。偶然接触跑团后，很多过来人说只要想一辈子跑下去，就要练习跑步姿势，要关注心率、步长。但在历经1年多的训练里面，始终不得其法，配速提不上去，心率还很高；甚至跑得还会变慢，这么四五年折腾下来，我变得没有那么喜欢跑步了。今年开始举铁，直到举铁我才发现运动的进步是可以被量化的，甚至这种多推3kg或者一组多做3个的成就感，会让我对每次训练都很期待，而不是靠着我的热爱和坚持在做。意识到自己每次到了瓶颈，没有再深入研究，其实浪费了很多自己可以突破“平衡系统”的机会。当然，现在想起来也不晚，我要打破身体构建的平衡系统，让身体的代谢、肌肉习惯新的平衡，让自己的脂肪和肌肉进入到新的平衡，体重进入到新的平衡态，所以我要在不受伤的情况下猛猛练，不断构建新的平衡系统。
-    </div>
+    <script src="../a.js">
+        // setTimeout输出值的时候，如何实现i按序输出
+        for (var i = 0; i < 10; i++) {
+            setTimeout(function ten() {
+                console.log(i);
+            }, 10);
+        } // 输出结果是10个10
+        // 1、var->let
+        for (let i = 0; i < 10; i++) {
+            setTimeout(function ten() {
+                console.log(1111, i);
+            }, 10);
+        }
+        // 2、构建闭包传入
+        for (var i = 0; i < 10; i++) {
+            function ten(a) {
+                console.log(22222, a);
+            }
+            setTimeout(ten(i), 10);
+        }
+
+        for (var i = 0; i < 10; i++) {
+            (function (a) {
+                setTimeout(function ten() {
+                    console.log(3333, a);
+                }, 10)
+            })(i);
+        }
+        for (var i = 0; i < 10; i++) {
+            setTimeout(function ten() {
+                console.log(i);
+            }, 10, i);
+        }
+    </script>
+    <script src="../a.js">
+        async function promiseSetTimeout(promise, delay) {
+            const reject = Promise.reject(new Error('promise timeout'));
+            const sleep = function () { return new Promise(resolve => setTimeout(() => resolve('sleep'), delay)) };
+            let returnPromise = true;
+            await Promise.race([promise, sleep()]).then((res) => {
+                console.log(11111, res);
+                if (res === 'sleep') {
+                    returnPromise = false;
+                }
+            })
+
+            return returnPromise ? promise : reject;
+        }
+        let p1 = (time) => new Promise((resolve) => {
+            setTimeout(() => {
+                resolve('p1');
+            }, time)
+        })
+        promiseSetTimeout(p1(5000), 1000).then((res) => {
+            console.log('输出res', res);
+        });
+    </script>
+    <script src="../a.js">
+        function defer() {
+            let r1;
+            let r2;
+
+            const promise = new Promise < R > ((resolve, reject) => {
+                r1 = resolve;
+                r2 = reject;
+            });
+
+            return {
+                promise,
+                resolve: r1,
+                reject: r2,
+            };
+        }
+        async function retry(fn, times) {
+            // 复制
+            times = times.slice(0);
+            // 执行一次即返回
+            const ok = await fn();
+            if (ok) {
+                return;
+            }
+
+            const deferred = defer();
+
+            function next(i) {
+                const timeout = times[i];
+                if (!timeout) {
+                    deferred.resolve();
+                    return;
+                }
+
+                setTimeout(async () => {
+                    try {
+                        const ok = await fn();
+                        if (ok) {
+                            deferred.resolve();
+                            return;
+                        }
+                    } catch (error) {
+                        deferred.reject(error);
+                        return;
+                    }
+
+                    next(i + 1);
+                }, timeout);
+            }
+
+            next(0);
+            return deferred.promise;
+        }
+    </script>
+    <script src="../a.js">
+        // 柯里化
+        function curry(fun, ...args) {
+            if (args.length >= fun.length) {
+                return fun(...args)
+            } else {
+                return (...args2) => curry(fun, ...args, ...args2)
+            }
+        }
+        function curry1(fun) {
+            let args = [].slice(1).call(arguments);
+            let length = fun.length
+            return function () {
+                let newArgs = [...args, ...arguments];
+                if (newArgs.length >= length) {
+                    return fun(newArgs);
+                } else {
+                    return curry1.call(this, fun, newArgs);
+                }
+            }
+        }
+    </script>
+    <script src="../a.js">
+        // 更周全的深拷贝
+        function isObject(target) {
+            let type = typeof target;
+            return target !== null && (type === "object" || type === "function")
+        }
+        // Date、正则、Symbol 类型的特殊处理
+        function cloneSpecial(type, target) {
+            switch (type) {
+                case '[object Date]':
+                    return new Date(target.getTime())
+                    break;
+                case '[object RegExp]':
+                    return new RegExp(target.source, target.flags);
+                    break;
+                case '[object Symbol]':
+                    // 对于Symbol类型，直接返回一个新的具有相同描述的Symbol
+                    return Symbol.for(target.description);
+                    break;
+                default:
+                    let constructor = target.constructor;
+                    return new constructor(target);
+            }
+        }
+        function deepCopy(target, map = new WeakMap()) {
+            // 原始类型 - 递归结束条件
+            if (!isObject(target)) {
+                return target
+            }
+            // 具体引用类型
+            let type = Object.prototype.toString.call(target);
+            let copy;
+
+            // deepCloneTypes  都是需要每一项一一处理的
+            let deepCloneTypes = ['[object Map]', '[object Set]', '[object Array]', '[object Object]'];
+            // Date、正则、Symbol 类型的特殊处理
+            if (!deepCloneTypes.includes(type)) {
+                return cloneSpecial(type, target);
+            }
+            // 初始化 - new 操作符
+            let constructor = target.constructor;
+
+            copy = new constructor();
+
+            //  防止循环
+            if (map.get(target)) {
+                return target;
+            }
+            map.set(target, copy);
+
+            // set
+            if (type === '[object Set]') {
+                target.forEach(it => {
+                    copy.add(deepCopy(it));
+                });
+                return copy;
+            }
+
+            // map
+            if (type === '[object Map]') {
+                target.forEach((value, key) => {
+                    copy.set(key, deepCopy(value));
+                });
+                return copy;
+            }
+
+            if (Array.isArray(target)) {
+                for (let i = 0; i < target.length; i++) {
+                    copy[i] = deepCopy(target[i]);
+                }
+            } else {
+                for (let i in target) {
+                    if (target.hasOwnProperty(i)) {
+                        copy[i] = deepCopy(target[i]);
+                    }
+                }
+            }
+            return copy;
+        }
+        let a = () => { console.log(111) };
+        console.log(typeof a, deepCopy(a));
+
+    </script>
+    <script src="../a.js">
+        function isObject(t) {
+            const type = typeof t;
+            return t !== null && (type === 'object' || type === 'function')
+        }
+        function newOther(type, o) {
+            switch (type) {
+                case '[object Date]':
+                    return new Date(o.getTime());
+                    break;
+                case '[object RegExp]':
+                    return new RegExp(o.source, o.flags);
+                    break;
+                case '[object Symbol]':
+                    return Symbol.for(o.description)
+                    break;
+                default:
+                    const ctor = o.constructor;
+                    return new ctor(o);
+            }
+        }
+        // 深拷贝
+        function deepClone(target, m = new WeakMap()) {
+            // 退出条件 - 基本类型
+            if (!isObject(target)) {
+                return target;
+            }
+            const objectType = Object.prototype.toString.call(target);
+            let special = ['[object Map]', '[object Set]', '[object Object]', '[object Array]'];
+            if (!special.includes(objectType)) {
+                return newOther(objectType, target)
+            }
+
+            const ctor = target.constructor;
+            let res = new ctor();
+
+            if (m.get(target)) {
+                return target
+            }
+            m.set(target, res);
+
+            if (objectType === '[object Map]') {
+                target.forEach((value, key) => {
+                    res.set(key, deepClone(value, m))
+                })
+            }
+            if (objectType === '[object Set]') {
+                target.forEach((i) => {
+                    res.add(deepClone(i, m))
+                })
+            }
+            if (Array.isArray(target)) {
+                for (let i of target) {
+                    res[i] = deepClone(target[i], m);
+                }
+            } else {
+                for (let i in target) {
+                    res[i] = deepClone(target[i], m);
+                }
+            }
+            return res;
+        }
+        let obj = { 'a': 9 };
+        let b = { 1: 3, '2': { 'a': 9 }, 1: obj };
+        let clone = deepClone(b);
+        console.log(typeof b, clone, b === clone);
+    </script>
+    <script src="../a.js">
+        // 柯里化
+        function curry2(fn, ...args) {
+            if (args.length >= fn.length) {
+                return fn(...args);
+            } else {
+                return (...args1) => curry2(fn, ...args, ...args1);
+            }
+        }
+        function isObject1(o) {
+            const type = typeof o;
+            return o !== null && (type === 'object' || type === 'function');
+        }
+        function cloneOthers(type, o) {
+            switch (type) {
+                case '[object Date]':
+                    return new Date(o.getTime());
+                    break;
+                case '[object RegExp]':
+                    return new RegExp(o.source, o.flags);
+                    break;
+                case '[object Symbol]':
+                    return Symbol.for(o.description);
+                    break;
+                default:
+                    const ctor = o.constructor;
+                    return new ctor(o);
+            }
+        }
+        // 更周全的深度拷贝
+        function deepClone1(target, m = new WeakMap()) {
+            // 基础类型
+            if (!isObject1(target)) {
+                return target
+            }
+
+            // 具体引用类型
+            const specificType = Object.prototype.toString.call(target);
+            let restArr = ['[object Set]', '[object Map]', '[object Object]', '[object Array]'];
+            if (!restArr.includes(specificType)) {
+                return cloneOthers(specificType, target);
+            }
+
+            let ctor = target.constructor;
+            let res = new ctor();
+
+
+
+            if (m.get(target)) {
+                console.log('m=', m);
+                console.log('target=', target);
+                console.log('m.get(target)=', m.get(target));
+                return target // 返回的值有点问题
+            }
+            console.log('res=', res);
+            m.set(target, res); // 位置有点问题 - 引用类型，赋值地址
+
+            if (specificType === '[object Set]') {
+                target.forEach((v) => {
+                    res.add(deepClone1(v, m))
+                })
+            }
+            if (specificType === '[object Map]') {
+                target.forEach((v, key) => {
+                    res.set(key, deepClone1(v, m))
+                })
+            }
+            if (Array.isArray(target)) {
+                for (let i = 0, len = target.length; i < len; i++) { // 循环方式
+                    res[i] = deepClone1(target[i], m)
+                }
+            } else {
+                for (let i in target) { // 循环方式 - for...in 循环的是 key
+                    res[i] = deepClone1(target[i], m)
+                }
+            }
+            return res;
+        }
+        let obj1 = { name: 'Object 1' };
+        let obj2 = { name: 'Object 2' };
+        let array = [obj1, obj2];
+        obj1.reference = array;
+        let c = obj1;
+        console.log(111111, typeof c, deepClone1(c));
+    </script>
+    <script>
+
+    </script>
 </body>
 
 </html>

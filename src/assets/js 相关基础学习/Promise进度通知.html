@@ -9,6 +9,12 @@
 
 <body>
     <details>红宝书 第十一章 P346</details>
+    <div>
+        实现效果：实例化一个 p ，执行
+        `p2.notify((x) => setTimeout(console.log, 0, 'progress:', x));
+        p2.then(() => setTimeout(console.log, 0, 'completed'));`
+        可以每隔 1000ms 输出 "progress: 80% remained" -> 60% 40% 20% -> 直到 "completed"
+    </div>
     <img src="../../images/promise-process.jpeg" alt="">
     <script src="../a.js">
         // 扩展 Promise - 添加 notify 方法
@@ -55,10 +61,11 @@
         p.notify((x) => setTimeout(console.log, 0, 'progress:', x));
         p.then(() => setTimeout(console.log, 0, 'completed'));
     </script>
-    <script>
+    <script src="../a.js">
         // 自己写
         // 10.21 第一次 - 在类中用数组->没有时间差（重新理解逻辑）
         // 10.22 第二次 - 在类中 this.handlers 和 arr 的同步，使用的是按值传递（地址）
+        // 10.24 第三次 - 逻辑一致
         class MyPromise extends Promise {
             constructor(executor) {
                 const arr = [];
@@ -90,6 +97,72 @@
         });
         promise.notify((x) => setTimeout(console.log, 0, 'progress:', x));
         promise.then(() => setTimeout(console.log, 0, 'completed'));
+    </script>
+    <script src="../a.js">
+        class PPromise extends Promise {
+            constructor(executor) {
+                let list = [];
+                super((resolve, reject) => {
+                    return executor(resolve, reject, (status) => {
+                        list.map(it => it(status))
+                    })
+                })
+                this.arr = list;
+            }
+
+            notify(fun) {
+                this.arr.push(fun);
+                return this
+            }
+        }
+        const ppp = new PPromise((resolve, reject, func) => {
+            function count(n) {
+                if (n > 0) {
+                    func(`${20 * n} remained`);
+                    setTimeout(() => count(n - 1), 1000);
+                } else {
+                    resolve();
+                }
+            }
+            count(5);
+        });
+
+        ppp.notify((x) => setTimeout(console.log, 0, 'progress:', x));
+        ppp.then(() => setTimeout(console.log, 0, 'completed'));
+
+    </script>
+    <script src="../a.js">
+        class Promise2 extends Promise {
+            constructor(executor) {
+                let handlers = [];
+                super((resolve, reject) => {
+                    return executor(resolve, reject, (state) => {
+                        handlers.map(it => it(state));
+                    })
+                })
+                this.handlers = handlers;
+            }
+            notify(fun) {
+                this.handlers.push(fun);
+                return this;
+            }
+        }
+        let p2 = new Promise2((resolve, reject, notifyFun) => {
+            function countD(n) {
+                if (n > 0) {
+                    notifyFun(`${n * 20} remained`);
+                    setTimeout(() => {
+                        countD(n - 1)
+                    }, 1000);
+                } else {
+                    resolve();
+                }
+            }
+            countD(5);
+        })
+        // 调用 - 传入了一个定时器，打印 x
+        p2.notify((x) => setTimeout(console.log, 0, 'progress:', x));
+        p2.then(() => setTimeout(console.log, 0, 'completed'));
     </script>
 </body>
 
