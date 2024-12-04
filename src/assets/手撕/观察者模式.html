@@ -152,7 +152,7 @@
     <script>
         class EventE {
             constructor() {
-                super();
+                // super();
                 this.events = {};
                 this.max = 10;
             }
@@ -169,29 +169,34 @@
             }
 
             removeListener(event, listener) {
-                let index = this.events[event].indexOf(listener);
-                if (index > -1) {
-                    this.events[event].splice(index, 1);
-                    return true;
-                } else {
-                    return false;
+                if (Array.isArray(this.events[event])) {
+                    // 删除某个类别的事件
+                    if(!listener) {
+                        delete this.events[event];
+                    }
+                    // 删除某个回调
+                    let index = this.events[event].indexOf(listener);
+                    if (index > -1) {
+                        this.events[event].splice(index, 1);
+                    }
                 }
             }
 
             once(event, listener) {
-                let newLis = () => new Promise((resolve) => {
-                    listener();
-                    resolve();
-                }).then(() => {
-                    removeListener(event, listener)
-                });
-                addListener(event, newLis);
+                let newLis = (...args) => {
+                    listener(...args);
+                    this.removeListener(event, newLis);
+                }
+                this.addListener(event, newLis);
             }
 
-            emit(event, [arg1], [arg2]) {
+            emit(event) {
                 [].shift.call(arguments);
                 if (this.events[event]) {
-                    this.events[event].forEach((it, index) => it(arguments[index]))
+                    let staticEvents = [...this.events[event]];
+                    staticEvents.forEach((it, index) => it(arguments[index]))
+                } else {
+                    return false
                 }
             }
             // 如果你添加的监听器超过 10 个就会输出警告信息
@@ -199,6 +204,24 @@
                 this.max = n;
             }
         }
+
+        const emitter1 = new EventE();
+        var onceListener = function (args) {
+            console.log('我只能被执行一次', args, this);
+        }
+
+        var listener = function (args) {
+            console.log('我是一个listener', args, this);
+        }
+
+        emitter1.once('click', onceListener);
+        emitter1.addListener('click', listener);
+
+        emitter1.emit('click', '参数');
+        emitter1.emit('click');
+
+        emitter1.removeListener('click', listener);
+        emitter1.emit('click');
     </script>
 </body>
 
