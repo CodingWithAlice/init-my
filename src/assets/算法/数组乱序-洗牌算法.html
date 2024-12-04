@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洗牌算法</title>
+</head>
+
+<body>
+    <div>
+        题目：从最后一个元素开始，从数组中随机选出一个位置，交换，直到第一个元素。
+        let test = disorder([1, 2, 3, 4, 5, 6, 7]);
+        console.log('test=', test);
+    </div>
+    <script src="../a.js">
+        function disorder(arr) {
+            let cur = arr.length - 1;
+            while (cur >= 0) {
+                let random = parseInt(Math.random() * arr.length);
+                [arr[cur], arr[random]] = [arr[random], arr[cur]];
+                cur--;
+            }
+            return arr;
+        }
+        let test = disorder([1, 2, 3, 4, 5, 6, 7]);
+        console.log('test=', test);
+    </script>
+    <script>
+        function disorder1(cards) {
+            let length = cards.length;
+            for (let i = length - 1; i >= 0; i--) {
+                let randomIndex = parseInt(Math.random()*length);
+                [cards[i], cards[randomIndex]] = [cards[randomIndex], cards[i]];
+            }
+            return cards
+        }
+        console.log('test=', disorder1([1, 2, 3, 4, 5, 6, 7]));
+    </script>
+</body>
+
+</html>

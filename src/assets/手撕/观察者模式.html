@@ -19,7 +19,7 @@
 
         手动实现EventEmitter
     </div>
-    <script src="./a.js">
+    <script src="../a.js">
 
 
         // 🌹2.事件系统
@@ -87,7 +87,7 @@
 
 
     </script>
-    <script>
+    <script src="../a.js">
         class EventEmitter {
             constructor() {
                 this._max = 10;
@@ -121,7 +121,7 @@
                 exist.push(oneFun);
                 this.eventList[event] = exist;
             }
-            emit(event, ...args) {                
+            emit(event, ...args) {
                 let exist = this.eventList[event];
                 if (!exist) { return false }
                 exist.forEach(it => {
@@ -148,6 +148,57 @@
         emitter.removeListener('click', listener);
         emitter.emit('click');
 
+    </script>
+    <script>
+        class EventE {
+            constructor() {
+                super();
+                this.events = {};
+                this.max = 10;
+            }
+
+            addListener(event, listener) {
+                if (!this.events[event]) {
+                    this.events[event] = [listener]
+                } else {
+                    if (this.events[event].length > this.max) {
+                        throw Error('max number');
+                    }
+                    this.events[event].push(listener);
+                }
+            }
+
+            removeListener(event, listener) {
+                let index = this.events[event].indexOf(listener);
+                if (index > -1) {
+                    this.events[event].splice(index, 1);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            once(event, listener) {
+                let newLis = () => new Promise((resolve) => {
+                    listener();
+                    resolve();
+                }).then(() => {
+                    removeListener(event, listener)
+                });
+                addListener(event, newLis);
+            }
+
+            emit(event, [arg1], [arg2]) {
+                [].shift.call(arguments);
+                if (this.events[event]) {
+                    this.events[event].forEach((it, index) => it(arguments[index]))
+                }
+            }
+            // 如果你添加的监听器超过 10 个就会输出警告信息
+            setMaxListeners(n) {
+                this.max = n;
+            }
+        }
     </script>
 </body>
 

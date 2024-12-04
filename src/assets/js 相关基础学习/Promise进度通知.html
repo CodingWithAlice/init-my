@@ -98,71 +98,35 @@
         promise.notify((x) => setTimeout(console.log, 0, 'progress:', x));
         promise.then(() => setTimeout(console.log, 0, 'completed'));
     </script>
-    <script src="../a.js">
-        class PPromise extends Promise {
+    <script>
+        class newPromise25 extends Promise {
             constructor(executor) {
-                let list = [];
+                let handler = [];
                 super((resolve, reject) => {
-                    return executor(resolve, reject, (status) => {
-                        list.map(it => it(status))
+                    return executor(resolve, reject, (note) => {
+                        handler.map(it => it(note))
                     })
                 })
-                this.arr = list;
+                this.handler = handler;
             }
 
             notify(fun) {
-                this.arr.push(fun);
-                return this
+                this.handler.push(fun);
             }
         }
-        const ppp = new PPromise((resolve, reject, func) => {
-            function count(n) {
+        const p25 = new newPromise25((resolve, reject, notifyF) => {
+            function countDown25(n) {
                 if (n > 0) {
-                    func(`${20 * n} remained`);
-                    setTimeout(() => count(n - 1), 1000);
+                    notifyF(`${n * 20} remained`);
+                    setTimeout(() => countDown25(n - 1), 1000)
                 } else {
-                    resolve();
+                    resolve()
                 }
             }
-            count(5);
+            countDown25(5);
         });
-
-        ppp.notify((x) => setTimeout(console.log, 0, 'progress:', x));
-        ppp.then(() => setTimeout(console.log, 0, 'completed'));
-
-    </script>
-    <script src="../a.js">
-        class Promise2 extends Promise {
-            constructor(executor) {
-                let handlers = [];
-                super((resolve, reject) => {
-                    return executor(resolve, reject, (state) => {
-                        handlers.map(it => it(state));
-                    })
-                })
-                this.handlers = handlers;
-            }
-            notify(fun) {
-                this.handlers.push(fun);
-                return this;
-            }
-        }
-        let p2 = new Promise2((resolve, reject, notifyFun) => {
-            function countD(n) {
-                if (n > 0) {
-                    notifyFun(`${n * 20} remained`);
-                    setTimeout(() => {
-                        countD(n - 1)
-                    }, 1000);
-                } else {
-                    resolve();
-                }
-            }
-            countD(5);
-        })
-        // 调用 - 传入了一个定时器，打印 x
-        p2.notify((x) => setTimeout(console.log, 0, 'progress:', x));
-        p2.then(() => setTimeout(console.log, 0, 'completed'));
+        p25.notify((x) => setTimeout(console.log, 0, 'progress:', x));
+        p25.then(() => setTimeout(console.log, 0, 'completed'));
     </script>
 </body>
 
