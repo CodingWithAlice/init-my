@@ -9,7 +9,8 @@
 </head>
 
 <body>
-    <script>
+    <div>如何实现 `flat` 方法？多维数组=>一维数组</div>
+    <script src="../a.js">
         // 方法一：原 flat 数组
         // var flatFun = (arr) => {
         //     return arr.flat(0);
@@ -45,7 +46,7 @@
             return arrays.reduce((pre, cur) => {
                 // return pre.concat(Array.isArray(cur) ? flatFun(cur) : cur);
                 return (Array.isArray(cur) ? pre.concat(flatFun(cur)) : pre.concat(cur));
-            },[])
+            }, [])
         }
 
         // 测试用例
@@ -67,7 +68,65 @@
             console.log(`测试用例${index + 1}未通过测试，入参为${item.key},预期结果为${item.value},实际结果为${flatFun(item.key)}`);
         })
     </script>
+    <script>
+        // 1
+        function myFlat1(arr) {
+            return arr.flat(+Infinity) // 全部拍平
+        }
+        // 2 forEach遍历
+        function myFlat2(target) {
+            if (!Array.isArray(target)) {
+                return [target]; // 同时在这边返回长度为1的数组类型
+            }
+            let res = [];
+            target.forEach(it => res.push(...myFlat2(it))); // 这边注意一定要加 ... 因为返回的res都是数组
+            return res;
+        }
+        function flatFun(arr) {
+            let res = [];
+            arr.forEach(item => {
+                res = res.concat(Array.isArray(item) ? flatFun(item) : item)
+                // if (Array.isArray(item)) {
+                //     res = res.concat(flatFun(item));
+                // } else {
+                //     res.push(item);
+                // }
+            });
+            return res;
+        }
+        // 3
+        function myFlat3(target) {
+            // if (!Array.isArray(target)) {
+            //     return [target]
+            // }
+            // return target.reduce((pre, cur) => {
+            //     pre.push(...myFlat3(cur));
+            //     return pre;
+            // }, [])
+            // 简写成
+            return target.reduce((pre, cur) => {
+                return pre.concat(Array.isArray(cur) ? myFlat3(cur) : cur);
+            }, [])
+        }
+        // 4
+        function flattenByDeep(arr, deep = 1) {
+            return arr.reduce((pre, cur) =>
+                pre.concat(Array.isArray(cur) && deep > 1 ? flattenByDeep(cur, deep - 1) : cur)
+                // Array.isArray(cur) && deep > 1 ?
+                //     pre.concat(flattenByDeep(cur, deep - 1)) :
+                //     pre.concat(cur)
+                // 
+                , []
+            )
+        }
 
+        let arr = [1, 2, [3, 4, [5, 6], 7, [8, [9]], 10], 11];
+        // console.log('1=', myFlat1(arr));
+        // console.log('2=', flatFun(arr));
+        // console.log('3=', myFlat3(arr));
+        console.log(flattenByDeep(arr, 1));
+
+    </script>
 </body>
 
 </html>

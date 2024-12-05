@@ -1,69 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>数组去重</title>
 </head>
-<body>
-    <script>
-    // 自己刷题
-    // 方法一：hash存储
-    // var unique = (arr) => {
-    //     let hash = {};
-    //     let res = [];
-    //     // for (let i = 0; i < arr.length; i++) {
-    //     //     if(!hash[arr[i]]) {
-    //     //         hash[arr[i]] = true;
-    //     //         res.push(arr[i]);
-    //     //     }
-    //     // }
-    //     // 数组 - for-of；对象 - for-in
-    //     for (let item of arr) {
-    //         if(!hash[item]) {
-    //             hash[item] = true;
-    //             res.push(item);
-    //         }
-    //     }
-    //     return res
-    // }
-    // 方法二：遍历数组 - indexOf/includes
-    var unique = (arr) => {
-        let res = [];
-        for(let item of arr) {
-            // if(res.indexOf(item) === -1) {
-            //     res.push(item);
-            // }
-            if(!res.includes(item)) {
-                res.push(item);
-            }
-        }
-        return res
-    }
-    // 方法三：Set
-    var unique = (arr) => {
-        return [...new Set(arr)]
-    }
 
-    // 测试
-    var arr = [1, 23, 34, 45, 1, 6, 4, 23];
-    let res = unique(arr); // [1, 23, 34, 45, 6, 4]
-    console.log('res=', res);
+<body>
+    <script src="../a.js">
+        // 自己刷题
+        // 方法一：hash存储
+        // var unique = (arr) => {
+        //     let hash = {};
+        //     let res = [];
+        //     // for (let i = 0; i < arr.length; i++) {
+        //     //     if(!hash[arr[i]]) {
+        //     //         hash[arr[i]] = true;
+        //     //         res.push(arr[i]);
+        //     //     }
+        //     // }
+        //     // 数组 - for-of；对象 - for-in
+        //     for (let item of arr) {
+        //         if(!hash[item]) {
+        //             hash[item] = true;
+        //             res.push(item);
+        //         }
+        //     }
+        //     return res
+        // }
+        // 方法二：遍历数组 - indexOf/includes
+        var unique = (arr) => {
+            let res = [];
+            for (let item of arr) {
+                // if(res.indexOf(item) === -1) {
+                //     res.push(item);
+                // }
+                if (!res.includes(item)) {
+                    res.push(item);
+                }
+            }
+            return res
+        }
+        // 方法三：Set
+        var unique = (arr) => {
+            return [...new Set(arr)]
+        }
+
+        // 测试
+        var arr = [1, 23, 34, 45, 1, 6, 4, 23];
+        let res = unique(arr); // [1, 23, 34, 45, 6, 4]
+        console.log('res=', res);
     </script>
-    <script>
+    <script src="../a.js">
         // 蚂蚁一面
         //  1.数组去重 - 存在字符串（至少三种方法）
         //  [2, '2', 3, 4, 5, 5]
         function unque(arr) {
-           // 哈希 - new Map ，不能用 Object，因为存储key只有字符串格式
-           // 遍历+判断 indexOf 是否一致
-           // new Set
+            // 哈希 - new Map ，不能用 Object，因为存储key只有字符串格式
+            // 遍历+判断 indexOf 是否一致
+            // new Set
         }
     </script>
     <div>
         已经整理过的理论方法
-        <a href="https://codingwithalice.github.io/2019/07/16/%E6%95%B0%E7%BB%84%E5%8E%BB%E9%87%8D-%E7%AE%97%E6%B3%95%E6%95%B4%E7%90%86/">数组去重（算法整理）</a> 
+        <a
+            href="https://codingwithalice.github.io/2019/07/16/%E6%95%B0%E7%BB%84%E5%8E%BB%E9%87%8D-%E7%AE%97%E6%B3%95%E6%95%B4%E7%90%86/">数组去重（算法整理）</a>
     </div>
+    <script>
+        // 1
+        function unique1(arr) {
+            return [...new Set(arr)]
+        }
+        // 2
+        function unique2(arr) {
+            let res = [];
+            arr.forEach(i => {
+                if (!res.includes(i)) {
+                    res.push(i)
+                }
+            });
+            return res;
+        }
+        // 3
+        function unique3(arr) {
+            let hash = {};
+            return arr.filter((it) => hash[it] ? false : hash[it] = true)
+            // return arr.filter((it) => {
+            //     let res = hash[it] ? false : (hash[it] = true);
+            //     console.log('it=', it, '=', res)
+            //     return res
+            // })
+            // let res = [];
+            // arr.forEach(i => {
+            //     if(!hash[i]) {
+            //         hash[i] = true;
+            //         res.push(i);
+            //     }
+            // });
+            // return res
+        }
+
+
+        let testArr = [1, 2, 3, 1, 3, 4, 5];
+        // console.log('unique1', unique1(testArr));
+        // console.log('unique2', unique2(testArr));
+        console.log('unique3', unique3(testArr));
+
+    </script>
 </body>
+
 </html>
