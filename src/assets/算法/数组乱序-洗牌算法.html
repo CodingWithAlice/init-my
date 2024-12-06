@@ -27,16 +27,28 @@
         let test = disorder([1, 2, 3, 4, 5, 6, 7]);
         console.log('test=', test);
     </script>
-    <script>
+    <script src="../a.js">
         function disorder1(cards) {
             let length = cards.length;
             for (let i = length - 1; i >= 0; i--) {
-                let randomIndex = parseInt(Math.random()*length);
+                let randomIndex = parseInt(Math.random() * length);
                 [cards[i], cards[randomIndex]] = [cards[randomIndex], cards[i]];
             }
             return cards
         }
         console.log('test=', disorder1([1, 2, 3, 4, 5, 6, 7]));
+    </script>
+    <script>
+        function shuffle(arr) {
+            let length = arr.length;
+            for (let i = length - 1; i >= 0; i--) {
+                let random = parseInt(Math.random() * length);
+                [arr[i], arr[random]] = [arr[random], arr[i]]
+            }
+            return arr;
+        }
+        let test1 = shuffle([1, 2, 3, 4, 5, 6, 7]);
+        console.log('test1=', test1);
     </script>
 </body>
 

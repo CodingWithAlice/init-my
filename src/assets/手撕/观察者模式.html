@@ -149,7 +149,7 @@
         emitter.emit('click');
 
     </script>
-    <script>
+    <script src="../a.js">
         class EventE {
             constructor() {
                 // super();
@@ -171,7 +171,7 @@
             removeListener(event, listener) {
                 if (Array.isArray(this.events[event])) {
                     // 删除某个类别的事件
-                    if(!listener) {
+                    if (!listener) {
                         delete this.events[event];
                     }
                     // 删除某个回调
@@ -222,6 +222,74 @@
 
         emitter1.removeListener('click', listener);
         emitter1.emit('click');
+    </script>
+    <script>
+        class EventEmit {
+            constructor() {
+                this.events = {};
+                this._max = 10;
+            }
+            addListener(event, listener) {
+                if (!this.events[event]) {
+                    this.events[event] = [listener];
+                } else {
+                    this.events[event].push(listener);
+                    if (this.events[event].length > this._max) {
+                        throw Error('max age')
+                    }
+                }
+            }
+            removeListener(event, listener) {
+                if (Array.isArray(this.events[event])) {
+                    if (!listener) {
+                        delete this.events[event]
+                    } else {
+                        let index = this.events[event].indexOf(listener);
+                        index > -1 && this.events[event].splice(index, 1);
+                    }
+                }
+            }
+            once(event, listener) {
+                let self = this;
+                const onceFunc = function (...args) {
+                    listener(...args);
+                    self.removeListener(event, onceFunc);
+                }
+                this.addListener(event, onceFunc);
+            }
+            emit(event) {
+                [].shift.call(arguments);
+
+                if (this.events[event]) {
+                    let events = [...this.events[event]]; // once 导致 events 动态变化造成异常
+                    events.forEach((it, index) => it(arguments[index]))
+                } else {
+                    return false
+                }
+            }
+            setMaxListeners(n) {
+                this._max = n;
+            }
+        }
+
+        const emitter2 = new EventEmit();
+        var onceListener = function (args) {
+            console.log('我只能被执行一次', args, this);
+        }
+
+        var listener = function (args) {
+            console.log('我是一个listener', args, this);
+        }
+
+        emitter2.once('click', onceListener);
+        emitter2.addListener('click', listener);
+
+        emitter2.emit('click', '参数');
+        emitter2.emit('click');
+        emitter2.emit('click');
+
+        emitter2.removeListener('click', listener);
+        emitter2.emit('click');
     </script>
 </body>
 

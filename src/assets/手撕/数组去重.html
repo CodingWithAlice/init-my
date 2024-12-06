@@ -68,7 +68,7 @@
         <a
             href="https://codingwithalice.github.io/2019/07/16/%E6%95%B0%E7%BB%84%E5%8E%BB%E9%87%8D-%E7%AE%97%E6%B3%95%E6%95%B4%E7%90%86/">数组去重（算法整理）</a>
     </div>
-    <script>
+    <script src="../a.js">
         // 1
         function unique1(arr) {
             return [...new Set(arr)]
@@ -108,6 +108,21 @@
         // console.log('unique2', unique2(testArr));
         console.log('unique3', unique3(testArr));
 
+    </script>
+    <script>
+        // 1 Set
+        function one1(arr) {
+            return [...new Set(arr)]
+        }
+        // 2 filter+indexOf
+        function one2(arr) {
+            return arr.filter((it, index) => arr.indexOf(it) === index);
+        }
+        // 3 hash
+        function one3(arr) {
+            let hash = {};
+            return arr.filter(it => !hash[it] ? false : hash[it] = true)
+        }
     </script>
 </body>
 
