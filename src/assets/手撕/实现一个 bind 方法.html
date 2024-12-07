@@ -33,11 +33,14 @@
         //     }
         // }
         Function.prototype.newBind = function (context) {
-            let self = this; // 调用 bind 的函数
+            let func = this; // 调用 bind 的函数
             let args = [].slice.call(arguments, 1); // 调用 bind 时的参数
-            return function() {
-                // self.apply(fun, [].concat.apply([].slice.call(arguments), args));
-                self.apply(context, [...arguments,...args]);
+            return function F(...args2) {
+                // 判断是否用于构造函数
+                if (func instanceof F) {
+                    return new func(...args2, ...args)
+                }
+                func.apply(context, [...args2, ...args]);
             }
         }
         let b = 'window中b';
@@ -45,7 +48,7 @@
             b: 'c中b',
         }
         function newFun() {
-            console.log('newFun中的 arguments=',arguments);
+            console.log('newFun中的 arguments=', arguments);
             console.log('this.b 取得是c中的b么？=', this.b);
         }
 
