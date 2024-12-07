@@ -319,7 +319,7 @@
         });
 
     </script>
-    <script>
+    <script src="../a.js">
         var Status = {
             pending: 'pending',
             resolve: 'fulfilled',
@@ -357,7 +357,7 @@
         }
         MyPromise1.prototype.then = function (onResolved, onRejected) {
             onResolved = typeof onResolved === 'function' ? onResolved : value => value;
-            onRejected = typeof onRejected === 'function' ? onRejected : reason => { throw reason };    
+            onRejected = typeof onRejected === 'function' ? onRejected : reason => { throw reason };
 
             const promise2 = new MyPromise1((resolve, reject) => {
                 const resolvedFunc = () => {
@@ -495,6 +495,115 @@
         // MyPromise1.resolve('resolved value').then(value => {
         //     console.log('resolve success:', value);
         // });
+    </script>
+    <script>
+        let statusEnum = {
+            resolve: 'fulfilled',
+            reject: 'rejected',
+            pending: 'pending'
+        }
+        function MyP(executor) {
+            this.status = statusEnum.pending;
+            this.value = undefined;
+            this.reason = undefined;
+            this.resolvedCallbacks = [];
+            this.rejectedCallbacks = [];
+
+            const resolve = (value) => {
+                if (this.status === statusEnum.pending) {
+                    this.status = statusEnum.resolve;
+                    this.value = value;
+                    this.resolvedCallbacks.forEach(it => it(this.value));
+                }
+            }
+            const reject = (reason) => {
+                if (this.status === statusEnum.pending) {
+                    this.status = statusEnum.reject;
+                    this.reason = reason;
+                    this.rejectedCallbacks.forEach(it => it(this.reason));
+                }
+            }
+            try {
+                executor(resolve, reject)
+            } catch (e) {
+                reject(e)
+            }
+        }
+        MyP.prototype.then = function (onFulfilled, onRejected) {
+            const self = this;
+            onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value;
+            onRejected = typeof onRejected === 'function' ? onRejected : reason => { throw reason };
+
+            return new MyP((resolve, reject) => {
+                function onResolveFunc() {
+                    try {
+                        const res = onFulfilled(self.value)
+                        resolve(res);
+                    } catch (e) {
+                        reject(e)
+                    }
+                }
+                function onRejectFunc() {
+                    try {
+                        const res = onRejected(self.reason)
+                        resolve(res);
+                    } catch (e) {
+                        reject(e)
+                    }
+                }
+
+                switch (self.status) {
+                    case statusEnum.resolve:
+                        setTimeout(onResolveFunc, 0);
+                        break;
+                    case statusEnum.reject:
+                        setTimeout(onRejectFunc, 0);
+                        break;
+                    case statusEnum.pending:
+                        self.resolvedCallbacks.push(() => setTimeout(onResolveFunc, 0));
+                        self.rejectedCallbacks.push(() => setTimeout(onRejectFunc, 0));
+                        break;
+                }
+            })
+        }
+        MyP.prototype.catch = function (onRejected) {
+            return this.then(null, onRejected);
+        }
+        MyP.prototype.finally = function (callback) {
+            return this.then(value => { callback() }, // ???
+                reason => { callback() })
+        }
+        MyP.resolve = function (value) {
+            return new MyP((resolve, reject) => {
+                if (value instanceof MyP) {
+                    // 传入的如果是一个 promise，会把状态和值传递下去
+                    value.then(resolve, reject)
+                } else {
+                    resolve(value)
+                }
+            })
+        }
+        MyP.reject = function (reason) {
+            return new MyP((resolve, reject) => {
+                reject(reason);
+            })
+        }
+        MyP.all = function (arr) {
+            return new MyP((resolve, reject) => {
+                arr.reduce((pre, cur, index) => {
+                    cur.then(res => {
+                        pre.push(res);
+                        index === arr.length - 1 && resolve(pre);
+                    }, e => reject(e))
+                    return pre;
+                }, [])
+            })
+        }
+        MyP.race = function (arr) {
+            return new MyP((resolve, reject) => {
+                arr.forEach(it => MyP.resolve(it).then(resolve, reject))
+            })
+        }
     </script>
 </body>
 
