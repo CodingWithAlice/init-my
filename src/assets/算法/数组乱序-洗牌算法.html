@@ -38,7 +38,7 @@
         }
         console.log('test=', disorder1([1, 2, 3, 4, 5, 6, 7]));
     </script>
-    <script>
+    <script src="../a.js">
         function shuffle(arr) {
             let length = arr.length;
             for (let i = length - 1; i >= 0; i--) {
@@ -49,6 +49,18 @@
         }
         let test1 = shuffle([1, 2, 3, 4, 5, 6, 7]);
         console.log('test1=', test1);
+    </script>
+    <script>
+        function shuffleCards(arr) {
+            let length = arr.length;
+            for (let i = length - 1; i >= 0; i--) {
+                let random = parseInt(Math.random() * length);
+                [arr[i], arr[random]] = [arr[random], arr[i]]
+            }
+            return arr
+        }
+        let test2 = shuffleCards([1, 2, 3, 4, 5, 6, 7]);
+        console.log('test2=', test2);
     </script>
 </body>
 

@@ -223,7 +223,7 @@
         emitter1.removeListener('click', listener);
         emitter1.emit('click');
     </script>
-    <script>
+    <script src="../a.js">
         class EventEmit {
             constructor() {
                 this.events = {};
@@ -290,6 +290,75 @@
 
         emitter2.removeListener('click', listener);
         emitter2.emit('click');
+    </script>
+    <script>
+        class EventEmitter1 {
+            constructor() {
+                this.events = {};
+                this._max = 10;
+            }
+            addListener(event, listener) {
+                if (!this.events[event]) {
+                    this.events[event] = [listener];
+                } else {
+                    this.events[event].push(listener);
+                    if (this.events[event].length >= 10) {
+                        throw Error('max capacity')
+                    }
+                }
+            }
+            removeListener(event, listener) {
+                if (!listener) {
+                    delete this.events[event];
+                } else {
+                    if (Array.isArray(this.events[event])) {
+                        let index = this.events[event].indexOf(listener);
+                        index > -1 && this.events[event].splice(index, 1);
+                    }
+                }
+            }
+            once(event, listener) {
+                let onceFun = (...args) => {                    
+                    listener(...args);
+                    this.removeListener(event, onceFun);
+                }
+                this.addListener(event, onceFun);
+            }
+            emit(event) {
+                [].shift.call(arguments);
+                if (Array.isArray(this.events[event])) {
+                    let staticEvents = [...this.events[event]];
+                    staticEvents.forEach((it, index) => {
+                        console.log('staticEvents=', staticEvents, 'this=', this.events[event]);
+                        
+                        let args = arguments[index];
+                        Array.isArray(args) ? it(...args) : it(args);
+                    })
+                } else {
+                    return false
+                }
+            }
+            setMaxListeners(n) {
+                this._max = n;
+            }
+        }
+        const emitter11 = new EventEmitter1();
+        var onceListener = function (args) {
+            console.log('我只能被执行一次', args, this);
+        }
+
+        var listener = function (args) {
+            console.log('我是一个listener', args, this);
+        }
+
+        emitter11.once('click', onceListener);
+        emitter11.addListener('click', listener);
+
+        emitter11.emit('click', ['参数']);
+        // emitter11.emit('click');
+
+        // emitter11.removeListener('click', listener);
+        // emitter11.emit('click');
     </script>
 </body>
 

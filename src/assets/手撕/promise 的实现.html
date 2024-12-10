@@ -496,7 +496,7 @@
         //     console.log('resolve success:', value);
         // });
     </script>
-    <script>
+    <script src="../a.js">
         let statusEnum = {
             resolve: 'fulfilled',
             reject: 'rejected',
@@ -602,6 +602,119 @@
         MyP.race = function (arr) {
             return new MyP((resolve, reject) => {
                 arr.forEach(it => MyP.resolve(it).then(resolve, reject))
+            })
+        }
+    </script>
+    <script>
+        let S = {
+            pending: 'pending',
+            resolve: 'fulfilled',
+            reject: 'rejected'
+        }
+        function MyPromise2(executor) {
+            let self = this;
+            self.status = S.pending;
+            self.value = undefined;
+            self.reason = undefined;
+            self.resolvedQueue = [];
+            self.rejectedQueue = [];
+
+            function resolve(value) {
+                if (self.status === S.pending) {
+                    self.status = S.resolve;
+                    self.value = value;
+                    self.resolvedQueue.forEach(it => it(value));
+                }
+            }
+            function reject(reason) {
+                if (self.status === S.pending) {
+                    self.status = S.reject;
+                    self.reason = reason;
+                    self.rejectedQueue.forEach(it => it(reason));
+                }
+            }
+            try {
+                executor(resolve, reject)
+            } catch (e) {
+                reject(e)
+            }
+        }
+        MyPromise2.prototype.then = function (onResolved, onRejected) {
+            function isFun(t) {
+                return typeof t === 'function';
+            }
+            onResolved = isFun(onResolved) ? onResolved : value => value;
+            onRejected = isFun(onRejected) ? onRejected : reason => { throw reason };
+            let self = this;
+
+            return new MyPromise2((resolve, reject) => {
+                function resolveFun() {
+                    setTimeout(() => {
+                        const res = onResolved(self.value); // 这里的 this 究竟是哪里的 this - 外面的
+                        resolve(res);
+                    }, 0);
+                }
+                function rejectFun() {
+                    setTimeout(() => {
+                        const res = onRejected(self.reason);
+                        reject(res);
+                    }, 0);
+                }
+                switch (self.status) {
+                    case S.resolve:
+                        resolveFun();
+                        break;
+                    case S.reject:
+                        rejectFun();
+                        break;
+                    case S.pending:
+                        self.resolvedQueue.push(() => resolveFun());
+                        self.rejectedQueue.push(() => rejectFun());
+                        break;
+                }
+            })
+        }
+
+        MyPromise2.prototype.catch = function (onRejected) {
+            return this.then(null, onRejected);
+        }
+
+        MyPromise2.prototype.finally = function (callback) {
+            return this.then(value => { callback(); return value; },
+                reason => { callback(); throw reason; })
+        }
+
+        MyPromise2.resolve = function (value) {
+            return new MyPromise2((resolve, reject) => {
+                if (value instanceof MyPromise2) {
+                    value.then(resolve, reject);
+                } else {
+                    resolve(value);
+                }
+            })
+        }
+
+        MyPromise2.reject = function (value) {
+            return new MyPromise2((resolve, reject) => {
+                reject(value);
+            })
+        }
+
+        MyPromise2.all = function (arr) {
+            return new MyPromise2((resolve, reject) => {
+                arr.reduce((pre, cur, index) => {
+                    cur.then(res => {
+                        pre.push(res);
+                        index === arr.length - 1 && resolve(pre);
+                    }, reject);
+                    return pre
+                }, [])
+            })
+        }
+
+        MyPromise2.race = function(arr) {
+            return new MyPromise2((resolve, reject) => {
+                arr.forEach(it => MyPromise1.resolve(it).then(resolve, reject));
             })
         }
     </script>

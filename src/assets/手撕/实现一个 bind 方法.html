@@ -13,7 +13,7 @@
         <button id="button">button</button>
         <div id='text'></div>
     </div>
-    <script>
+    <script src="../a.js">
         let button = document.getElementById('button');
         let text = document.getElementById('text');
         // button.onclick = function() {
@@ -56,6 +56,18 @@
         console.log('res=', res);
         res('这是给newFun 的参数1', '这是给newFun 的参数2');
 
+    </script>
+    <script>
+        Function.prototype.fakeBind = function(context, ...args1) {
+            let func = this;
+            return function F(...args2) {
+                if (func instanceof F) {
+                    return new func(...args1, ...args2)
+                } else {
+                    func.apply(context, [...args1, ...args2]);
+                }
+            }
+        }
     </script>
 </body>
 

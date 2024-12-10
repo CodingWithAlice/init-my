@@ -36,7 +36,7 @@
             console.log(data);
         })
     </script>
-    <script>
+    <script src="../a.js">
         // 核心功能：组装 url+callback  + 浏览器在 script 打开执行
         function jsonp({ url, params, callback }) {
             // 组装 url+callback
@@ -51,7 +51,7 @@
             // 挂载回调函数 - 服务器返回后需要执行的回调函数
             window[callback] = data => {
                 callback[data];
-                document.body.removeChild(scriptEle);
+                document.body.removeChild(script);
             }
 
             // 添加
@@ -62,6 +62,25 @@
             params: { wd: 'Iloveyou' },
             callback: 'show'
         })
+    </script>
+    <script>
+        function jsonp(url = '', searches = {}, cb = '') {
+            let suffix = Object.entries(searches).map(([key, value]) => `${key}=${value}`).join('&');
+            let totalUrl = url + (url.includes('?') ? '&' : '?') + suffix + `&callback=${cb}`;
+
+            let dom = document.createElement('script');
+            window[cb] = function (data) {
+                cb[data];
+                document.body.removeChild(dom);
+            }
+            dom.src = totalUrl;
+            document.body.appendChild(dom);
+        }
+        jsonp1(
+            'http://localhost:3000/say',
+            { wd: 'Iloveyou' },
+            'show'
+        )
     </script>
 </body>
 

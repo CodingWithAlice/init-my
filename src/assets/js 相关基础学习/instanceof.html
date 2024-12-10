@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>instanceof实现</title>
+</head>
+
+<body>
+    <script>
+        // instanceof功能：检测对象原型链上是否有被检测函数的原型对象
+        function fakeInstanceof(target, constructor) {
+            let proto = Object.getPrototypeOf(target);
+            // let proto = target.__proto__;
+            while (proto) {
+                if (proto === constructor.prototype) {
+                    return true
+                }
+                proto = Object.getPrototypeOf(proto);
+            }
+            return false
+        }
+    </script>
+</body>
+
+</html>
