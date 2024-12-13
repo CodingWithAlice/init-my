@@ -24,7 +24,7 @@
         防抖后的input：<input id="input2" type="text">
         节流后的input：<input id="input3" type="text">
     </div>
-    <script>
+    <script src="../a.js">
         console.log('当前时间 秒数=', new Date().getUTCSeconds());
         let ajax = (content) => {
             console.log('ajax - ', content, new Date());
@@ -56,7 +56,7 @@
             let last;
             return (arguments) => {
                 let now = +new Date();
-                if(last && now < last + delay) {
+                if (last && now < last + delay) {
                     clearTimeout(callback.timeId);
                     callback.timeId = setTimeout(() => {
                         last = now;
@@ -67,7 +67,7 @@
                     last = now;
                     callback.call(this, arguments)
                 }
-                
+
             }
         }
         let throttleAjax = throttle(ajax, 1000);
@@ -87,6 +87,43 @@
         input3.addEventListener('keyup', (e) => {
             throttleAjax(e.target.value);
         });
+    </script>
+    <script>
+        // 防抖 - 输入查询内容，不是每次输入完就查询，而是等待几秒后执行
+
+        function debounce(fn, delay) {
+            let timeId = null;
+            return function (...args) {
+                timeId && clearTimeout(timeId);
+                timeId = setTimeout(() => {
+                    fn(...args);
+                }, delay)
+            }
+        }
+        const click = (e) => console.log(1, e.target.value);
+        const shakeClick = debounce(click, 3000);
+        const shakeClickMy = onlyOnce(click, 3000);
+        const input11 = document.getElementById('input1');
+        const input22 = document.getElementById('input2');
+        const input33 = document.getElementById('input3');
+        input11.addEventListener('keyup', (e) => click(e));
+        input22.addEventListener('keyup', (e) => shakeClick(e));
+        input33.addEventListener('keyup', (e) => shakeClickMy(e));
+
+        // 节流
+        function onlyOnce(fn, delay) {
+            let time, flag = true;
+            return function (...args) {
+                if(!flag) {
+                    return;
+                }
+                fn.apply(this, args);
+                flag = false;
+                setTimeout(() => {
+                    flag = true;
+                }, delay)
+            }
+        }
     </script>
 </body>
 

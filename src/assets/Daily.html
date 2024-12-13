@@ -75,19 +75,20 @@
             <!-- <h1>每日复盘</h1> -->
             <h2>一、时间统计</h2>
             <div class="total" id="total"></div>
-            <div class="date" id="date"></div>
+            <div class="date" id="date1"></div>
             <div class="details" id="details"></div>
             <button id="add"> 添加一项 </button>
         </section>
         <section class="outer">
             <h2>二、事项统计</h2>
             <p class="top">前端学习时长： <input class="short"> 🎉🎉🎉</p>
+            <div class="date" id="date2"></div>
             <p class="title">【复盘】</p>
-            <p>① 睡眠 + 运动 + 电影： </p>
+            <p>① 运动 + 电影： </p>
             <section>
                 <textarea class="input long" type="text" name="sports" id="sports" placeholder="运动情况"></textarea>
-                <textarea class="input long" type="text" name="sleep" id="sleep" placeholder="睡眠情况"></textarea>
-                <br/>
+                <!-- <textarea class="input long" type="text" name="sleep" id="sleep" placeholder="睡眠情况"></textarea> -->
+                <!-- <br/> -->
                 <textarea class="input long" type="text" name="movie" id="movie" placeholder="电影"></textarea>
             </section>
             <p>② 前端： </p>
@@ -259,7 +260,8 @@
         totalElement.innerHTML = getFirstLine([totalTimes, readTime, fTime]);
 
         // 第二行
-        document.getElementById('date').innerHTML = `<span class="red">${getTime('month')}.${getTime('day')}</span> 周${getTime('week')}`;
+        document.getElementById('date1').innerHTML = `<span class="red">${getTime('month')}.${getTime('day')}</span> 周${getTime('week')}`;
+        document.getElementById('date2').innerHTML = `<span class="red">${getTime('month')}.${getTime('day')}</span> 周${getTime('week')}`;
 
         // 监听添加按钮
         let button = document.getElementById('add');
