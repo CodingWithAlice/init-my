@@ -291,7 +291,7 @@
         emitter2.removeListener('click', listener);
         emitter2.emit('click');
     </script>
-    <script>
+    <script src="../a.js">
         class EventEmitter1 {
             constructor() {
                 this.events = {};
@@ -318,7 +318,7 @@
                 }
             }
             once(event, listener) {
-                let onceFun = (...args) => {                    
+                let onceFun = (...args) => {
                     listener(...args);
                     this.removeListener(event, onceFun);
                 }
@@ -330,7 +330,7 @@
                     let staticEvents = [...this.events[event]];
                     staticEvents.forEach((it, index) => {
                         console.log('staticEvents=', staticEvents, 'this=', this.events[event]);
-                        
+
                         let args = arguments[index];
                         Array.isArray(args) ? it(...args) : it(args);
                     })
@@ -359,6 +359,60 @@
 
         // emitter11.removeListener('click', listener);
         // emitter11.emit('click');
+    </script>
+    <script>
+        class EventEmitter2 {
+            constructor() {
+                this.events = {};
+                this._max = 10;
+            }
+
+            addListener(event, listener) {
+                if (!this.events[event]) {
+                    this.events[event] = [listener];
+                } else {
+                    this.events[event].push(listener);
+                    if (this.events[event].length > this._max) {
+                        throw Error('max size');
+                    }
+                }
+            }
+
+            removeListener(event, listener) {
+                if (Array.isArray(this.events[event])) {
+                    if (!listener) {
+                        delete this.events[event];
+                    }
+                    let index = this.events[event].indexOf(listener);
+                    index > -1 && this.events[event].splice(index, 1);
+                }
+            }
+
+            once(event, listener) {
+                let onceFun = (...args) => {
+                    listener(...args);
+                    this.removeEventListener(event, onceFun);
+                }
+                this.addListener(event, onceFun);
+            }
+
+            emit(event) {
+                if (!this.events[event]) {
+                    return false;
+                } else {
+                    let static = [...this.events[event]]; // once导致 events动态变化造成异常
+                    let argsList = [].shift.call(arguments);
+                    static.forEach((it, index) => {
+                        let args = argsList[index];
+                        Array.isArray(args) ? it(...args) : it(args);
+                    })
+                }
+            }
+
+            setMaxListeners(n) {
+                this._max = n;
+            }
+        }
     </script>
 </body>
 
