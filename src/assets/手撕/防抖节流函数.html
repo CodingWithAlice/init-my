@@ -19,6 +19,7 @@
 </head>
 
 <body>
+    <input type="time" class="time">
     <div class="wrap">
         没有防抖的input：<input id="input1" type="text">
         防抖后的input：<input id="input2" type="text">
@@ -88,7 +89,7 @@
             throttleAjax(e.target.value);
         });
     </script>
-    <script>
+    <script src="../a.js">
         // 防抖 - 输入查询内容，不是每次输入完就查询，而是等待几秒后执行
 
         function debounce(fn, delay) {
@@ -114,7 +115,32 @@
         function onlyOnce(fn, delay) {
             let time, flag = true;
             return function (...args) {
-                if(!flag) {
+                if (!flag) {
+                    return;
+                }
+                fn.apply(this, args);
+                flag = false;
+                setTimeout(() => {
+                    flag = true;
+                }, delay)
+            }
+        }
+    </script>
+    <script>
+        function debounce(fn, delay) {
+            let timeId = null;
+            return (...args) => {
+                timeId && clearTimeout(timeId);
+                timeId = setTimeout(() => {
+                    fn.apply(this, args);
+                }, delay);
+            }
+        }
+        function throttle(fn, delay) {
+            let timeId = null;
+            let flag = true;
+            return (...args) => {
+                if (!flag) {
                     return;
                 }
                 fn.apply(this, args);

@@ -93,12 +93,13 @@
 
             if (detailType === '[object Map]') {
                 for (let i of target) {
-                    res.set(i, deepCopy1(target[i], m))
+                    // i 为键值对 ['a', 1]
+                    res.set(i[0], deepCopy1(i[1], m))
                 }
             }
             if (detailType === '[object Set]') {
                 for (let i of target) {
-                    res.add(deepCopy1(target[i], m))
+                    res.add(deepCopy1(i, m))
                 }
             }
             if (Array.isArray(target)) {
@@ -155,13 +156,13 @@
             m.set(target, res);
 
             if (detailType === '[object Map]') {
-                target.forEach(it => {
-                    res.set(it, deepClone2(target[it], m))
+                target.forEach((value, key) => {
+                    res.set(key, deepClone2(value, m))
                 });
             }
             if (detailType === '[object Set]') {
                 target.forEach(it => {
-                    res.add(deepClone2(target[it], m))
+                    res.add(deepClone2(it, m))
                 });
             }
             if (Array.isArray(target)) {
@@ -176,7 +177,7 @@
             return res
         }
     </script>
-    <script>
+    <script src="../a.js">
         function isObj(t) {
             const type = typeof t;
             return t !== null && (type === 'object' || type === 'function');
@@ -217,13 +218,13 @@
             m.set(target, res);
 
             if (typeDetail === '[object Map]') {
-                target.forEach((it) => {
-                    res.set(i, deepCopy2(target[i], m))
+                target.forEach((value, key) => {
+                    res.set(key, deepCopy2(value, m))
                 })
             }
             if (typeDetail === '[object Set]') {
                 target.forEach((it) => {
-                    res.add(deepCopy2(target[i], m))
+                    res.add(deepCopy2(it, m))
                 })
             }
             if (Array.isArray(target)) {
@@ -237,6 +238,72 @@
             }
             return res
         }
+    </script>
+    <script>
+        function isObject3(t) {
+            const type = typeof t;
+            return type !== null && (type === 'object' || type === 'function');
+        }
+        function handleNormalType(t, type) {
+            switch (type) {
+                case '[object Date]':
+                    return new Date(t.getTime());
+                    break;
+                case '[object RegExp]':
+                    return new RegExp(t.source, t.flags);
+                    break;
+                case '[object Symbol]':
+                    return Symbol.for(t.description);
+                    break;
+                default:
+                    const ctor = t.constructor;
+                    return new ctor(t);
+            }
+        }
+        function deepCopy3(target, m = new WeakMap()) {
+            if (!isObject3(target)) {
+                return target
+            }
+
+            let specialType = ['Set', 'Map', 'Array', 'Object'].map(it => `[object ${it}]`);
+            const objectType = Object.prototype.toString.call(target);
+            if (!specialType.includes(objectType)) {
+                return handleNormalType(target, objectType);
+            }
+
+            const ctor = target.constructor;
+            let res = new ctor();
+
+            if (m.has(target)) {
+                return target
+            }
+            m.set(target, res);
+
+            if (objectType === '[object Map]') {
+                // Map类型使用 forEach ，回调参数(value, key, map)
+                target.forEach((value, key) => {
+                    res.set(key, deepCopy3(value, m));
+                });
+            }
+            if (objectType === '[object Set]') {
+                // Set类型使用 forEach ，回调参数(value, key, set)
+                // key 始终和value相同
+                target.forEach(it => {
+                    res.add(deepCopy3(it, m));
+                });
+            }
+            if (Array.isArray(target)) {
+                for (let i = 0, len = target; i < len; i++) {
+                    res[i] = deepCopy3(target[it], m);
+                }
+            } else {
+                for (let i in target) {
+                    res[i] = deepCopy3(target[it], m);
+                }
+            }
+            return res;
+        }
+
     </script>
 </body>
 
