@@ -137,13 +137,36 @@
             }
         }
         function throttle(fn, delay) {
-            let timeId = null;
             let flag = true;
             return (...args) => {
                 if (!flag) {
                     return;
                 }
                 fn.apply(this, args);
+                flag = false;
+                setTimeout(() => {
+                    flag = true;
+                }, delay)
+            }
+        }
+    </script>
+    <script>
+        // 防抖，连续输入不会触发回调，输入停了一会再触发回调
+        function debounce(fn, delay) {
+            let timeId = null;
+            return function (...args) {
+                if (timeId) { clearTimeout(timeId) }
+                timeId = setTimeout(() => {
+                    fn.call(this, ...args);
+                }, delay);
+            }
+        }
+        // 节流，长按也能够保证回调间隔delay一定会触发一次
+        function throttle(fn, delay) {
+            let flag = true;
+            return function (...args) {
+                if (!flag) return;
+                fn.call(this, ...args);
                 flag = false;
                 setTimeout(() => {
                     flag = true;
