@@ -718,7 +718,7 @@
             })
         }
     </script>
-    <script>
+    <script src="../a.js">
         let SE = {
             pending: 'pending',
             resolved: 'fulfilled',
@@ -819,6 +819,120 @@
             return new MyPromise3((resolve, reject) => {
                 arr.forEach(it => {
                     MyPromise3.resolve(it).then(resolve, reject);
+                })
+            })
+        }
+    </script>
+    <script>
+        const Status6 = {
+            pending: 'pending',
+            resolved: 'fulfilled',
+            rejected: 'rejected'
+        }
+        function MyPromise6(executor) {
+            this.status = Status6.pending;
+            this.value = null;
+            this.reason = null;
+            this.resolveCallList6 = [];
+            this.rejectCallList6 = [];
+
+            const resolve = (value) => {
+                if (this.status === Status6.pending) {
+                    this.status = Status6.resolved;
+                    this.value = value;
+                    this.resolveCallList6.forEach(it => it(value));
+                }
+            }
+            const reject = (reason) => {
+                if (this.status === Status6.pending) {
+                    this.status = Status6.rejected;
+                    this.reason = reason;
+                    this.rejectCallList6.forEach(it => it(reason));
+                }
+            }
+
+            try {
+                executor(resolve, reject)
+            } catch (e) {
+                reject(e)
+            }
+        }
+        MyPromise6.prototype.then = function (onResolve, onReject) {
+            onResolve = typeof onResolve === 'function' ? onResolve : v => v;
+            onReject = typeof onReject === 'function' ? onReject : r => { throw r };
+
+            return new MyPromise6((resolve, reject) => {
+                const resolveFun = () => {
+                    setTimeout(() => {
+                        try {
+                            const res = onResolve(this.value);
+                            resolve(res);
+                        } catch (e) {
+                            reject(e)
+                        }
+                    }, 0)
+                }
+                const rejectFun = () => {
+                    setTimeout(() => {
+                        try {
+                            const res = onReject(this.reason);
+                            resolve(res);
+                        } catch (e) {
+                            reject(e)
+                        }
+                    }, 0)
+                }
+                switch (this.status) {
+                    case Status6.pending:
+                        this.resolveCallList6.push(() => resolveFun());
+                        this.rejectCallList6.push(() => rejectFun())
+                        break;
+                    case Status6.resolved:
+                        resolveFun();
+                        break;
+                    case Status6.rejected:
+                        rejectFun()
+                        break;
+                }
+            })
+        }
+        MyPromise6.prototype.catch = function (onReject) {
+            return this.then(null, onReject);
+        }
+        MyPromise6.prototype.finally = function (callback) {
+            return this.then(value => { callback(); return value; },
+                reason => { callback(); throw reason; })
+        }
+        MyPromise6.resolve = function (value) {
+            return new MyPromise6((resolve, reject) => {
+                if (value instanceof MyPromise6) {
+                    return value.then(resolve, reject);
+                }
+                resolve(value);
+            })
+        }
+        MyPromise6.reject = function (reason) {
+            return new MyPromise6((resolve, reject) => {
+                reject(reason);
+            })
+        }
+        MyPromise6.all = function (arr) {
+            return new MyPromise6((resolve, reject) => {
+                arr.reduce((pre, cur, index) => {
+                    cur.then(res => {
+                        pre.push(res);
+                        if (index === arr.length - 1) {
+                            resolve(pre);
+                        }
+                    }, reject);
+                    return pre;
+                }, [])
+            })
+        }
+        MyPromise6.race = function (arr) {
+            return new MyPromise6((resolve, reject) => {
+                arr.forEach(it => {
+                    MyPromise6.resolve(it).then(resolve, reject);
                 })
             })
         }
