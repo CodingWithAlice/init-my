@@ -50,7 +50,7 @@
 
             // 挂载回调函数 - 服务器返回后需要执行的回调函数
             window[callback] = data => {
-                callback[data];
+                callback(data);
                 document.body.removeChild(script);
             }
 
@@ -63,14 +63,14 @@
             callback: 'show'
         })
     </script>
-    <script>
-        function jsonp(url = '', searches = {}, cb = '') {
+    <script src="../a.js">
+        function jsonp(url = '', searches = {}, cb = '') {            
             let suffix = Object.entries(searches).map(([key, value]) => `${key}=${value}`).join('&');
             let totalUrl = url + (url.includes('?') ? '&' : '?') + suffix + `&callback=${cb}`;
 
             let dom = document.createElement('script');
             window[cb] = function (data) {
-                cb[data];
+                cb(data);
                 document.body.removeChild(dom);
             }
             dom.src = totalUrl;
@@ -81,6 +81,26 @@
             { wd: 'Iloveyou' },
             'show'
         )
+    </script>
+    <script>
+        function jsonp({url, params, callback}) {
+            let suffix = Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&');
+            // +（加法运算符）的优先级要高于? :（三元条件运算符）
+            let mixUrl = url + (url.includes('?') ? '&' : '?') + suffix + (suffix ? '&' : '') + `callback=${callback}`;
+            
+            let dom = document.createElement('script');
+            window[callback] = function (data) {
+                callback(data);
+                document.removeChild(dom);
+            }
+            dom.src = mixUrl;
+            document.body.appendChild(dom);
+        }
+        jsonp({
+            url: 'http://localhost:3000/say',
+            params: { wd: 'Iloveyou' },
+            callback: 'show'
+        })
     </script>
 </body>
 
