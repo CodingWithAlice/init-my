@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <script>
+    <script src="../a.js">
         // instanceof功能：检测对象原型链上是否有被检测函数的原型对象
         function fakeInstanceof(target, constructor) {
             let proto = Object.getPrototypeOf(target);
@@ -20,6 +20,24 @@
                 }
                 proto = Object.getPrototypeOf(proto);
             }
+            return false
+        }
+    </script>
+    <script>
+        // 查找对象的原型链上是否有指定构造函数的原型对象
+        function fakeInstanceof(target, constructor) {
+            // Object.getPrototypeOf() 静态方法返回指定对象的原型（即内部 [[Prototype]] 属性的值）。
+            let cur = target.__proto__;
+            // 相等
+            if (cur === constructor.prototype) {
+                return true
+            } else {
+                // 不相等，但是可以继续找下一层
+                if (cur.__proto__) {
+                    return fakeInstanceof(cur, constructor)
+                }
+            }
+            // 都不相等，则为 false
             return false
         }
     </script>
