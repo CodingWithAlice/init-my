@@ -162,7 +162,7 @@
             setTimeout(console.log, 0, 'completed')
         });
     </script>
-    <script>
+    <script src="../a.js">
         class My extends Promise {
             constructor(executor) {
                 let handlers = [];
@@ -190,6 +190,35 @@
         });
         p3.notify((x) => setTimeout(console.log, 0, 'progress:', x));
         p3.then(() => setTimeout(console.log, 0, 'completed'));
+    </script>
+    <script>
+        class MyPromise extends Promise {
+            constructor(executor) {
+                const handlers = [];
+                super((resolve, reject) => {
+                    return executor(resolve, reject, (notes) => {
+                        handlers.forEach(it => it(notes));
+                    })
+                });
+                this.handlers = handlers;
+            }
+            notify(fn) {
+                this.handlers.push(fn);
+            }
+        }
+        const p2 = new MyPromise((resolve, reject, notifyCb) => {
+            function count(n) {
+                if (n > 0) {
+                    notifyCb(`${n * 20} remained`);
+                    setTimeout(() => count(n - 1), 0);
+                } else {
+                    resolve()
+                }
+            }
+            count(5);
+        })
+        p2.notify((it) => console.log(`${it} ---`));
+        p2.then(() => console.log('completed'));
     </script>
 </body>
 
