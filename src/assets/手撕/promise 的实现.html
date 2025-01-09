@@ -903,28 +903,52 @@
             return this.then(value => { callback(); return value; },
                 reason => { callback(); throw reason; })
         }
-        MyPromise6.resolve = function (value) {
+        // MyPromise.resolve = function (value) {
+        //     return new MyPromise6((resolve, reject) => {
+        //         if (value instanceof MyPromise6) {
+        //             return value.then(resolve, reject);
+        //         }
+        //         resolve(value);
+        //     })
+        // }
+        MyPromise6.resolve = (value) => {
             return new MyPromise6((resolve, reject) => {
                 if (value instanceof MyPromise6) {
-                    return value.then(resolve, reject);
+                    value.then(resolve, reject);
                 }
                 resolve(value);
             })
+            // 3、这里的 return ？？？？
         }
         MyPromise6.reject = function (reason) {
             return new MyPromise6((resolve, reject) => {
                 reject(reason);
             })
         }
+        // MyPromise.all = function (arr) {
+        //     return new MyPromise6((resolve, reject) => {
+        //         arr.reduce((pre, cur, index) => {
+        //             cur.then(res => {
+        //                 pre.push(res);
+        //                 if (index === arr.length - 1) {
+        //                     resolve(pre);
+        //                 }
+        //             }, reject);
+        //             return pre;
+        //         }, [])
+        //     })
+        // }
         MyPromise6.all = function (arr) {
             return new MyPromise6((resolve, reject) => {
-                arr.reduce((pre, cur, index) => {
+                 arr.reduce((pre, cur, index) => {
+                    // 4、这里的 return 可以省略 ？？？？
                     cur.then(res => {
                         pre.push(res);
                         if (index === arr.length - 1) {
                             resolve(pre);
                         }
                     }, reject);
+                    // 1、reject 是作为 then 的第二个函数 -> }, reject)
                     return pre;
                 }, [])
             })
@@ -936,6 +960,18 @@
                 })
             })
         }
+        // 测试all方法
+        let promise4 = MyPromise6.resolve(30);
+        let promise5 = MyPromise6.resolve(40);
+        MyPromise6.all([promise4, promise5]).then(values => {
+            console.log('all success:', values);
+        }).catch(reason => {
+            console.log('all catch:', reason);
+        });
+        // 测试resolve方法
+        // MyPromise6.resolve('resolved value').then(value => {
+        //     console.log('resolve success:', value);
+        // });
     </script>
 </body>
 
