@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>141. 环形链表</title>
 </head>
-<script>
+<script src="../a.js">
     // 定义一个链表
     function ListNode(val) {
         this.val = val;
@@ -59,8 +59,8 @@
     // 方法四
     var hasCycle = (head) => {
         let set = new Set();
-        while(head !== null){
-            if(set.has(head)) {
+        while (head !== null) {
+            if (set.has(head)) {
                 return true;
             }
             set.add(head);
@@ -92,6 +92,39 @@
     l19.next = l18;
 
     hasCycle(l1);
+</script>
+<script>
+    // 定义一个链表
+    function listNode(value, next = null) {
+        return {
+            value,
+            next
+        }
+    }
+    const l2 = listNode(2);
+    const l1 = listNode(1, l2);
+
+    // 废弃
+    var hasCycle = function (head) {
+        let cursor1 = head;
+        let cursor2 = head.next;
+        if (!cursor1 || !cursor2) { return false }
+        while (cursor1) {
+            while (cursor2) {
+                console.log(1111)
+                if (cursor2.value === cursor1.value) {
+                    return true
+                }
+                cursor2 = cursor2.next;
+            }
+            console.log(22222)
+            cursor1 = cursor1.next;
+        }
+        console.log(3333)
+
+        return false
+    };
+    console.log(hasCycle(l1))
 </script>
 
 <body>

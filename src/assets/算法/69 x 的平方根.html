@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>69. x 的平方根</title>
 </head>
-<script>
+<script src="../a.js">
     // 方法一：遍历
     // var mySqrt = function(x) {
     //     let mid = Math.ceil(x/2);
@@ -27,7 +27,7 @@
         }
         let left = 0, right = x;
         let mid = Math.ceil(x / 2);
-        while(left < right) {
+        while (left < right) {
             // 不用乘法，防止溢出
             if (x / mid === mid) {
                 return mid;
@@ -54,6 +54,77 @@
     if (mySqrt(9) === 3) {
         console.log('测试用例2通过');
     }
+</script>
+<script>
+
+
+    // 废弃
+    function square(x) {
+        if (x === 0 || x === 1) {
+            return x
+        }
+        let cur1 = 1, cur2 = Math.ceil(x / 2);
+
+        while (cur1 <= cur2) {
+            if (cur1 * cur1 < x) {
+                cur1++;
+            }
+            if (cur2 * cur2 > x) {
+                cur2--;
+            }
+        }
+        console.log(cur1, cur2);
+        // 相当于 cur2到cur1之间
+        if (cur2 < cur1) {
+            return cur2
+        }
+        // if (cur1 * cur1 === x) {
+        //     return cur1
+        // }
+        // if (cur2 * cur2 === x) {
+        //     return cur2
+        // }
+        // if (cur1 > cur2) {
+        //     return cur2
+        // } else if (cur1 === cur2) {
+        //     if (cur1 * cur1 > x) {
+        //         return cur1 - 1
+        //     }
+        //     return cur1
+        // }
+    }
+    const test = 8192;
+    console.log('square(8)=', square(test), Math.sqrt(test));
+
+    function mySqrt1(x) {
+        const mid = Math.ceil(x / 2);
+        let i = 0;
+        for (; i < mid; i++) {
+            // 注意这里要给 = 号，否则会遗漏
+            if ((i * i <= x) && ((i + 1) * (i + 1) > x)) {
+                return i;
+            }
+        }
+        return i
+    };
+    function mySqrt3(x) {
+        // 开区间 (left, right)
+        let left = 0, right = Math.min(x + 1, 46341);
+        while (left + 1 < right) {  // 开区间不为空
+            // 循环不变量：left^2 <= x
+            // 循环不变量：right^2 > x
+            let m = Math.floor((left + right) / 2);
+            if (m * m <= x) {
+                left = m;
+            } else {
+                right = m;
+            }
+        }
+        // 循环结束时 left+1 == right
+        // 此时 left^2 <= x 且 right^2 > x
+        // 所以 left 最大的满足 m^2 <= x 的数
+        return left;
+    };
 </script>
 
 <body>
