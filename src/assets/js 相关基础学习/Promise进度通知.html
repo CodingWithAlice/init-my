@@ -191,7 +191,7 @@
         p3.notify((x) => setTimeout(console.log, 0, 'progress:', x));
         p3.then(() => setTimeout(console.log, 0, 'completed'));
     </script>
-    <script>
+    <script src="../a.js">
         class MyPromise extends Promise {
             constructor(executor) {
                 const handlers = [];
@@ -219,6 +219,39 @@
         })
         p2.notify((it) => console.log(`${it} ---`));
         p2.then(() => console.log('completed'));
+    </script>
+    <script>
+        // 作业29：Promise的进度通知
+        class MyPromise extends Promise {
+            constructor(executor) {
+                let handles = [];
+                super((resolve, reject) => {
+                    return executor(resolve, reject, (state) => {
+                        handles.forEach(it => it(state));
+                    })
+                })
+                this.handles = handles;
+            }
+            notify(fn) {
+                this.handles.push(fn);
+            }
+        }
+        const p11 = new MyPromise((resolve, reject, notifyFunc) => {
+            function count(n) {
+                if (n > 0) {
+                    setTimeout(() => {
+                        count(n - 1);
+                        notifyFunc(`${n * 20} remained`)
+                    }, 0)
+
+                } else {
+                    resolve()
+                }
+            }
+            count(5);
+        })
+        p11.notify((it) => { console.log(it) })
+        p11.then(() => console.log('completed'))
     </script>
 </body>
 
