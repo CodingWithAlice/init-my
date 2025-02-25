@@ -137,7 +137,9 @@
         const callbacks1 = []; //  存储异步队列
         let pending1 = false;
         function flushCall() {
-            callbacks1.forEach(it => it());
+            pending = false; // ❌ 1、pending 重置为 false
+            const copies = callbacks.slice(0);
+            copies.forEach(it => it());
         }
 
         let timeFunc1; // 选择异步
@@ -149,14 +151,19 @@
             const dom = document.createElement('p');
             dom.nodeValue = '1';
             const ob = new MutationObserver(flushCall);
-            ob.observe(dom, { data: true })
+            ob.observe(dom, { characterData: true }) // ❌ 2、observe 的参数使用 characterData
             timeFunc1 = () => {
                 dom.nodeValue = '2';
             }
         } else if (typeof setImmediate !== 'undefined') {
-            setImmediate(flushCall)
+            // ❌ 3、修改 timeFunc
+            timeFunc1 = () => {
+                setImmediate(flushCall)
+            }
         } else {
-            setTimeout(flushCall, 0);
+            timeFunc1 = () => {
+                setTimeout(flushCall, 0);
+            }
         }
 
         function vue2NextTick(cb) {
@@ -169,29 +176,64 @@
                 pending1 = true;
                 timeFunc1();
             }
-            pending1 = false;
+            // pending1 = false; // ❌ 4、重置为 false 的时机在 flushCall
 
         }
+        // ❌ 5、少写了个 Vue2 实例化
+        new Vue({
+            data() { return { msg: 111 } },
+            mounted() {
+                this.$Vue2nextTick(() => { console.log(1111) })
+            }
+        })
         // Vue3
         let queue1 = [];
         let pending2 = false;
         function flushCall2() {
-            queue1.forEach(it => it());
+            pending2 = true; // ❌ 6、重置 为 true
+            // queue1.forEach(it => it()); // ❌ 7、队列处理
+            let job;
+            while ((job = queue1.shift())) {
+                job();
+            }
+            pending2 = false; // ❌ 8、重置 为 false
         }
-        function timeFunc2() {
-            queueMicrotask(flushCall2);
-        }
+        // function timeFunc2() { // ❌ 9、默认使用 queueMicrotask，不再单独处理成函数
+        //     queueMicrotask(flushCall2);
+        // }
         function vue3NextTick(cb) {
-            if(cb) {
-                queue1.push(cb)
-            }
-            if(!pending2) {
-                pending2 = true;
-                timeFunc2()
-            }
-            pending2 = false;
-
+            // if (cb) {
+            //     queue1.push(cb)
+            // }
+            // if (!pending2) {
+            //     pending2 = true;
+            //     timeFunc2()
+            // }
+            // pending2 = false;
+            return new Promise((resolve) => { // ❌ 10、返回 promise
+                const runner = () => {
+                    if (cb) {
+                        try { cb() } catch (e) { console.error(e) }
+                    }
+                    resolve();
+                };
+                // step1：存储回调函数的队列
+                queue.push(runner);
+                // step2：执行异步任务
+                if (!pending2) {
+                    queueMicrotask(flushJobs);
+                }
+            });
         }
+        // ❌ 11、少了实例化
+        import { createApp, nextTick } from 'vue';
+        const app1 = createApp({
+            data() { return { msg: 111 } },
+            mounted() {
+                nextTick(() => {console.log(2222)})
+            }
+        })
+        app1.mount('#app')
     </script>
 </body>
 
