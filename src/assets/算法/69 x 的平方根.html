@@ -55,7 +55,7 @@
         console.log('测试用例2通过');
     }
 </script>
-<script>
+<script src="../b.js">
 
 
     // 废弃
@@ -125,6 +125,35 @@
         // 所以 left 最大的满足 m^2 <= x 的数
         return left;
     };
+</script>
+<script>
+    function sqrt1111(n) {
+        const half = Math.ceil(n / 2);
+        console.log('half=', half);
+        let res = 1;
+        while (res <= half) {
+            const next = res + 1;
+            if (res * res <= n && next * next > n) {
+                return res
+            }
+            res++;
+        }
+        // return res
+    }
+    function sqrt222(n) {
+        let left = 0;
+        let right = n + 1;
+        while (left + 1 !== right) {
+            const mid = Math.ceil((left + right) / 2);
+            if (mid * mid > n) {
+                right = mid;
+            } else {
+                left = mid;
+            }
+        }
+        return left
+    }
+    console.log('res=', sqrt222(10));
 </script>
 
 <body>
