@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <script>
+    <script src="../a.js">
         const callbacks = [];
         let pending = false;  // 标记是否正在执行回调函数
         function flushCallbacks() { // 异步执行全部回调函数
@@ -82,7 +82,7 @@
             },
         })
     </script>
-    <script>
+    <script src="../a.js">
 
         const queue = []; // 存储回调函数的队列
         let isFlushing = false; // 标记是否正在执行回调函数
@@ -131,6 +131,67 @@
         });
 
         app.mount('#app');
+    </script>
+    <script>
+        // Vue2
+        const callbacks1 = []; //  存储异步队列
+        let pending1 = false;
+        function flushCall() {
+            callbacks1.forEach(it => it());
+        }
+
+        let timeFunc1; // 选择异步
+        if (typeof Promise !== 'undefined') {
+            timeFunc1 = () => {
+                Promise.resolve().then(flushCall)
+            }
+        } else if (typeof MutationObserver !== 'undefined') {
+            const dom = document.createElement('p');
+            dom.nodeValue = '1';
+            const ob = new MutationObserver(flushCall);
+            ob.observe(dom, { data: true })
+            timeFunc1 = () => {
+                dom.nodeValue = '2';
+            }
+        } else if (typeof setImmediate !== 'undefined') {
+            setImmediate(flushCall)
+        } else {
+            setTimeout(flushCall, 0);
+        }
+
+        function vue2NextTick(cb) {
+            // 收集
+            if (cb) {
+                callbacks1.push(cb);
+            }
+            // 执行
+            if (!pending1) {
+                pending1 = true;
+                timeFunc1();
+            }
+            pending1 = false;
+
+        }
+        // Vue3
+        let queue1 = [];
+        let pending2 = false;
+        function flushCall2() {
+            queue1.forEach(it => it());
+        }
+        function timeFunc2() {
+            queueMicrotask(flushCall2);
+        }
+        function vue3NextTick(cb) {
+            if(cb) {
+                queue1.push(cb)
+            }
+            if(!pending2) {
+                pending2 = true;
+                timeFunc2()
+            }
+            pending2 = false;
+
+        }
     </script>
 </body>
 
