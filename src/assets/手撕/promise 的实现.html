@@ -823,7 +823,7 @@
             })
         }
     </script>
-    <script>
+    <script src="../a.js">
         const Status6 = {
             pending: 'pending',
             resolved: 'fulfilled',
@@ -940,7 +940,7 @@
         // }
         MyPromise6.all = function (arr) {
             return new MyPromise6((resolve, reject) => {
-                 arr.reduce((pre, cur, index) => {
+                arr.reduce((pre, cur, index) => {
                     // 4、这里的 return 可以省略 ？？？？
                     cur.then(res => {
                         pre.push(res);
@@ -972,6 +972,109 @@
         // MyPromise6.resolve('resolved value').then(value => {
         //     console.log('resolve success:', value);
         // });
+    </script>
+    <script>
+        // Promise.race - MDN 返回第一个非pending状态的promise
+        const fn1 = () => new Promise((resolve) => setTimeout(() => {
+            console.log('Promise 1 resolved');
+
+            resolve({ result: 'Promise 1 resolved', index: 0 });
+        }, 1000));
+        const fn2 = () => new Promise((resolve) => setTimeout(() => {
+            console.log('Promise 2 resolved');
+
+            resolve({ result: 'Promise 2 resolved', index: 1 })
+        }, 800));
+        const fn3 = () => new Promise((resolve, reject) => setTimeout(() => {
+            console.log('Promise 3 resolved');
+
+            resolve({ result: 'Promise 3 resolved', index: 2 })
+            // reject({ result: ('Promise 3 resolved'), index: 2 })
+        }, 500));
+        const fn4 = () => new Promise((resolve) => setTimeout(() => {
+            console.log('Promise 4 resolved');
+
+            resolve({ result: 'Promise 4 resolved', index: 3 })
+        }, 200));
+        const fn5 = () => new Promise((resolve) => setTimeout(() => {
+            console.log('Promise 5 resolved');
+
+            resolve({ result: 'Promise 5 resolved', index: 4 })
+        }, 100));
+
+        // const promiseList = [fn1(), fn2(), fn3()];
+        // Promise.race(promiseList)
+        //     .then(res => {
+        //         console.log(111, res.index);
+        //         nextF1(res.index);
+
+        //     })
+        const nextF1 = (i) => {
+            promiseList.splice(i, 1);
+            promiseList.push(fn4());
+            Promise.race(promiseList).then(res => {
+                console.log(222, res.index);
+                nextF2(res.index);
+            })
+        }
+        const nextF2 = (i) => {
+            promiseList.filter(it => it.index !== i);
+            promiseList.push(fn5());
+            Promise.race(promiseList).then(res => {
+                console.log(333, res.index);
+            })
+        }
+
+        // 创建 30 个模拟请求
+        const requests = Array.from({ length: 10 }, (v, index) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(resolve, 100 * index, `${index} resolved`);
+            })
+        })
+        function transList(list) {
+            return list.map((it, index) => {
+                return {
+                    index,
+                    promise: new Promise((resolve, reject) => {
+                        it.then(value => resolve({
+                            value,
+                            key: index
+                        }), reason => reject({
+                            value: reason,
+                            key: index
+                        }))
+                    })
+                }
+            })
+        }
+        // 执行所有请求，返回所有响应
+        async function execute(questList, concurreny = 6) {
+            const indexedRequests = questList.map((promise, index) => ({
+                index,
+                promise: promise.then(value => ({ value, key: index }))
+            }));
+            // 初始化并发任务列表
+            const activeTasks = indexedRequests.splice(0, concurrency);
+            const results = [];
+            // 持续处理任务，直到所有任务完成
+            while (activeTasks.length > 0) {
+                const { key, value } = await Promise.race(activeTasks.map(task => task.promise));
+                
+                const resolvedIndex = activeTasks.findIndex(task => task.index === key);
+                activeTasks.splice(resolvedIndex, 1); // 移除已完成的任务
+                results[key] = value; // 存储结果
+
+                // 如果还有待处理的任务，添加一个新任务到并发列表
+                if (indexedRequests.length > 0) {
+                    activeTasks.push(indexedRequests.shift());
+                }
+            }
+            return results;
+        }
+        execute(requests).then(res => {
+            console.log('res:', res);
+        })
+
     </script>
 </body>
 

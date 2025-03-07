@@ -12,7 +12,7 @@
     <div>
         组合函数：将一组需要顺序执行的函数，复合为一个函数，外层函数的参数实际是内层函数的返回值
     </div>
-    <script>
+    <script src="../a.js">
         const add = (x, y) => x + y;
         const square = z => z * z;
 
@@ -45,7 +45,7 @@
             await next();
             console.log('2 end');
         }
-        
+
         async function fun3() {
             console.log('3');
             await next();
@@ -57,11 +57,93 @@
             new Promise((resolve) => {
                 console.log('4');
                 resolve();
-            }).then(function() {
+            }).then(function () {
                 console.log('5');
             })
         }
 
+    </script>
+    <script src="../a.js">
+        async function fn1(ctx, next) {
+            console.log('1')
+            await next();
+            console.log('5')
+        }
+        async function fn2(ctx, next) {
+            console.log('2')
+            await next();
+            console.log('4')
+        }
+        async function fn3(ctx, next) {
+            console.log('3')
+        }
+        function compose(middlewares) {
+            return (ctx, next) => {
+                let index = -1;
+                return dispatch(0);
+
+                function dispatch(i) {
+                    if (i <= index) { return Promise.reject(new Error('next multiple times')) }
+                    index = i;
+                    let fn = middlewares[i];
+                    if (i === middlewares.length) {
+                        fn = next
+                    }
+                    if (!fn) { return Promise.resolve() }
+                    try {
+                        // 定义 next 函数
+                        const next = () => dispatch(i + 1);
+                        return Promise.resolve(fn(ctx, next))
+                    } catch (e) { return Promise.reject(e) }
+
+                }
+
+            };
+        }
+        const ctx = {};
+        compose([fn1, fn2, fn3])(ctx, () => Promise.resolve())
+            .then(() => console.log(11111))
+    </script>
+    <script>
+        const ctx1 = {};
+        function composes(middlewares) {
+            return (ctx, next) => {
+                let index = -1;
+                return dispatch(0);
+
+                function dispatch(i) {
+                    if (i < index) return Promise.reject(new Error('next multiple'));
+                    index = i;
+                    let fn = middlewares[i];
+                    if (!fn) return Promise.resolve();
+                    if (i === middlewares.length) {
+                        fn = next
+                    }
+                    try {
+                        const next = () => dispatch(i + 1);
+                        return Promise.resolve(fn(ctx1, next))
+                    } catch (e) {
+                        return Promise.reject(e)
+                    }
+                }
+            }
+        }
+        async function fn1(ctx, next) {
+            console.log('1')
+            await next();
+            console.log('5')
+        }
+        async function fn2(ctx, next) {
+            console.log('2')
+            await next();
+            console.log('4')
+        }
+        async function fn3(ctx, next) {
+            console.log('3')
+        }
+        const func1 = composes([fn1, fn2, fn3]);
+        console.log(func1)
+        func1(ctx1, () => Promise.resolve()).then(() => console.log(11111))
     </script>
 </body>
 
