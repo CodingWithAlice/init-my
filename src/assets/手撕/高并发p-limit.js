@@ -19,28 +19,30 @@ function pLimit(concurrency) {
     let activeCount = 0;
     const activeQueue = [];
     const next = () => {
-        // 1、next 执行当前 activeQueue 的下一个任务 activeCount-- 而不是 ++
+        activeCount--;
         if (activeQueue.length) {
             activeQueue.shift()();
-            activeCount++; // 2、不是增加，应该是减少
         }
     }
-    const run = (fn, resolve, arg) => {
-        activeCount--; // 3、执行函数时，执行一个计数一个 activeCount++
-        const res = fn(...arg); // 4、少写了 try-catch 且 fn 是异步函数，需要 await 获取结果
-        resolve(res);
+    const run = async (fn, resolve, arg) => {
+        activeCount++;
+        try {
+            const res = await fn(...arg);
+            resolve(res)
+        } catch (e) {
+            return Promise.reject(e)
+        }
         next()
     }
-    const generator = (cb, ...args) => {
-        return new Promise((resolve) => {
-            if (activeCount < concurrency) {
-                run(cb, resolve, args)
-            } else {
-                activeQueue.push(run.bind(null, cb, resolve, arg))
-            }
-        })
+    const generator = (cb, ...arg) => {
+        // ❌ 1、返回 promise：return new Promise((resolve) => {})
+        if (activeCount < concurrency) {
+            run(cb, resolve, arg)
+        } else {
+            activeQueue.push(run.bind(null, cb, resolve, arg))
+        }
     }
-    return generator;
+    return generator
 }
 
 async function execute(arr, concurrency) {
