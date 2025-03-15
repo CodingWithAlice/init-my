@@ -1,63 +1,64 @@
 import pLimit, { limitFunction } from 'p-limit';
-const limit = pLimit(2);
+const limit = pLimit(5);
 const arr = Array.from({ length: 20 }, (it, index) => {
     return limit(() => new Promise(resolve => setTimeout(resolve, index * 100)))
 })
-
-const arr2 = Array.from({ length: 20 }, (it, index) => {
-    return limitFunction(() => new Promise(resolve => setTimeout(resolve, index * 100)), { concurrency: 2 })
+Promise.all(arr).then(console.log)
+const arrMixed = Array.from({ length: 20 }, (it, index) => {
+    return limitFunction(() => new Promise(resolve => setTimeout(resolve, index * 80)), { concurrency: 5 })
 })
-
-Promise.all(arr).then(res => res);
-Promise.all(arr2).then(res => res);
-
-// 源码实现
-function validate(limit) { if (!Number.isInteger(limit) || limit < 0) { throw new Error('limit') } }
-function pLimit1(concurrency) {
+Promise.all(arrMixed).then(console.log)
+// 源码
+function validate(limit) {
+    if (!Number.isInteger(limit) || limit < 0) {
+        throw new Error('err concurrency')
+    }
+}
+function pLimit(concurrency) {
     validate(concurrency);
-    const queue = [];
-    let current = 0; // 1、可变变量，使用 let
+    let activeCount = 0;
+    const activeQueue = [];
     const next = () => {
-        current--;
-        if (queue.length) {
-            queue.shift()();
+        // 1、next 执行当前 activeQueue 的下一个任务 activeCount-- 而不是 ++
+        if (activeQueue.length) {
+            activeQueue.shift()();
+            activeCount++; // 2、不是增加，应该是减少
         }
     }
-    const run = async (resolve, fn, arg) => { // 2、run 执行函数的时候，要注意 fn 是异步函数
-        current++;
-        try {
-            const res = await fn(...arg);
-            resolve(res);
-        } catch (e) {
-            throw new Error('e') // 3、执行遇到错误时，抛出一个拒绝的 promise - resolve(Promise.reject(e))
-        }
-        next(); // 4、执行下一个任务
+    const run = (fn, resolve, arg) => {
+        activeCount--; // 3、执行函数时，执行一个计数一个 activeCount++
+        const res = fn(...arg); // 4、少写了 try-catch 且 fn 是异步函数，需要 await 获取结果
+        resolve(res);
+        next()
     }
-    const generate = (cb, ...args) => {
+    const generator = (cb, ...args) => {
         return new Promise((resolve) => {
-            if (current < concurrency) {
-                run(resolve, cb, args)
+            if (activeCount < concurrency) {
+                run(cb, resolve, args)
             } else {
-                queue.push(run.bind(null, resolve, cb, args))
+                activeQueue.push(run.bind(null, cb, resolve, arg))
             }
         })
     }
-    return generate;
+    return generator;
 }
-// 使用Promise.race 来实现并发控制
-async function execute(arr, concurrency = 0) {
+
+async function execute(arr, concurrency) {
     const indexedArr = arr.map((it, index) => {
-        return { index, promise: it.then(value => ({ value, key: index })) }
+        return {
+            index,
+            promise: Promise.resolve(it).then(res => ({ key: index, value: res }))
+        }
     })
-    const activeTasks = indexedArr.splice(0, concurrency);
+    const activeArr = indexedArr.splice(0, concurrency);
     const result = [];
-    while(activeTasks.length) {
-        const {key ,value} = await Promise.race(activeTasks.map(it => it.promise));
-        const currentIndex = activeTasks.findIndex(it => it.index === key);
-        activeTasks.splice(currentIndex, 1);
+    while (activeArr.length) {
+        const { key, value } = await Promise.race(activeArr.map(it => it.promise));
+        const index = activeArr.findIndex(it => it.index === key);
+        activeArr.splice(index, 1);
         result[key] = value;
-        if(indexedArr.length > 0) {
-            activeTasks.push(indexedArr.shift())
+        if (indexedArr.length) {
+            activeArr.push(indexedArr.shift())
         }
     }
     return result
