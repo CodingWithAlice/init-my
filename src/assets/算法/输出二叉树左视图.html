@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>输出二叉树左视图</title>
 </head>
-<script>
+<script src="../a.js">
     // 常见解决方法：溯源算法 / 层序遍历
 
     // 分析：左视图 - 保存每一层的第一个节点
@@ -92,11 +92,103 @@
     }
 
 </script>
+<script>
+    class TreeNode {
+        constructor(v = 0, left = null, right = null) {
+            this.val = v;
+            this.left = left;
+            this.right = right;
+        }
+    }
+    function preOrder1(root) {
+        const result = [];
+        function helper(node) {
+            if (node) {
+                result.push(node.val)
+                helper(node.left);
+                helper(node.right)
+            }
+        }
+        helper(root);
+        return result
+    }
+    function preOrder2(root) {
+        if (!root) { return [] }
+        const result = [];
+        const stack = [root];
+        while (stack.length) {
+            const node = stack.pop();
+            result.push(node.val);
+            if (node.right) { stack.push(node.right) }
+            if (node.left) { stack.push(node.left) }
+        }
+        return result
+    }
+
+    function levelOrder(root) {
+        if (!root) return [];
+        const queue = [root];
+        const result = [];
+        while (queue.length) {
+            const levelSize = queue.length;
+            const currentLevel = [];
+            for (let i = 0; i < levelSize; i++) {
+                const node = queue.shift();
+                currentLevel.push(node.val);
+                if (node.left) queue.push(node.left);
+                if (node.right) queue.push(node.right);
+            }
+            result.push(currentLevel);
+        }
+        return result;
+    }
+
+    function myLevelOrder(root) {
+        const result = [];
+        const queue = [root];
+        while(queue.length) {
+            const currentLevel = [];
+            const copy = [...queue]; // 复制当前队列的内容，这会增加额外的空间和时间开销
+            copy.forEach(node => {
+                queue.shift();
+                currentLevel.push(node.val);
+                if(node.left) queue.push(node.left);
+                if(node.right) queue.push(node.right);
+            })
+            result.push(currentLevel);
+        }
+        return result
+    }
+
+    // 构建一个简单的二叉树
+    const root1 = new TreeNode(1);
+    root1.left = new TreeNode(2);
+    root1.right = new TreeNode(3);
+    root1.left.left = new TreeNode(4);
+    root1.left.right = new TreeNode(5);
+    root1.right.right = new TreeNode(6);
+    root1.left.left.left = new TreeNode(7);
+    root1.left.left.right = new TreeNode(8);
+
+
+
+    console.log("前序遍历（递归）:", preOrder1(root1));
+    // console.log("中序遍历（递归）:", inorderTraversalRecursive(root));
+    // console.log("后序遍历（递归）:", postorderTraversalRecursive(root));
+    console.log("前序遍历（非递归）:", preOrder2(root1));
+    // console.log("中序遍历（非递归）:", inorderTraversalIterative(root));
+    // console.log("后序遍历（非递归）:", postorderTraversalIterative(root));
+    console.log("层序遍历:", levelOrder(root1));
+    console.log("层序遍历 1111 :", myLevelOrder(root1));
+    // console.log("左视图:", leftView(root));
+    // console.log("路径和为 7 的路径:", pathSum(root, 7));
+</script>
 
 <body>
     <div>
         输出二叉树左视图
         描述：树被从左侧访问时可见的节点集合；它接受树的根作为参数
+        基础扎实，了解浏览器基本原理、HTTP基础知识
     </div>
 </body>
 
