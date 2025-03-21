@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设计模式-策略模式</title>
+</head>
+
+<body>
+    <div style="position: absolute; background: blue;" id="div">I am DIV</div>
+    <script src="../a.js">
+        // 缓动动画，利用 类 封装了不同的动画
+        const Animate = function (dom) {
+            this.dom = dom;
+            this.startTime = 0; // 动画开始时间
+            this.startPos = 0; // dom 初始位置
+            this.endPos = 0;  // dom 目标位置
+            this.propertyName = null;  // dom 节点需要被改变的 css 属性名
+            this.easing = null;  // 缓动算法
+            this.duration = null;  // 动画持续时间
+        }
+        Animate.prototype.start = function (propertyName, endPos, duration, easing) {
+            this.startTime = +new Date;
+            this.startPos = this.dom.getBoundingClientRect()[propertyName];
+            this.propertyName = propertyName;
+            this.endPos = endPos;
+            this.duration = duration;
+            this.easing = tween[easing];
+
+            const self = this;
+            const timeId = setInterval(() => {  // 启动定时器，开始执行动画
+                if (self.step() === false) { // 动画已结束
+                    clearInterval(timeId)
+                }
+            }, 19)
+        }
+        Animate.prototype.step = function () {
+            const t = +new Date;
+            if (t >= this.startTime + this.duration) {
+                this.update(this.endPos);
+                return false
+            }
+            const pos = this.easing(t - this.startTime, this.startPos, this.endPos - this.startPos, this.duration);
+            this.update(pos)
+        }
+        Animate.prototype.update = function (pos) {
+            this.dom.style[this.propertyName] = pos + 'px';
+        }
+        const div = document.getElementById('div');
+        const animate = new Animate(div);
+
+        animate.start('left', 500, 1000, 'strongEaseOut')
+        // animate.start('top', 1500, 500, 'strongEaseIn')
+    </script>
+    <script src="../a.js">
+        // 第一版本 模仿传统面向对象语言
+        const performanceS = function () { };
+        performanceS.prototype.calculate = function (salary) {
+            return salary * 4
+        }
+        const performanceA = function () { };
+        performanceA.prototype.calculate = function (salary) {
+            return salary * 3;
+        }
+        const performanceB = function () { };
+        performanceB.prototype.calculate = function (salary) {
+            return salary * 2;
+        }
+
+        const Bonus = function () {
+            this.salary = null;
+            this.strategy = null;
+        }
+        Bonus.prototype.setSalary = function (salary) {
+            this.salary = salary;
+        }
+        Bonus.prototype.setStrategy = function (strategy) {
+            this.strategy = strategy;
+        }
+        Bonus.prototype.getBonus = function () {
+            return this.strategy.calculate(this.salary)
+        }
+
+        const bonus = new Bonus()
+        bonus.setSalary(10000);
+        bonus.setStrategy(new performanceS());
+        console.log(bonus.getBonus());
+
+        bonus.setStrategy(new performanceA());
+        console.log(bonus.getBonus());
+
+        // 第二版本 JS 版本的策略模式 -> JS 是动态语言，函数也是对象，不需要基于类来创建对象，函数也可以
+        // 所以可以把 strategy 定义为函数，Bonus 也不需要使用 类 来创建
+        const strategies = {
+            'S': salary => salary * 4,
+            'A': salary => salary * 3,
+            'B': salary => salary * 2,
+        }
+        const calculateBonus = (level, salary) => strategies[level](salary)
+        console.log(calculateBonus('S', 1000));
+        console.log(calculateBonus('A', 2000));
+
+
+    </script>
+    <form action="http://xxx/register" id="form" method="post">
+        name: <input type="text" name="name" />
+        psd: <input type="text" name="psd" />
+        tel: <input type="text" name="tel" />
+        <button>submit</button>
+    </form>
+    <script>
+        const form = document.getElementById('form');
+        // 第一版 冗余
+        form.onsubmit = function () {
+            if (form.name.value === '') { alert('用户不能为空'); return false; }
+            if (form.psd.value.length < 6) { alert('psd less than 6'); return false; }
+            if (!/(^1[3|5|8][0-9]{9}$)/.test(form.tel.value)) { alert('tel wrong'); return false; }
+        }
+        // 第二版 策略模式
+        const formStrategies = {
+            isNonEmpty: (value, errMsg) => { if (value === '') { return errMsg } },
+            minLength: (value, length, errMsg) => { if (value.length < length) { return errMsg } },
+            isMobile: (value, errMsg) => { if (!/(^1[3|5|8][0-9]{9}$)/.test(value)) { return errMsg } }
+        }
+        const validate = function () {
+            const validator = new Validator();
+            validator.add(form.name, 'isNonEmpty', '用户不能为空');
+            validator.add(form.psd, 'minLength:6', 'psd less than 6');
+            validator.add(form.tel, 'isMobile', 'tel wrong');
+            const errMsg = validator.start();
+            return errMsg
+        }
+        form.onsubmit = function () {
+            const errMsg = validate();
+            if (errMsg) { alert(errMsg); return false; }
+        }
+        const Validator = function () { this.cache = [] }
+        Validator.prototype.add = function (dom, rule, errMsg) {
+            const arr = rule.split(':');
+            this.cache.push(function () {
+                const strategy = arr.shift();
+                arr.unshift(dom.value);
+                arr.push(errMsg);
+                return strategies[strategy].apply(dom, arr);
+            })
+        }
+        Validator.prototype.start = function () {
+            for (let i = 0, validateFun; validateFun = this.cache[i++];) {
+                const msg = validateFun();
+                if (msg) {
+                    return msg
+                }
+            }
+        }
+        // 第三版 策略模式 - 将表单校验改为可以为一个 dom 添加多个校验规则
+        validator.add(form.name, [{
+            strategy: 'isNonEmpty',
+            errMsg: '用户不能为空'
+        }, {
+            strategy: 'minLength:6',
+            errMsg: 'psd less than 6'
+        }]);
+        Validator.prototype.add = function (dom, rules) {
+            const self = this;
+            for(let i = 0, rule;rule = rules[i++];) {
+                (function(rule){
+                    const strategyArr = rule.strategy.split(':');
+                    const errMsg = rule.errMsg;
+                    self.cache.push(function() {
+                        const strategy = strategyArr.shift();
+                        strategyArr.unshift(dom.value);
+                        strategyArr.push(errMsg);
+                        return strategies[strategy].apply(dom, strategyArr)
+                    })
+                })(rule)
+            }
+        }
+    </script>
+</body>
+
+</html>
