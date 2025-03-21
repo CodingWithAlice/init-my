@@ -340,7 +340,7 @@
     console.log(4444, leftView(tree));
 
 </script>
-<script>
+<script src="../a.js">
     //  二叉树：前中后序、层序遍历-递归/非递归版本、层序遍历、路径和
     // 递归版本
     function preC(head) {
@@ -464,9 +464,128 @@
         return result
     }
 </script>
+<script>
+    // 前中后序 - 递归版本
+    function preC1(head) {
+        if (!head) return []
+        return [head.value, ...preC(head.left), ...preC(head.right)];
+    }
+    function inC1(head) {
+        if (!head) return [];
+        return [...preC(head.left), head.value, ...preC(head.right)];
+    }
+    function postC1(head) {
+        if (!head) return [];
+        return [...preC(head.left), ...preC(head.right), head.value];
+    }
+    // 前中后序 - 非递归版本，通过栈实现
+    function preNC1(head) {
+        if (!head) return [];
+        const result = [];
+        const stack = [head];
+        while (stack.length) {
+            const node = stack.pop();
+            result.push(node.value);
+            if (node.right) stack.push(node.right);
+            if (node.left) stack.push(node.left);
+        }
+        return result
+    }
+    function inNC1(head) {
+        // if (!head) return []; 可以省略不写
+        const result = [];
+        const stack = [];
+        let current = head;
+        while (stack.length || current) {
+            while (current) {
+                stack.push(current);
+                current = current.left;
+            }
+            current = stack.pop();
+            result.push(current.value);
+            current = current.right;
+        }
+        return result
+    }
+    function postNC1(head) {
+        if (!head) return [];
+        const result = [];
+        const stack = [head];
+        while (stack.length) {
+            const node = stack.pop();
+            result.unshift(node.value);
+            if (node.left) stack.push(node.left);
+            if (node.right) stack.push(node.right);
+        }
+        return result
+    }
+    // 层序遍历 - 递归
+    function layerC1(head, layer = 0, result = []) {
+        if (!result[layer]) {
+            result[layer] = [];
+        }
+        result[layer].push(head);
+        if (head.left) { layerC1(head.left, layer + 1, result) }
+        if (head.right) { layerC1(head.right, layer + 1, result) }
+        return result
+    }
+    // 层序遍历 - 非递归
+    function layerNC1(head) {
+        if (!head) return [];
+        const result = [];
+        const queue = [head];
+        while (queue.length) {
+            const cur = [];
+            const size = queue.length
+            for (let i = 0; i < size; i++) {
+                // const node = queue.pop();
+                const node = queue.shift();
+                cur.push(node.value)
+                if (node.left) queue.push(node.left)
+                if (node.right) queue.push(node.right)
+            }
+            result.push(cur)
+        }
+        return result
+    }
+
+    // 左视图
+    function leftView1(head) {
+        if (!head) return [];
+        const result = [];
+        const queue = [head];
+        while (queue.length) {
+            const size = queue.length
+            for (let i = 0; i < size; i++) {
+                const node = queue.pop();
+                if (i === 0) { result.push(node.value) }
+                if (node.left) queue.push(node.left)
+                if (node.right) queue.push(node.right)
+            }
+        }
+        return result
+    }
+    // 路径和
+    function pathSum1(head, target) {
+        const result = [];
+        function track(node, targetValue, path) {
+            if (!node) return; // ❌ 1、缺少退出条件
+            path.push(node.value);
+            if (!node.left && !node.right && node.value === targetValue) {
+                result.push([...path])
+            }
+            if (node.left) track(node.left, targetValue - node.value, path)
+            if (node.right) track(node.right, targetValue - node.value, path)
+            path.pop();
+        }
+        track(head, target, []);
+        return result
+    }
+</script>
 
 <body>
     <div>
+        2023-09 二叉树：前中后序、层序遍历-递归/非递归版本、层序遍历、路径和
         输出二叉树左视图
         描述：树被从左侧访问时可见的节点集合；它接受树的根作为参数
         基础扎实，了解浏览器基本原理、HTTP基础知识
