@@ -92,7 +92,7 @@
     }
 
 </script>
-<script>
+<script src="../a.js">
     class TreeNode {
         constructor(v = 0, left = null, right = null) {
             this.val = v;
@@ -146,14 +146,14 @@
     function myLevelOrder(root) {
         const result = [];
         const queue = [root];
-        while(queue.length) {
+        while (queue.length) {
             const currentLevel = [];
             const copy = [...queue]; // 复制当前队列的内容，这会增加额外的空间和时间开销
             copy.forEach(node => {
                 queue.shift();
                 currentLevel.push(node.val);
-                if(node.left) queue.push(node.left);
-                if(node.right) queue.push(node.right);
+                if (node.left) queue.push(node.left);
+                if (node.right) queue.push(node.right);
             })
             result.push(currentLevel);
         }
@@ -182,6 +182,287 @@
     console.log("层序遍历 1111 :", myLevelOrder(root1));
     // console.log("左视图:", leftView(root));
     // console.log("路径和为 7 的路径:", pathSum(root, 7));
+</script>
+<script src="../a.js">
+    Function.prototype.before = function (beforefn) {
+        var _self = this;
+        console.log('beforefn=', beforefn);
+        return function () {
+
+            beforefn.apply(this, arguments);
+            console.log('beforefn');
+
+            return _self.apply(this, arguments);
+        }
+    }
+    Function.prototype.after = function (afterfn) {
+        var _self = this;
+        return function () {
+
+            var ret = _self.apply(this, arguments);
+            afterfn.apply(this, arguments);
+            return ret
+        }
+    }
+    var func = function () { console.log(2) }
+    const before = func.before(function () {
+        console.log(1)
+    })
+    before()
+    console.log('func.before=', before);
+
+    func = func.before(function () {
+        console.log(1)
+    }).after(function () {
+        console.log(3)
+    })
+    // func()
+    function Singleton() { }
+    Singleton.getInstance = (function (name) {
+        let instance = null;
+        return function (name) {
+            if (!instance) {
+                instance = new Singleton(name);
+            }
+            return instance
+        }
+    })()
+    const a = Singleton.getInstance('1')
+    const b = Singleton.getInstance('2')
+
+    class Modal {
+        constructor() {
+            if (Modal.instance) { return Modal.instance }
+            this.isOpen = false;
+            Modal.instance = this;
+        }
+        open() { if (!this.isOpen) { this.isOpen = true; } }
+        close() { if (this.isOpen) { this.isOpen = false } }
+    }
+    const c = new Modal();
+    const d = new Modal();
+    console.log(111, c === d)
+
+
+</script>
+<script src="../a.js">
+    function inC(head) {
+        // const stack = [head];
+        const stack = [];
+        const result = [];
+        let current = head; // 问题 1：current 被声明为常量，无法重新赋值
+        // while (stack.length) {
+        while (stack.length || current) {
+            while (current) {
+                // if (current.left) {
+                // stack.push(current.left);
+                stack.push(current);
+                current = current.left;
+                // }
+            }
+            current = stack.pop();
+            result.push(current.value);
+            // if (current.right) { stack.push(current.right); }
+            current = current.right;
+        }
+        return result;
+    }
+    const tree = {
+        value: 1,
+        left: {
+            value: 2,
+            left: {
+                value: 4, left: {
+                    value: 7, left: null, right: null
+                }, right: {
+                    value: 8, left: null, right: null
+                }
+            },
+            right: {
+                value: 5, left: {
+                    value: 9, left: null, right: null
+                }, right: null
+            }
+        },
+        right: {
+            value: 3,
+            left: {
+                value: 6, left: null, right: {
+                    value: 10, left: null, right: null
+                }
+            },
+        }
+    };
+
+    console.log(inC(tree));     // [4, 2, 5, 1, 6, 3, 7]
+
+    function list(head, layer = 0, res = []) {
+        if (!head) { return [] }
+        if (!res[layer]) {
+            res[layer] = [];
+        }
+        res[layer].push(head.value)
+        layer++;
+        const a = [...list(head.left, layer, res), ...list(head.right, layer, res)];
+
+        return res
+    }
+    console.log(2222, list(tree));
+    function plainList(head) {
+        if (!head) { return [] }
+        const result = [];
+        const queue = [head];
+        while (queue.length) {
+            const size = queue.length;
+            const current = [];
+            for (let i = 0; i < size; i++) {
+                const node = queue.shift();
+                current.push(node.value);
+                if (node.left) { queue.push(node.left) }
+                if (node.right) { queue.push(node.right) }
+            }
+            result.push(current)
+        }
+        return result
+    }
+
+    function leftView(head) {
+        if (!head) { return [] }
+        const queue = [head];
+        const result = [];
+        while (queue.length) {
+            result.push(queue[0].value);
+            queue.length = 0;
+        }
+        return result
+    }
+    console.log(333333, plainList(tree));
+    console.log(4444, leftView(tree));
+
+</script>
+<script>
+    //  二叉树：前中后序、层序遍历-递归/非递归版本、层序遍历、路径和
+    // 递归版本
+    function preC(head) {
+        if (!head) { return [] }
+        return [head.value, ...preC(head.left), ...preC(head.right)]
+    }
+    function inC(head) {
+        if (!head) { return [] }
+        return [...inC(head.left), head.value, ...inC(head.right)]
+    }
+    function postC(head) {
+        if (!head) { return [] }
+        return [...postC(head.left), ...postC(head.right), head.value]
+    }
+    // 非递归版本
+    function preNC(head) {
+        if (!head) { return [] }
+        const result = [];
+        const queue = [head];
+        while (queue.length) {
+            const node = queue.pop();
+            result.push(node.value);
+            if (node.right) { queue.push(node.right) }
+            if (node.left) { queue.push(node.left) }
+        }
+        return result
+    }
+    function inNC(head) {
+        const result = [];
+        const queue = [];
+        let current = head;
+        while (queue.length || current) {
+            while (current) {
+                queue.push(current);
+                current = curren.left;
+            }
+            const node = queue.pop();
+            result.push(node.value);
+            current = current.right;
+        }
+        return result
+    }
+    function postNC(head) {
+        if (!head) { return [] }
+        const result = [];
+        const queue = [head];
+        while (queue.length) {
+            const node = queue.pop();
+            result.shift(node.value); // ❌ 1、是 unshift 不是 shift
+            if (node.left) { queue.push(node.left) }
+            if (node.right) { queue.push(node.right) }
+        }
+        return result
+    }
+    // 递归版本 - 层级遍历
+    function layerC(head, layer = 0, result = []) {
+        if (!head) { return [] }
+        const queue = [head];
+        while (queue.length) {
+            const node = queue.shift();
+            if (!result[layer]) {
+                result[layer] = [];
+            }
+            result[layer].push(node.value);
+        }
+        layerC(head.left, layer + 1, result);
+        layerC(head.right, layer + 1, result);
+        return result
+    }
+    // 非递归版本 - 层级遍历
+    function layerNC(head) {
+        if (!head) { return [] }
+        const result = [];
+        const queue = [head];
+        // let layer = 0; 不需要 layer 保存层级，直接 push 就可以
+        while (queue.length) {
+            const current = [];
+            const size = queue.length;
+            for (let i = 0; i < size; i++) {
+                const node = queue.shift();
+                // current[i] = node.value; current 不需要保存层级，保存值即可
+                current.push(node.value);
+                if (node.left) { queue.push(node.left) }
+                if (node.right) { queue.push(node.right) }
+            }
+            result.push(current);
+            // result[layer] = current;
+            // layer++;
+        }
+        return result
+    }
+    // 左视图
+    function layerNCLeft(head) {
+        const result = [];
+        const queue = [head];
+        while (queue.length) {
+            const size = queue.length;
+            for (let i = 0; i < size; i++) {
+                const node = queue.shift();
+                if (i === 0) { result.push(node.value) }
+                if (node.left) { queue.push(node.left) }
+                if (node.right) { queue.push(node.right) }
+            }
+        }
+        return result
+    }
+    // 路径和 - 不行
+    function Path(head) {
+        const result = [];
+        function track(node, target, path) {
+            if (!node) { return }
+            path.push(node.value);
+            if (!node.left && !node.right && target === node.value) {
+                result.push([...path])
+            }
+            track(node.left, target - node.value, path)
+            track(node.right, target - node.value, path)
+            path.pop();
+        }
+        track(head, target, [])
+        return result
+    }
 </script>
 
 <body>

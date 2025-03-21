@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>p-limit 使用+源码 、100个请求并发请求</title>
+</head>
+
+<body>
+    <script type="module">
+        import pLimit, { limitFunction } from 'p-limit';
+        // 方法1
+        const limit = new pLimit(4);
+        const arr1 = Array.from({ length: 30 }, (it, index) =>
+            limit(() => new Promise((resolve) => setTimeout(resolve, index * 88, index)))
+        )
+        Promise.all(arr).then(res => console.log(res))
+        // 方法2
+        const arr2 = Array.from({ length: 30 }, (it, index) =>
+            limitFunction(() => new Promise((resolve) => setTimeout(resolve, index * 88, index)),
+                { concurrency: 4 })
+        )
+        //  源码
+        function validate(limit) {
+            if (!Number.isInteger(limit) || limit < 0) {
+                throw new Error('concurrency 无效')
+            }
+        }
+        function pLimit(concurrency) {
+            validate(concurrency);
+            const queue = [];
+            let running = 0;
+            const next = () => {
+                running--;
+                if (queue.length) {
+                    queue.pop()();
+                }
+            }
+            const run = async (resolve, fn, arg) => {
+
+                running++;
+                // ❌ 1、resolve(fn(...arg));
+                try {
+                    const res = await fn(...arg);
+                    resolve(res)
+                } catch (e) {
+                    resolve(Promise.reject(e))
+                }
+
+                next()
+            }
+            return (fn, ...arg) => {
+                return new Promise((resole) => {
+                    if (running < concurrency) {
+                        run(resolve, fn, arg)
+                    } else {
+                        queue.push(() => run(resolve, fn, arg))
+                    }
+                })
+            }
+        }
+        function limitFunction(fn, options) {
+            const limit = new pLimit(options.concurrency);
+            // ❌ 2、return limit(() => fn)
+            return (...arg) => limit(() => fn(...arg))
+        }
+        // 100个并发请求
+        const arr = Array.from({ length: 100 }, (it, index) => {
+            // ❌ 3、return () => new Promise((resolve) => setTimeout(resolve, index * 99, index))
+            return new Promise((resolve) => setTimeout(resolve, index * 99, index))
+        })
+        async function Co(arr, concurrency) {
+            const indexedArr = arr.map((it, index) => ({
+                index,
+                // ❌ 4、promise: () => Promise.resolve(it).then(value => ({ key: index, value }))
+                promise: Promise.resolve(it).then(value => ({ key: index, value }))
+            }))
+            let count = 0;
+            const result = [];
+            const queue = indexedArr.splice(0, concurrency);
+            while (queue.length > 0) {
+                const { key, value } = await Promise.race(queue.map(it => it.promise))
+                result[key] = value;
+                const resolveIndex = queue.findIndex(it => it.index === key) // ❌ 5
+                // queue.splice(key, 1);
+                queue.splice(resolveIndex, 1);
+                if (indexedArr.length > 0) {
+                    queue.push(indexedArr.pop())
+                }
+            }
+            return result
+        }
+    </script>
+</body>
+
+</html>

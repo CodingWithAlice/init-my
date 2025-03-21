@@ -132,7 +132,7 @@
 
         app.mount('#app');
     </script>
-    <script>
+    <script src="../a.js">
         // Vue2
         const callbacks1 = []; //  存储异步队列
         let pending1 = false;
@@ -230,10 +230,74 @@
         const app1 = createApp({
             data() { return { msg: 111 } },
             mounted() {
-                nextTick(() => {console.log(2222)})
+                nextTick(() => { console.log(2222) })
             }
         })
         app1.mount('#app')
+    </script>
+    <script>
+        const callbacks2 = [];
+        let pending22 = false;
+        function flushJobs() {
+            pending22 = true;
+            const copy = [...callbacks2];
+            copy.forEach(it => it());
+            callbacks2.length = 0;
+            pending22 = false
+        }
+        let timeFunc22;
+        if (typeof Promise !== 'undefined') {
+            timeFunc22 = () => Promise.resolve().then(flushJobs)
+        } else if (typeof MutationObserver !== 'undefined') {
+            const ob = new MutationObserver(flushJobs);
+            const dom = document.createTextNode('1');
+            ob.observe(dom, { characterData: true });
+            timeFunc22 = () => dom.data = '2';
+        } else if (typeof setImmediate !== 'undefined') {
+            timeFunc22 = () => setImmediate(flushJobs);
+        } else {
+            timeFunc22 = () => setTimeout(flushJobs, 0)
+        }
+
+        function vue2NextTick(cb, thisArg) {
+            if (!cb) { return Promise.resolve() }
+            callbacks2.push(() => {
+                try { cb.apply(thisArg) } catch (e) { return console.log(e) }
+            })
+            if (!pending) { timeFunc22() }
+        }
+        new Vue({
+            data() { return { msg: '1' } },
+            mounted() { this.$Vue2nextTick(() => { }) }
+        })
+
+        function flushJobs3() {
+            pending22 = true;
+            let job;
+            while ((job = callbacks2.shift())) {
+                job();
+            }
+            pending22 = false;
+        }
+        const timeFunc3 = () => { queueMicrotask(flushJobs3) }
+        function vue3NextTick(cb) {
+            return new Promise((resolve, reject) => {
+                if (!cb) { resolve() }
+                callbacks2.push(() => {
+                    try {
+                        cb();
+                        resolve()
+                    } catch (e) { reject(e) }
+                })
+                if (!pending22) { timeFunc3() }
+            })
+        }
+        import { nextTick, createApp } from 'vue';
+        const app3 = createApp({
+            data() { return { msg: '1' } },
+            mounted() { nextTick(() => { }) }
+        })
+        app3.mount('#root')
     </script>
 </body>
 

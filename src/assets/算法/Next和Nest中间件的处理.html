@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next和Nest中间件的处理</title>
+</head>
+
+<body>
+    <script type="module">
+        // Next - 守卫 auth.guard.ts
+        @Injectable()
+        export class MyAuth implements CanActivate {
+            canActivate(context) {
+                const headers = context.switchToHttp().getRequest().headers;
+                if (headers.auth !== 'xxx') {
+                    throw new UnauthorizedException('x')
+                }
+                return true
+            }
+        }
+        @UseGuards(MyAuth)
+        // Nest - 基于 Express 和app同级，src/middleware.ts
+        export const config = {
+            matcher: '/api/:path*'
+        }
+        export function MyAuth(request: NestRequest) {
+            const headers = request.headers;
+            if (headers.get('auth') !== 'x') {
+                return NestResponse.json({ status: 401, message: 'err' })
+            }
+            NestResponse.next();
+        }
+
+    </script>
+</body>
+
+</html>

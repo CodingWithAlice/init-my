@@ -104,7 +104,7 @@
         compose([fn1, fn2, fn3])(ctx, () => Promise.resolve())
             .then(() => console.log(11111))
     </script>
-    <script>
+    <script src="../a.js">
         const ctx1 = {};
         function composes(middlewares) {
             return (ctx, next) => {
@@ -144,6 +144,54 @@
         const func1 = composes([fn1, fn2, fn3]);
         console.log(func1)
         func1(ctx1, () => Promise.resolve()).then(() => console.log(11111))
+    </script>
+    <script>
+        function compose2(middlewares) {
+            return (ctx, next) => {
+                let index = -1;
+                return dispatch(0);
+                function dispatch(i) {
+                    if (i <= index) { return Promise.reject('multiple times') }
+                    let fn = middlewares[i];
+                    if (!fn) { return Promise.resolve() }
+                    if (i === middlewares.length) { fn = next }
+                    try {
+                        const nextFunc = () => dispatch(i + 1);
+                        return Promise.resolve(fn(ctx, nextFunc))
+                    } catch (e) { Promise.reject(e) }
+                }
+            }
+        }
+        import http from 'http'
+        class KOA2 {
+            constructor() {
+                this.middlewares = [];
+            }
+            listen(...arg) {
+                const server = http.createServer(this.callback());
+                return server.listen(...arg)
+            }
+            use(fn) { this.middlewares.push(fn) }
+            callback() {
+                const fnCompose = compose(this.middlewares);
+                return (req, res) => {
+                    const context = createContext(req, res);
+                    return fnCompose(context).then(() => response(context)).catch(e => ctx.onerror(e))
+                }
+            }
+            createContext(req, res) {
+                const ctx = Object.create(this.context);
+                ctx.request = Object.create(this.request);
+                ctx.response = Object.create(this.response);
+                ctx.req = ctx.request.req = req;
+                ctx.res = ctx.response.res = res;
+                return ctx
+            }
+        }
+        function response(ctx) {
+            ctx.res.statusCode = ctx.status;
+            ctx.res.end(ctx.body)
+        }
     </script>
 </body>
 

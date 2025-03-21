@@ -973,7 +973,7 @@
         //     console.log('resolve success:', value);
         // });
     </script>
-    <script>
+    <script src="../a.js">
         // Promise.race - MDN 返回第一个非pending状态的promise
         const fn1 = () => new Promise((resolve) => setTimeout(() => {
             console.log('Promise 1 resolved');
@@ -1059,7 +1059,7 @@
             // 持续处理任务，直到所有任务完成
             while (activeTasks.length > 0) {
                 const { key, value } = await Promise.race(activeTasks.map(task => task.promise));
-                
+
                 const resolvedIndex = activeTasks.findIndex(task => task.index === key);
                 activeTasks.splice(resolvedIndex, 1); // 移除已完成的任务
                 results[key] = value; // 存储结果
@@ -1075,6 +1075,141 @@
             console.log('res:', res);
         })
 
+    </script>
+    <script>
+        const S7 = {
+            pending: 'pending',
+            resolved: 'fulfilled',
+            rejected: 'rejected'
+        }
+        function MyPromise7(executor) {
+            this.status = S7.pending;
+            this.value = null;
+            this.reason = null;
+            this.resolvedCbs = [];
+            this.rejectedCbs = [];
+            const resolve = (value) => {
+                if (this.status === S7.pending) {
+                    this.status = S7.resolved;
+                    this.value = value;
+                    this.resolvedCbs.forEach(it => it(value))
+                }
+            }
+            const reject = (reason) => {
+                if (this.status === S7.pending) {
+                    this.status = S7.rejected;
+                    this.reason = reason;
+                    this.rejectedCbs.forEach(it => it(reason))
+                }
+            }
+            try {
+                executor(resolve, reject);
+            } catch (e) {
+                reject(e);
+            }
+        }
+        MyPromise7.prototype.then = function (onResolved, onRejected) {
+            return new MyPromise7((resolve, reject) => {
+                const resolveFunc = () => {
+                    setTimeout(() => {
+                        try {
+                            const res = onResolved(this.value);
+                            resolve(res)
+                        } catch (e) { reject(e) }
+                    }, 0);
+                }
+                const rejectFunc = () => {
+                    setTimeout(() => {
+                        try {
+                            const res = onRejected(this.reason);
+                            resolve(res)
+                        } catch (e) { reject(e) }
+                    }, 0);
+                }
+                switch (this.status) {
+                    case S7.pending:
+                        this.resolvedCbs.push(resolveFunc);
+                        this.rejectedCbs.push(rejectFunc);
+                        break;
+                    case S7.resolved:
+                        this.resolvedCbs.push(resolveFunc());
+                        break;
+                    case S7.rejected:
+                        this.rejectedCbs.push(rejectFunc());
+                        break;
+                }
+            })
+        }
+        MyPromise7.prototype.catch = function (onRejected) {
+            return this.then(null, onRejected);
+        }
+        MyPromise7.prototype.finally = function (cb) {
+            return this.then(v => { cb(); return v }, r => { cb(); throw r })
+        }
+        MyPromise7.resolve = function (value) {
+            return new MyPromise((resolve, reject) => {
+                if (value instanceof MyPromise7) {
+                    return value.then(resolve, reject)
+                }
+                resolve(value);
+            })
+        }
+        MyPromise7.reject = function (reason) {
+            return new MyPromise7((resolve, reject) => reject(reason))
+        }
+        MyPromise7.all = function (arr) {
+            return new MyPromise7((resolve, reject) => {
+                if (!arr.length) { resolve([]); return }
+                let count = 0;
+                const result = [];
+                arr.forEach((it, index) => {
+                    MyPromise7.resolve(it).then(res => {
+                        count++;
+                        result[index] = res;
+                        if (count === arr.length) {
+                            resolve(result)
+                        }
+                    }).catch(reject);
+                })
+            })
+        }
+        MyPromise7.race = function (arr) {
+            return new MyPromise7((resolve, reject) => {
+                arr.forEach(it => it(resolve, reject))
+            })
+        }
+        MyPromise7.allSettled = function (arr) {
+            return new MyPromise7((resolve) => {
+                if (!arr.length) { resolve([]); return; }
+                const result = [];
+                let count = 0;
+                arr.forEach((it, index) => {
+                    MyPromise7.resolve(it).then(value => {
+                        result[index] = { status: S7.resolved, value }
+                    }).catch(reason => {
+                        result[index] = { status: S7.rejected, reason }
+                    }).finally(() => {
+                        count++;
+                        if (count === arr.length) { resolve(result) }
+                    })
+                })
+            })
+        }
+        const getErr = info => new AggregateError(info, 'all rejected')
+        MyPromise7.any = function (arr) {
+            return new MyPromise7((resolve, reject) => {
+                if (!arr.length) { reject(getErr([])); return; }
+                const result = [];
+                let count = 0;
+                arr.forEach((it, index) => {
+                    MyPromise7.resolve(it).then(resolve).catch(reason => {
+                        count++;
+                        result[index] = reason;
+                        if (count === arr.length) { reject(getErr(results)) }
+                    })
+                })
+            })
+        }
     </script>
 </body>
 
