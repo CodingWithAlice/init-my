@@ -464,7 +464,7 @@
         return result
     }
 </script>
-<script>
+<script src="../a.js">
     // 前中后序 - 递归版本
     function preC1(head) {
         if (!head) return []
@@ -579,6 +579,124 @@
             path.pop();
         }
         track(head, target, []);
+        return result
+    }
+</script>
+<script>
+    // 2023-09 二叉树：前中后序、层序遍历-递归/非递归版本、左视图、路径和
+    // 前中后序-递归
+    function preC2(head) {
+        if (!head) { return [] }
+        return [head.value, ...preC2(head.left), ...preC2(head.right)]
+    }
+    function inC2(head) {
+        if (!head) { return [] }
+        return [...inC2(head.left), head.value, ...inC2(head.right)]
+    }
+    function postC2(head) {
+        if (!head) { return [] }
+        return [...postC2(head.left), ...postC2(head.right), head.value]
+    }
+    // 前中后序-非递归
+    function preNC2(head) {
+        if (!head) { return [] }
+        const result = [];
+        const stack = [head];
+        while (stack.length) {
+            const node = stack.pop();
+            result.push(node.value);
+            if (node.right) { stack.push(node.right) }
+            if (node.left) { stack.push(node.left) }
+        }
+        return result
+    }
+    function inNC2(head) {
+        const result = [];
+        const stack = [];
+        let cur = head;
+        while (stack.length || cur) {
+            while (cur) {
+                stack.push(cur);
+                cur = cur.left;
+            }
+            cur = stack.pop();
+            result.push(cur.value);
+            cur = cur.right
+        }
+        return result
+    }
+    function postNC2(head) {
+        if (!head) { return [] }
+        const result = [];
+        const stack = [head];
+        while (stack.length) {
+            const node = stack.pop();
+            result.unshift(node.value);
+            if (node.left) { stack.push(node.left) }
+            if (node.right) { stack.push(node.right) }
+        }
+        return result
+    }
+    // 层序遍历-递归/非递归版本
+    function layerC2(head, layer = 0, result = []) {
+        if (!head) { return [] }
+        // result[layer] = head.value;
+        // ❌ 1、存储层级是 []
+        if(!result[layer]) {
+            result[layer] = [];
+        }
+        result[layer].push(head.value)
+        layerC2(head.left, layer + 1, result);
+        layerC2(head.right, layer + 1, result);
+        return result
+    }
+    function layerNC2(head) {
+        if (!head) return [];
+        const result = [];
+        const queue = [head];
+        while (queue.length) {
+            const cur = [];
+            const size = queue.length;
+            for (let i = 0; i < size; res++) {
+                const node = queue.pop();
+                cur.push(node.value);
+                if (node.left) { queue.push(node.left) }
+                if (node.right) { queue.push(node.right) }
+            }
+            result.push(cur)
+        }
+        return result
+    }
+    // 左视图
+    function layerNC2(head) {
+        if (!head) return [];
+        const result = [];
+        const queue = [head];
+        while (queue.length) {
+            const size = queue.length;
+            for (let i = 0; i < size; res++) {
+                const node = queue.pop();
+                if (i === 0) { result.push(node.value) }
+                if (node.left) { queue.push(node.left) }
+                if (node.right) { queue.push(node.right) }
+            }
+        }
+        return result
+    }
+    // 路径和
+    function path2(head, target) {
+        const result = [];
+        function track(node, targetValue, path) {
+            if (!node) return;
+            path.push(node.value);
+            if (!node.left && !node.right && node.value === targetValue) {
+                result.push([...path])
+            }
+            if (node.left) { track(node.left, targetValue - node.value, path) }
+            if (node.right) { track(node.right, targetValue - node.value, path) }
+            path.pop()
+        }
+        track(head, target, [])
         return result
     }
 </script>
