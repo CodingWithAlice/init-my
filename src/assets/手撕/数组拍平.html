@@ -136,27 +136,16 @@
     <script>
         let arr1 = [1, 2, [3, 4, [5, 6], 7, [8, [9]], 10], 11];
         // 一层
-        let flat01 = arr1.flat();
-        let flat02 = [].concat.call([], ...arr1);
-        let flat03 = [].concat.apply([], arr1);
-        let flat04 = [].concat(...arr1);
-        // console.log(0, flat02, flat03, flat04);
-
-        // 1、
-        function flat1(arr) {
-            return arr.flat(Infinity);
-        }
-        // 2
-        function flat2(arr) {
-            return arr.toString().split(',').map(it => +it)
-        }
-        // 3
-        function flat3(arr) {
-            return arr.reduce((pre, cur) => pre.concat(Array.isArray(cur) ? flat3(cur) : cur), [])
-        }
-        // 4 自定义拍平深度
-        function flat4(arr, deep = 1) {
-            return arr.reduce((pre, cur) => pre.concat(Array.isArray(cur) && deep > 1 ? flat4(cur, deep - 1) : cur), [])
+        arr1.flat();
+        [].concat.call([], ...arr1);
+        [].concat.apply([], arr1);
+        [].concat(...arr1);
+        // ❌ 1、[].concat(arr1); concat 自动打平一层数组，要传入 ...arr作为参数
+        // 全部展开
+        arr1.flat(Infinity)
+        arr1.toString().split(',');
+        function expense(arr, deep = 1) {
+            return arr.reduce((pre, cur) => pre.concat(Array.isArray(cur) && deep > 1 ? expense(cur, deep - 1) : cur), [])
         }
         // console.log('1=', flat1(arr1));
         // console.log('2=', flat2(arr1));
