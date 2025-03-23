@@ -10,31 +10,30 @@
 <body>
     <script>
         // 2025-3 NextJS 全局中间件-校验权限
-        // Nextjs 和 src/app 层级同级 src/middleware.ts
-        // ❌ 1、少写 路由匹配器 
-        export const config = { matcher: '/api/:path*' }
-        export function MyAuth(request: NextRequest) {
-            // const headers = request.switchToHttp().getRequest().headers;
-            // ❌ 2、request 是 NextRequest 是封装好的
+        // 和 src/app 同层级 - src/middleware.ts
+        export const config = {
+            matcher: '/api/:path*'
+        }
+        export default function MyAuth(request: NextRequest) {
             const headers = request.headers;
             if(headers.get('Auth') !== 'x'){
-                return NextResponse.json({status: 401, message: 'err'})
+                return NextResponse.json({status: 401})
             }
+            // ❌ 1、少写了 return
             return NextResponse.next();
         }
         // 2025-3 NestJS 守卫-校验权限
         @Injectable()
         export class AuthGuard implements CanActivate{
             canActivate(context){
-                // const headers = context.request.headers;
-                // ❌ 3、NestJS 中的 context 包含的内容很多，需要调用访问函数来获取 
                 const headers = context.switchToHttp().getRequest().headers;
                 if(headers.Auth !== 'x'){
-                    throw new Error('err') 
+                    throw new Error('err')
                 }
                 return true;
             }
         }
+        @UseGuards(AuthGuard)
     </script>
 </body>
 
