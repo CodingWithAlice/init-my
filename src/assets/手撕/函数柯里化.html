@@ -65,37 +65,19 @@
         console.log(res, res1, addRes);
     </script>
     <script>
-        // 返回的是 直到参数够了再执行的函数
-        // 将一个多参数函数转换为一系列单参数函数的过程
+        // 柯里化
         function curry(fn, ...arg1) {
             if (arg1.length >= fn.length) {
-                return fn(...arg1)
+                // ❌ 1、 fn(...arg, ...arg2) - 没有 arg2
+                fn(...arg1)
             } else {
-                // return (...arg2) => fn(...arg1, ...arg2)
                 return (...arg2) => curry(fn, ...arg1, ...arg2)
             }
         }
-        // 想要返回的是 - 将一个方法从“属于某个对象”转换为 通用的函数，使得这个方法可以被其他对象借用
-        // function curryReverse(fn) {
-        //     return (...arg) => {
-        //         fn()
-        //     }
-        // }
-        Function.prototype.uncurry = function () {
-            const self = this;
-            return (...arg) => {
-                // 1
-                const obj = [].shift.call(arg);
-                return self.apply(obj, arg)
-                // 2
-                return Function.prototype.call.apply(self, arg)
-            }
-        }
+        // 反柯里化
         function uncurry(fn) {
-            return function (...args) {
-                // 递归地将柯里化函数逐步调用，直到所有参数都被传递
-                return args.reduce((pre, cur) => pre(cur), fn);
-            };
+            // ❌ 2、return arg.reduce((pre, cur) => pre(cur), fn); - 反柯里化返回的也应该是函数
+            return (...args) => args.reduce((pre, cur) => pre(cur), fn);
         }
     </script>
 </body>
