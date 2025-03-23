@@ -583,7 +583,6 @@
     }
 </script>
 <script>
-    // 2023-09 二叉树：前中后序、层序遍历-递归/非递归版本、左视图、路径和
     // 前中后序-递归
     function preC2(head) {
         if (!head) { return [] }
@@ -602,7 +601,7 @@
         if (!head) { return [] }
         const result = [];
         const stack = [head];
-        while (stack.length) {
+        while (stack.length > 0) {
             const node = stack.pop();
             result.push(node.value);
             if (node.right) { stack.push(node.right) }
@@ -614,7 +613,7 @@
         const result = [];
         const stack = [];
         let cur = head;
-        while (stack.length || cur) {
+        while (stack.length > 0 || cur) {
             while (cur) {
                 stack.push(cur);
                 cur = cur.left;
@@ -629,7 +628,7 @@
         if (!head) { return [] }
         const result = [];
         const stack = [head];
-        while (stack.length) {
+        while (stack.length > 0) {
             const node = stack.pop();
             result.unshift(node.value);
             if (node.left) { stack.push(node.left) }
@@ -640,9 +639,7 @@
     // 层序遍历-递归/非递归版本
     function layerC2(head, layer = 0, result = []) {
         if (!head) { return [] }
-        // result[layer] = head.value;
-        // ❌ 1、存储层级是 []
-        if(!result[layer]) {
+        if (!result[layer]) {
             result[layer] = [];
         }
         result[layer].push(head.value)
@@ -651,34 +648,36 @@
         return result
     }
     function layerNC2(head) {
+        // ❌ 1、层序遍历少写了 head 为 null 的边界
         if (!head) return [];
         const result = [];
         const queue = [head];
-        while (queue.length) {
-            const cur = [];
+        while (queue.length > 0) {
+            const current = [];
             const size = queue.length;
-            for (let i = 0; i < size; res++) {
-                const node = queue.pop();
-                cur.push(node.value);
+            for (let i = 0; i < size; i++) {
+                const node = queue.shift();
+                current.push(node.value);
                 if (node.left) { queue.push(node.left) }
                 if (node.right) { queue.push(node.right) }
             }
-            result.push(cur)
+            result.push(current)
         }
         return result
     }
     // 左视图
     function layerNC2(head) {
+        // ❌ 2、层序遍历少写了 head 为 null 的边界
         if (!head) return [];
         const result = [];
         const queue = [head];
-        while (queue.length) {
+        while (queue.length > 0) {
             const size = queue.length;
-            for (let i = 0; i < size; res++) {
-                const node = queue.pop();
-                if (i === 0) { result.push(node.value) }
-                if (node.left) { queue.push(node.left) }
-                if (node.right) { queue.push(node.right) }
+            for (let i = 0; i < size; i++) {
+                const node = queue.shift();
+                if (i === 0) result.push(node.value)
+                if (node.left) queue.push(node.left)
+                if (node.right) queue.push(node.right)
             }
         }
         return result
@@ -692,8 +691,9 @@
             if (!node.left && !node.right && node.value === targetValue) {
                 result.push([...path])
             }
-            if (node.left) { track(node.left, targetValue - node.value, path) }
-            if (node.right) { track(node.right, targetValue - node.value, path) }
+            track(node.left, targetValue - node.value, path)
+            track(node.right, targetValue - node.value, path)
+            // ❌ 3、少写了 退出回溯的条件
             path.pop()
         }
         track(head, target, [])
