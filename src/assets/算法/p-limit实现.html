@@ -10,14 +10,15 @@
 <body>
     <script type="module">
         import pLimit, { limitFunction } from 'p-limit';
-        const limit = pLimit(4);
-        const promiseArr = Array.from({ length: 30 }, (it, index) => (new Promise(resolve => setTimeout(resolve, 0))))
-        // 使用1
-        const limitArr = promiseArr.map(it => limit(() => it));
-        Promise.all(limitArr).then(res => console.log(res))
-        // 使用2
-        const limitFuncArr = promiseArr.map(it => limitFunction(() => it, { concurrency: 4 }))
-        Promise.all(limitFuncArr).then(res => console.log(res))
+        const promiseArr = Array.from({ length: 30 }, (it, index) => new Promise(resolve => setTimeout(resolve, index * 99, index)))
+        // 方法1
+        const limit = pLimit(6);
+        const limitedArr = promiseArr.map(it => limit(() => it));
+        Promise.all(limitedArr).then(res => console.log(res))
+        // 方法2
+        // ❌ 1、const limitedArr2 = promiseArr.map(it => limitFunction(() => it)) - limitFunction 缺少函数传入 
+        const limitedArr2 = promiseArr.map(it => limitFunction(() => it, { concurrency: 4 }))
+        Promise.all(limitedArr2).then(res => console.log(res));
         // pLimit 源码
         function validate(limit) {
             if (!Number.isInteger(limit) || limit < 0) {
@@ -25,12 +26,12 @@
             }
         }
         function pLimit(concurrency) {
-            validate(concurrency);
+            validate(concurrency)
             const queue = [];
             let running = 0;
             const next = () => {
                 running--;
-                if (queue.length) {
+                if (queue.length > 0) {
                     queue.shift()()
                 }
             }
@@ -41,20 +42,15 @@
                     const res = await fn(...arg);
                     resolve(res)
                 } catch (e) {
-                    // ❌ 1、return Promise.reject(e) 错了，不是返回一个 reject 的Promise，而是继续通过 resolve 返回
                     resolve(Promise.reject(e))
                 }
-                // ❌ 2、少写了 next()
                 next()
             }
             return (fn, ...arg) => {
-                // ❌ 3、完犊子，应该返回一个 promise
                 return new Promise((resolve) => {
                     if (running < concurrency) {
-                        // ❌ 4、fn(...arg) 不是直接执行，而是通过包装的 run 来控制 running 计数
                         run(resolve, fn, arg)
                     } else {
-                        // ❌ 5、queue.push(fn); 添加进队列的应该不是直接函数，是包装过 run 的函数
                         queue.push(() => run(resolve, fn, arg))
                     }
                 })
@@ -63,39 +59,41 @@
         function limitFunction(fn, options) {
             const concurrency = options.concurrency;
             const limit = pLimit(concurrency);
-            // ❌ 6、return limit((...arg) => fn(...arg)) 返回的是一个可以接受参数的函数
             return (...arg) => limit(() => fn(...arg))
         }
         // 100个并发请求
-        async function manyRequest(arr, concurrency) {
+        async function limitRequest(arr, concurrency) {
             const indexedArr = arr.map((it, index) => ({
                 index,
-                promise: Promise.resolve(it).then(value => ({ key: index, value }))
+                promise: it.then(value => ({ key: index, value }))
             }))
             const result = [];
             const queue = indexedArr.splice(0, concurrency);
-            while (queue.length) {
-                // ❌ 7、const { key, value } = await Promise.race(queue); queue 中的 promise 都被包装过一层了，需要重新组装一下
+            while (queue.length > 0) {
                 const { key, value } = await Promise.race(queue.map(it => it.promise))
                 result[key] = value;
+
                 const resolveIndex = queue.findIndex(it => it.index === key);
                 queue.splice(resolveIndex, 1);
+
                 if (indexedArr.length > 0) {
-                    // ❌ 8、if (indexedArr.length) { 条件应该是 > 0
-                    queue.push(indexedArr.shift())
+                    queue.push(indexedArr.pop())
                 }
             }
             return result
         }
-        // 分时操作 - 分批处理数组元素的工具函数 - 在指定的时间间隔内，每次从数组中取出一定数量的元素，并通过回调函数 fn 进行处理
-        function timeRun(arr, count, fn) {
-            let timeId;
-            const start = function () {
+        // 分时操作
+        function timeFunc(arr, count, fn) {
+            // ❌ 1、创建一个 start 函数来处理循环
+            const start = () => {
                 for (let i = 0; i < Math.min(count || 1, arr.length); i++) {
+                    // ❌ 2、应该使用 arr 边执行边移除 fn(arr[i]);
                     fn(arr.shift())
                 }
             }
+            let timeId;
             return () => {
+                // ❌ 3、返回一个函数来定时执行 start
                 timeId = setInterval(() => {
                     if (arr.length === 0) {
                         return clearInterval(timeId)
