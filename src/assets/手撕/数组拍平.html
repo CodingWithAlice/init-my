@@ -134,24 +134,16 @@
 
     </script>
     <script>
-        let arr1 = [1, 2, [3, 4, [5, 6], 7, [8, [9]], 10], 11];
-        // 一层
         arr1.flat();
-        [].concat.call([], ...arr1);
-        [].concat.apply([], arr1);
-        [].concat(...arr1);
-        // ❌ 1、[].concat(arr1); concat 自动打平一层数组，要传入 ...arr作为参数
-        // 全部展开
+        [].concat(...arr);
+        [].concat.call(null, ...arr1);
+        [].concat.apply(null, arr1);
+
         arr1.flat(Infinity)
         arr1.toString().split(',');
         function expense(arr, deep = 1) {
             return arr.reduce((pre, cur) => pre.concat(Array.isArray(cur) && deep > 1 ? expense(cur, deep - 1) : cur), [])
         }
-        // console.log('1=', flat1(arr1));
-        // console.log('2=', flat2(arr1));
-        // console.log('3=', flat3(arr1));
-        console.log('4=', flat4(arr1, 1));
-        // console.log(flattenByDeep(arr1, 1));
     </script>
 </body>
 

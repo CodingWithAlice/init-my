@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>函数泛化-借用</title>
 </head>
+
 <body>
     <script>
-        Function.prototype.borrow1 = function() {
-            let self = this;
+        Function.prototype.borrow = function () {
+            const self = this;
             return (...arg) => {
                 return Function.prototype.call.apply(self, arg)
             }
         }
-        Function.prototype.borrow2 = function() {
-            let self = this;
+        Function.prototype.borrow = function () {
+            const self = this;
             return (...arg) => {
-                const obj = [].shift.call(arg);
-                return self.apply(obj, arg)
+                const obj = arg.shift();
+                return self.call(obj, ...arg)
             }
         }
     </script>
 </body>
+
 </html>
