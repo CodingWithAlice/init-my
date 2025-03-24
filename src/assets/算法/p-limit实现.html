@@ -9,17 +9,17 @@
 
 <body>
     <script type="module">
+        // 2025-03 p-limit 使用+源码 、100个请求并发请求、分时操作
         import pLimit, { limitFunction } from 'p-limit';
-        const promiseArr = Array.from({ length: 30 }, (it, index) => new Promise(resolve => setTimeout(resolve, index * 99, index)))
-        // 方法1
-        const limit = pLimit(6);
-        const limitedArr = promiseArr.map(it => limit(() => it));
-        Promise.all(limitedArr).then(res => console.log(res))
-        // 方法2
-        // ❌ 1、const limitedArr2 = promiseArr.map(it => limitFunction(() => it)) - limitFunction 缺少函数传入 
-        const limitedArr2 = promiseArr.map(it => limitFunction(() => it, { concurrency: 4 }))
-        Promise.all(limitedArr2).then(res => console.log(res));
-        // pLimit 源码
+        const promiseArr = Array.from({ length: 30 }, (it, index) => (new Promise(resolve => setTimeout(resolve, index * 99, index))))
+        // 法1
+        const limit = pLimit(4);
+        const arr1 = promiseArr.map(it => limit(() => it));
+        Promise.all(arr1).then(res => console.log(res))
+        // 法2
+        const arr2 = promiseArr.map(it => limitFunction(() => it, { concurrency: 4 }))
+        Promise.all(arr2).then(res => console.log(res));
+        // 源码
         function validate(limit) {
             if (!Number.isInteger(limit) || limit < 0) {
                 throw new Error('limit err')
@@ -61,11 +61,11 @@
             const limit = pLimit(concurrency);
             return (...arg) => limit(() => fn(...arg))
         }
-        // 100个并发请求
-        async function limitRequest(arr, concurrency) {
+        // 100个请求并发请求
+        async function conRequest(arr, concurrency) {
             const indexedArr = arr.map((it, index) => ({
                 index,
-                promise: it.then(value => ({ key: index, value }))
+                promise: Promise.resolve(it).then(value => ({ key: index, value }))
             }))
             const result = [];
             const queue = indexedArr.splice(0, concurrency);
@@ -77,26 +77,24 @@
                 queue.splice(resolveIndex, 1);
 
                 if (indexedArr.length > 0) {
-                    queue.push(indexedArr.pop())
+                    queue.push(indexedArr.shift())
                 }
             }
             return result
         }
         // 分时操作
-        function timeFunc(arr, count, fn) {
-            // ❌ 1、创建一个 start 函数来处理循环
+        function splitTime(arr, fn, limit) {
+            let timeId;
             const start = () => {
-                for (let i = 0; i < Math.min(count || 1, arr.length); i++) {
-                    // ❌ 2、应该使用 arr 边执行边移除 fn(arr[i]);
+                for (let i = 0; i < Math.min(arr.length, limit || 1); i++) {
                     fn(arr.shift())
                 }
             }
-            let timeId;
             return () => {
-                // ❌ 3、返回一个函数来定时执行 start
                 timeId = setInterval(() => {
                     if (arr.length === 0) {
                         return clearInterval(timeId)
+                        // ❌ 1、clearInterval(timeId) - 应该使用 return，避免触发 start
                     }
                     start()
                 }, 200)

@@ -68,7 +68,7 @@
         // 柯里化
         function curry(fn, ...arg1) {
             if (arg1.length >= fn.length) {
-                // ❌ 1、 fn(...arg, ...arg2) - 没有 arg2
+                // 之前的错误 ❌ 1、 fn(...arg, ...arg2) - 没有 arg2
                 fn(...arg1)
             } else {
                 return (...arg2) => curry(fn, ...arg1, ...arg2)
@@ -76,7 +76,7 @@
         }
         // 反柯里化
         function uncurry(fn) {
-            // ❌ 2、return arg.reduce((pre, cur) => pre(cur), fn); - 反柯里化返回的也应该是函数
+            // 之前的错误 ❌ 2、return arg.reduce((pre, cur) => pre(cur), fn); - 反柯里化返回的也应该是函数
             return (...args) => args.reduce((pre, cur) => pre(cur), fn);
         }
     </script>
