@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自定义运算符优先级计算 #>$</title>
+</head>
+
+<body>
+    <script>
+        function number(input) {
+            if (!input.includes("#") && !input.includes("$")) {
+                return console.log(0);
+            }
+            let lowerList = input.split("$");
+            lowerList = lowerList.map((it) => {
+                // 处理包含 # 的操作
+                if (it.includes("#")) {
+                    const higher = it.split("#");
+                    if (higher.length === 2) {
+                        const res = +higher[0] * 4 + +higher[1] * 3 + 2
+                        return res;
+                    } else {
+                        const res = higher.reduce((pre, cur) => 4 * +pre + +cur * 3 + 2)
+                        return res;
+                    }
+                }
+                return it;
+            });
+            const result = lowerList.reduce((pre, cur) => +pre * 2 + +cur + 3)
+
+            return (result);
+        }
+        number('7#6$5#12')
+    </script>
+</body>
+
+</html>
