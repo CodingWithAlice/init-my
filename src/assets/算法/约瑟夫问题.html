@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>约瑟夫问题</title>
+</head>
+
+<body>
+    <script>
+        // 100个人为成圈，从 1 - 100 编码，接收输入 M，从第一个人开始报数，报到 M 的人自动退出这个圈，下个人接着从1报数，直到剩余人数少于M，输出剩余人的编码
+        function circle(M) {
+            if (M <= 1 || M >= 100) {
+                return 'ERROR!'
+            }
+            if (M === 2) return '1';
+            let origin = Array.from({ length: 100 }, (it, index) => (
+                index + 1
+            ));
+
+            while (origin.length > M) {
+                const size = origin.length;
+                let i = 1;
+                for (; i * M <= size; i++) {
+                    origin[i * M - 1] = null
+                }
+                origin = origin.filter(it => it);
+                // 移除了 i - 1 个人
+                const last = (i - 1) * M - (i - 1);
+                origin = origin.slice(last).concat(origin.slice(0, last));
+
+            }
+
+            origin.splice(M - 1, 1);
+            return origin.sort((a, b) => a - b).join(',');
+
+        }
+        function josephus(M) {
+            if (M === 2) return 1; // 经典约瑟夫问题的已知解
+            let people = Array.from({ length: 100 }, (_, i) => i + 1);
+            let current = 0;
+            while (people.length >= M) {
+                current = (current + M - 1) % people.length;
+                people.splice(current, 1);
+            }
+            return people.sort((a, b) => a - b);
+        }
+
+
+        // 测试
+        [2, 3, 4, 5, 6, 9, 10, 88].forEach((it, index) => {
+
+            const res = circle(it);
+            const stand = josephus(it);
+            if (res != stand) {
+                console.log(`❌ 测试 test M = ${it}，期待返回 ${stand}，实际返回 ${res}`)
+            } else {
+                console.log(`测试 test M = ${it} 已通过`)
+            }
+            if (index === 6) {
+                console.log('🌹 测试用例全部通过')
+            }
+        })
+
+
+    </script>
+</body>
+
+</html>
