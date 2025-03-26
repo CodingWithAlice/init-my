@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最大化最小间隔</title>
+</head>
+
+<body>
+    <script>
+        function maxMinSpacing(rightSize, rightArr, treeNum) {
+            rightArr.sort((a, b) => a - b);
+            let left = 0;
+            let right = rightArr[rightSize - 1] - rightArr[0];
+            let result = 0;
+
+            while (left <= right) {
+                const mid = Math.floor((left + right) / 2);
+                let count = 1; // 第一个点必选
+                let lastPos = rightArr[0];
+
+                for (let i = 1; i < rightSize; i++) {
+                    if (rightArr[i] - lastPos >= mid) {
+                        count++;
+                        lastPos = rightArr[i];
+                        if (count === treeNum) break;
+                    }
+                }
+
+                if (count >= treeNum) {
+                    result = mid;
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+
+            return result;
+        }
+
+        // 测试
+        console.log(maxMinSpacing(5, [1, 3, 4, 7, 9], 3)); // 输出 3
+    </script>
+</body>
+
+</html>
