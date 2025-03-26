@@ -8,6 +8,13 @@
 </head>
 
 <body>
+    <div>问题：给定一个由数字、# 和 $ 组成的字符串，其中
+        # 的优先级高于 $
+        运算规则：
+        a#b：结果为 a * 4 + b * 3 + 2
+        a$b：结果为 a * 2 + b + 3
+        最终输出整个表达式的计算结果
+    </div>
     <script>
         function number(input) {
             if (!input.includes("#") && !input.includes("$")) {
