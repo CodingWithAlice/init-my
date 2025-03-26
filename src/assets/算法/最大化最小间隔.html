@@ -10,21 +10,26 @@
 <body>
     <script>
         function maxMinSpacing(rightSize, rightArr, treeNum) {
+            // const sortedArr = rightArr.sort((a, b) => a - b); ❌ 1、不需要用新的数组来承接排序后的结果 - 因为 sort 是改变原数组的
             rightArr.sort((a, b) => a - b);
             let left = 0;
             let right = rightArr[rightSize - 1] - rightArr[0];
+            // let lastPos = rightArr[0]; ❌ 2、不再这里声明，是在 while 循环内部，保证每次 left/right 变化后，第一个节点都会被重置为第一项开始
             let result = 0;
 
+            // while (left < right) {  ❌ 3、少写了等号
             while (left <= right) {
                 const mid = Math.floor((left + right) / 2);
-                let count = 1; // 第一个点必选
+                let count = 1;
                 let lastPos = rightArr[0];
 
                 for (let i = 1; i < rightSize; i++) {
                     if (rightArr[i] - lastPos >= mid) {
                         count++;
                         lastPos = rightArr[i];
-                        if (count === treeNum) break;
+                        if (count === treeNum)
+                            break;
+                        // return ❌ 4、 return 会终止整个函数；break 仅跳出当前 for 循环
                     }
                 }
 
@@ -33,6 +38,7 @@
                     left = mid + 1;
                 } else {
                     right = mid - 1;
+                    // right = mid; // ❌ 5、 已验证当前 mid 不会满足条件，所以赋值 mid-1 性能还会更高
                 }
             }
 
