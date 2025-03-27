@@ -10,15 +10,14 @@
 <body>
     <script>
         // 100个人为成圈，从 1 - 100 编码，接收输入 M，从第一个人开始报数，报到 M 的人自动退出这个圈，下个人接着从1报数，直到剩余人数少于M，输出剩余人的编码
-            function circle(M) {
-            // if (M === 2) return '0'; - ❌ 1、M 为 2 的时候，约瑟夫已知解应该是 1
-            if (M === 2) return '0';
-            let origin = Array.from({ length: 100 }, (_, i) => i + 1);
+        // 错误记录1 M 为 2 的时候，约瑟夫已知解应该是 1
+        function circle(M) {
+            if (M === 2) return '1';
+            let origin = Array.from({ length: 100 }, (it, i) => i + 1);
 
             while (origin.length >= M) {
-                const size = origin.length;
-                let i = 1;
-                for (; (i * M - 1) < size; i++) {
+                let i = 0; // ❌ 1、i 应该是从 1 开始计倍数
+                for (; (i * M - 1) < origin.length; i++) {
                     origin[i * M - 1] = null
                 }
                 origin = origin.filter(it => it);
@@ -32,10 +31,9 @@
         }
         function josephus(M) {
             if (M === 2) return '1';
-            // if (M === 2) return '0'; - ❌ 2、M 为 2 的时候，约瑟夫已知解应该是 1
-            let origin = Array.from({ length: 100 }, (_, i) => i + 1);
+            let origin = Array.from({ length: 100 }, (it, i) => i + 1);
             let index = 0;
-            while(origin.length >= M) {
+            while (origin.length >= M) {
                 index = (index + M - 1) % origin.length;
                 origin.splice(index, 1)
             }
