@@ -9,27 +9,26 @@
 
 <body>
     <script>
+        // 错误记录 ❌ 1、sort 是不需要用新的数组来承接排序后的结果 - 因为 sort 是改变原数组的
+        // 错误记录 ❌ 2、lastPos 需要声明在 while 循环内部，保证每次 left/right 变化后，第一个节点都会被重置为第一项开始
+        // 错误记录 ❌ 3、for 循环中 return 会终止整个函数；break 仅跳出当前 for 循环
+        // 错误记录 ❌ 4、在一个循环结束后，right = mid -1 -> 已验证当前 mid 不会满足条件，所以赋值 mid-1 性能还会更高
         function maxMinSpacing(rightSize, rightArr, treeNum) {
-            // const sortedArr = rightArr.sort((a, b) => a - b); ❌ 1、不需要用新的数组来承接排序后的结果 - 因为 sort 是改变原数组的
+            // ❌ 1、要对输入的 rightArr 进行一个从小到大的排序
             rightArr.sort((a, b) => a - b);
             let left = 0;
             let right = rightArr[rightSize - 1] - rightArr[0];
-            // let lastPos = rightArr[0]; ❌ 2、不再这里声明，是在 while 循环内部，保证每次 left/right 变化后，第一个节点都会被重置为第一项开始
             let result = 0;
-
-            // while (left < right) {  ❌ 3、少写了等号
-            while (left <= right) {
+            while (left < right) { // ❌ 2、少写了等号，会导致 mid 取不到 right - 也就是最大值
                 const mid = Math.floor((left + right) / 2);
                 let count = 1;
                 let lastPos = rightArr[0];
 
                 for (let i = 1; i < rightSize; i++) {
-                    if (rightArr[i] - lastPos >= mid) {
+                    if ((rightArr[i] - lastPos) > mid) { // ❌ 3、少写了等号
                         count++;
                         lastPos = rightArr[i];
-                        if (count === treeNum)
-                            break;
-                        // return ❌ 4、 return 会终止整个函数；break 仅跳出当前 for 循环
+                        if (count === treeNum) break;
                     }
                 }
 
@@ -38,7 +37,6 @@
                     left = mid + 1;
                 } else {
                     right = mid - 1;
-                    // right = mid; // ❌ 5、 已验证当前 mid 不会满足条件，所以赋值 mid-1 性能还会更高
                 }
             }
 
