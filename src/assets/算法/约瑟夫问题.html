@@ -11,12 +11,13 @@
     <script>
         // 100个人为成圈，从 1 - 100 编码，接收输入 M，从第一个人开始报数，报到 M 的人自动退出这个圈，下个人接着从1报数，直到剩余人数少于M，输出剩余人的编码
         // 错误记录1 M 为 2 的时候，约瑟夫已知解应该是 1
+        // ❌ 错误记录2、i 应该是从 1 开始计倍数
         function circle(M) {
             if (M === 2) return '1';
-            let origin = Array.from({ length: 100 }, (it, i) => i + 1);
+            let origin = Array.from({ length: 100 }, (_, i) => i + 1);
 
             while (origin.length >= M) {
-                let i = 0; // ❌ 1、i 应该是从 1 开始计倍数
+                let i = 1;
                 for (; (i * M - 1) < origin.length; i++) {
                     origin[i * M - 1] = null
                 }
@@ -31,7 +32,7 @@
         }
         function josephus(M) {
             if (M === 2) return '1';
-            let origin = Array.from({ length: 100 }, (it, i) => i + 1);
+            let origin = Array.from({ length: 100 }, (_, i) => i + 1);
             let index = 0;
             while (origin.length >= M) {
                 index = (index + M - 1) % origin.length;
@@ -39,7 +40,7 @@
             }
             return origin.join(',')
         }
-
+        
 
         // 测试
         [2, 3, 4, 5, 6, 9, 10, 88].forEach((it, index) => {
